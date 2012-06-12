@@ -33,13 +33,13 @@ tl.pg.default_prefs = {
 
 tl.pg.init = function(preferences) {
     /* page guide object, for pages that have one */
-    if ($("#tlyPageGuide").length === 0) {
+    if (jQuery("#tlyPageGuide").length === 0) {
         return;
     }
 
-    var guide   = $("#tlyPageGuide"),
-        wrapper = $('<div>', { id: 'tlyPageGuideWrapper' }),
-        message = $('<div>', { id: 'tlyPageGuideMessages'});
+    var guide   = jQuery("#tlyPageGuide"),
+        wrapper = jQuery('<div>', { id: 'tlyPageGuideWrapper' }),
+        message = jQuery('<div>', { id: 'tlyPageGuideMessages'});
 
     message.append('<a href="#" class="tlypageguide_close" title="Close Guide">close</a>')
       .append('<span></span>')
@@ -47,7 +47,7 @@ tl.pg.init = function(preferences) {
       .append('<a href="#" class="tlypageguide_back" title="Next">Previous</a>')
       .append('<a href="#" class="tlypageguide_fwd" title="Next">Next</a>');
 
-    $('<div/>', {
+    jQuery('<div/>', {
         'title': 'Launch Page Guide',
         'class': 'tlypageguide_toggle'
     }).append('page guide')
@@ -56,9 +56,9 @@ tl.pg.init = function(preferences) {
 
     wrapper.append(guide);
     wrapper.append(message);
-    $('body').append(wrapper);
+    jQuery('body').append(wrapper);
 
-    var pg = new tl.pg.PageGuide($('#tlyPageGuideWrapper'), preferences);
+    var pg = new tl.pg.PageGuide(jQuery('#tlyPageGuideWrapper'), preferences);
     pg.ready(function() {
         pg.setup_handlers();
         pg.$base.children(".tlypageguide_toggle").animate({ "right": "-120px" }, 250);
@@ -67,22 +67,22 @@ tl.pg.init = function(preferences) {
 };
 
 tl.pg.PageGuide = function (pg_elem, preferences) {
-    this.preferences = $.extend({}, tl.pg.default_prefs, preferences);
+    this.preferences = jQuery.extend({}, tl.pg.default_prefs, preferences);
     this.$base = pg_elem;
-    this.$all_items = $('#tlyPageGuide > li', this.$base);
-    this.$items = $([]); /* fill me with visible elements on pg expand */
-    this.$message = $('#tlyPageGuideMessages');
-    this.$fwd = $('a.tlypageguide_fwd', this.$base);
-    this.$back = $('a.tlypageguide_back', this.$base);
+    this.$all_items = jQuery('#tlyPageGuide > li', this.$base);
+    this.$items = jQuery([]); /* fill me with visible elements on pg expand */
+    this.$message = jQuery('#tlyPageGuideMessages');
+    this.$fwd = jQuery('a.tlypageguide_fwd', this.$base);
+    this.$back = jQuery('a.tlypageguide_back', this.$base);
     this.cur_idx = 0;
     this.track_event = this.preferences.track_events_cb;
 };
 
 tl.pg.isScrolledIntoView = function(elem) {
-    var dvtop = $(window).scrollTop(),
-        dvbtm = dvtop + $(window).height(),
-        eltop = $(elem).offset().top,
-        elbtm = eltop + $(elem).height();
+    var dvtop = jQuery(window).scrollTop(),
+        dvbtm = dvtop + jQuery(window).height(),
+        eltop = jQuery(elem).offset().top,
+        elbtm = eltop + jQuery(elem).height();
 
     return (elbtm >= dvtop) && (eltop <= dvbtm - 100);
 };
@@ -90,7 +90,7 @@ tl.pg.isScrolledIntoView = function(elem) {
 tl.pg.PageGuide.prototype.ready = function(callback) {
     var that = this,
         interval = window.setInterval(function() {
-            if (!$(that.preferences.loading_selector).is(':visible')) {
+            if (!jQuery(that.preferences.loading_selector).is(':visible')) {
                 callback();
                 clearInterval(interval);
             }
@@ -126,7 +126,7 @@ tl.pg.PageGuide.prototype._on_expand = function () {
 
     /* add number tags and PG shading elements */
     this.$items.each(function(i) {
-        var $p = $($(this).data('tourtarget') + ":visible:first");
+        var $p = jQuery(jQuery(this).data('tourtarget') + ":visible:first");
         $p.addClass("tlypageguide_shadow tlypageguide_shadow" + i);
 
         var node_text = '.tlypageguide_shadow' + i + ':after { height: ' +
@@ -141,8 +141,8 @@ tl.pg.PageGuide.prototype._on_expand = function () {
             ie += node_text;
         }
 
-        $(this).prepend('<ins>' + (i + 1) + '</ins>');
-        $(this).data('idx', i);
+        jQuery(this).prepend('<ins>' + (i + 1) + '</ins>');
+        jQuery(this).data('idx', i);
     });
 
     // is IE? slam styles in all at once:
@@ -161,7 +161,7 @@ tl.pg.PageGuide.prototype.open = function() {
 
     this._on_expand();
     this.$items.toggleClass('expanded');
-    $('body').addClass('tlypageguide-open');
+    jQuery('body').addClass('tlypageguide-open');
 };
 
 tl.pg.PageGuide.prototype.close = function() {
@@ -169,19 +169,19 @@ tl.pg.PageGuide.prototype.close = function() {
 
     this.$items.toggleClass('expanded');
     this.$message.animate({ height: "0" }, 500, function() {
-        $(this).hide();
+        jQuery(this).hide();
     });
     /* clear number tags and shading elements */
-    $('ins').remove();
-    $('body').removeClass('tlypageguide-open');
+    jQuery('ins').remove();
+    jQuery('body').removeClass('tlypageguide-open');
 };
 
 tl.pg.PageGuide.prototype.setup_handlers = function () {
     var that = this;
 
     /* interaction: open/close PG interface */
-    $('.tlypageguide_toggle', this.$base).live('click', function() {
-        if ($('body').is('.tlypageguide-open')) {
+    jQuery('.tlypageguide_toggle', this.$base).live('click', function() {
+        if (jQuery('body').is('.tlypageguide-open')) {
             that.close();
         } else {
             that.open();
@@ -189,14 +189,14 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
         return false;
     });
 
-    $('.tlypageguide_close', this.$message).live('click', function() {
+    jQuery('.tlypageguide_close', this.$message).live('click', function() {
         that.close();
         return false;
     });
 
     /* interaction: item click */
     this.$all_items.live('click', function() {
-        var new_index = $(this).data('idx');
+        var new_index = jQuery(this).data('idx');
 
         that.track_event('PG.specific_elt');
         that.show_message(new_index);
@@ -224,7 +224,7 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
     });
 
     /* register resize callback */
-    $(window).resize(function() { that.position_tour(); });
+    jQuery(window).resize(function() { that.position_tour(); });
 };
 
 tl.pg.PageGuide.prototype.show_message = function (new_index, left) {
@@ -234,16 +234,16 @@ tl.pg.PageGuide.prototype.show_message = function (new_index, left) {
 
     this.cur_idx = new_index;
 
-    $('div', this.$message).html($(new_item).children('div').html());
+    jQuery('div', this.$message).html(jQuery(new_item).children('div').html());
     this.$items.removeClass("tlypageguide-active");
-    $(new_item).addClass("tlypageguide-active");
+    jQuery(new_item).addClass("tlypageguide-active");
 
-    if (!tl.pg.isScrolledIntoView($(new_item))) {
-        $('html,body').animate({scrollTop: $(new_item).offset().top - 50}, 500);
+    if (!tl.pg.isScrolledIntoView(jQuery(new_item))) {
+        jQuery('html,body').animate({scrollTop: jQuery(new_item).offset().top - 50}, 500);
     }
 
     this.$message.not(':visible').show().animate({ 'height': '100px'}, 500);
-    this.roll_number($('span', this.$message), $(new_item).children('ins').html(), left);
+    this.roll_number(jQuery('span', this.$message), jQuery(new_item).children('ins').html(), left);
 };
 
 tl.pg.PageGuide.prototype.roll_number = function (num_wrapper, new_text, left) {
@@ -256,12 +256,12 @@ tl.pg.PageGuide.prototype.roll_number = function (num_wrapper, new_text, left) {
 tl.pg.PageGuide.prototype.position_tour = function () {
     /* set PG element positions for visible tourtargets */
     this.$items = this.$all_items.filter(function () {
-        return $($(this).data('tourtarget')).is(':visible');
+        return jQuery(jQuery(this).data('tourtarget')).is(':visible');
     });
 
     this.$items.each(function() {
-        var arrow   = $(this),
-            target  = $(arrow.data('tourtarget')).filter(':visible:first'),
+        var arrow   = jQuery(this),
+            target  = jQuery(arrow.data('tourtarget')).filter(':visible:first'),
             setLeft = target.offset().left,
             setTop  = target.offset().top;
 
