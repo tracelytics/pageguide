@@ -21,7 +21,10 @@
  *                       with pageguide.  Should be a method taking a single
  *                       parameter indicating the name of the interaction.
  *                       (default none)
- *     handle_doc_switch - (default none)
+ *     handle_doc_switch - Optional callback to enlight or adapt interface 
+ *                         depending on current documented element. Should be a
+ *                         function taking 2 parameters, current and previous
+ *                         data-tourtarget selectors. (default null)
  */
 tl = window.tl || {};
 tl.pg = tl.pg || {};
