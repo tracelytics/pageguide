@@ -44,7 +44,7 @@ tl.pg.init = function(preferences) {
     message.append('<a href="#" class="tlypageguide_close" title="Close Guide">close</a>')
       .append('<span></span>')
       .append('<div></div>')
-      .append('<a href="#" class="tlypageguide_back" title="Next">Previous</a>')
+      .append('<a href="#" class="tlypageguide_back" title="Previous">Previous</a>')
       .append('<a href="#" class="tlypageguide_fwd" title="Next">Next</a>');
 
     jQuery('<div/>', {
