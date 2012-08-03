@@ -21,6 +21,10 @@
  *                       with pageguide.  Should be a method taking a single
  *                       parameter indicating the name of the interaction.
  *                       (default none)
+ *     handle_doc_switch - Optional callback to enlight or adapt interface 
+ *                         depending on current documented element. Should be a
+ *                         function taking 2 parameters, current and previous
+ *                         data-tourtarget selectors. (default null)
  */
 tl = window.tl || {};
 tl.pg = tl.pg || {};
@@ -28,7 +32,8 @@ tl.pg = tl.pg || {};
 tl.pg.default_prefs = {
     'auto_show_first': true,
     'loading_selector' : '#loading',
-    'track_events_cb': function() { return; }
+    'track_events_cb': function() { return; },
+    'handle_doc_switch': null
 };
 
 tl.pg.init = function(preferences) {
@@ -76,6 +81,7 @@ tl.pg.PageGuide = function (pg_elem, preferences) {
     this.$back = jQuery('a.tlypageguide_back', this.$base);
     this.cur_idx = 0;
     this.track_event = this.preferences.track_events_cb;
+    this.handle_doc_switch = this.preferences.handle_doc_switch;
 };
 
 tl.pg.isScrolledIntoView = function(elem) {
@@ -233,6 +239,10 @@ tl.pg.PageGuide.prototype.show_message = function (new_index, left) {
         new_item = this.$items[new_index];
 
     this.cur_idx = new_index;
+    if(this.handle_doc_switch){
+        this.handle_doc_switch(jQuery(new_item).data('tourtarget'),
+                               jQuery(old_item).data('tourtarget'));    
+    }
 
     jQuery('div', this.$message).html(jQuery(new_item).children('div').html());
     this.$items.removeClass("tlypageguide-active");
