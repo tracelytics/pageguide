@@ -231,7 +231,7 @@ tl.pg.PageGuide.prototype.show_message = function (new_index, left) {
       .append('<a href="#" class="tlypageguide_close" title="Close Guide">close</a>')
       .append('<span>' + $(old_item).children('ins').html() + '</span>')
       .append('<div>' + $(new_item).children('div').html() + '</div>')
-      .append('<a href="#" class="tlypageguide_back" title="Next">Previous</a>')
+      .append('<a href="#" class="tlypageguide_back" title="Previous">Previous</a>')
       .append('<a href="#" class="tlypageguide_fwd" title="Next">Next</a>');
 
     this.$items.removeClass("tlypageguide-active");
