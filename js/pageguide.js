@@ -25,6 +25,7 @@
  *                         depending on current documented element. Should be a
  *                         function taking 2 parameters, current and previous
  *                         data-tourtarget selectors. (default null)
+ *     pg_caption - Optional - Sets the visible caption
  */
 tl = window.tl || {};
 tl.pg = tl.pg || {};
@@ -33,7 +34,8 @@ tl.pg.default_prefs = {
     'auto_show_first': true,
     'loading_selector' : '#loading',
     'track_events_cb': function() { return; },
-    'handle_doc_switch': null
+    'handle_doc_switch': null,
+    'pg_caption' : 'page guide'
 };
 
 tl.pg.init = function(preferences) {
@@ -55,7 +57,7 @@ tl.pg.init = function(preferences) {
     jQuery('<div/>', {
         'title': 'Launch Page Guide',
         'class': 'tlypageguide_toggle'
-    }).append('page guide')
+    }).append(preferences.pg_caption)
       .append('<div><span>' + guide.data('tourtitle') + '</span></div>')
       .append('<a href="javascript:void(0);" title="close guide">close guide &raquo;</a>').appendTo(wrapper);
 
