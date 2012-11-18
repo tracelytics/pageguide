@@ -25,6 +25,8 @@
  *                         depending on current documented element. Should be a
  *                         function taking 2 parameters, current and previous
  *                         data-tourtarget selectors. (default null)
+ *     custom_open_button - Optional id for toggling pageguide. Default null.
+ *                          If not specified then the default button is used.
  */
 tl = window.tl || {};
 tl.pg = tl.pg || {};
@@ -33,7 +35,8 @@ tl.pg.default_prefs = {
     'auto_show_first': true,
     'loading_selector' : '#loading',
     'track_events_cb': function() { return; },
-    'handle_doc_switch': null
+    'handle_doc_switch': null,
+    'custom_open_button': null
 };
 
 tl.pg.init = function(preferences) {
@@ -52,12 +55,14 @@ tl.pg.init = function(preferences) {
       .append('<a href="#" class="tlypageguide_back" title="Previous">Previous</a>')
       .append('<a href="#" class="tlypageguide_fwd" title="Next">Next</a>');
 
-    jQuery('<div/>', {
-        'title': 'Launch Page Guide',
-        'class': 'tlypageguide_toggle'
-    }).append('page guide')
-      .append('<div><span>' + guide.data('tourtitle') + '</span></div>')
-      .append('<a href="javascript:void(0);" title="close guide">close guide &raquo;</a>').appendTo(wrapper);
+    if (preferences.custom_open_button == null) {
+        jQuery('<div/>', {
+            'title': 'Launch Page Guide',
+            'class': 'tlypageguide_toggle'
+        }).append('page guide')
+          .append('<div><span>' + guide.data('tourtitle') + '</span></div>')
+          .append('<a href="javascript:void(0);" title="close guide">close guide &raquo;</a>').appendTo(wrapper);
+    }
 
     wrapper.append(guide);
     wrapper.append(message);
@@ -82,6 +87,7 @@ tl.pg.PageGuide = function (pg_elem, preferences) {
     this.cur_idx = 0;
     this.track_event = this.preferences.track_events_cb;
     this.handle_doc_switch = this.preferences.handle_doc_switch;
+    this.custom_open_button = this.preferences.custom_open_button;
 };
 
 tl.pg.isScrolledIntoView = function(elem) {
@@ -186,7 +192,8 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
     var that = this;
 
     /* interaction: open/close PG interface */
-    jQuery('.tlypageguide_toggle', this.$base).live('click', function() {
+    var interactor = (that.custom_open_button == null) ? jQuery('.tlypageguide_toggle', this.$base) : jQuery(that.custom_open_button)
+    interactor.live('click', function() {
         if (jQuery('body').is('.tlypageguide-open')) {
             that.close();
         } else {
