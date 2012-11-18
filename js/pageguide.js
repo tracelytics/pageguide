@@ -25,6 +25,8 @@
  *                         depending on current documented element. Should be a
  *                         function taking 2 parameters, current and previous
  *                         data-tourtarget selectors. (default null)
+ *     custom_open_button - Optional id for toggling pageguide. Default null.
+ *                          If not specified then the default button is used.
  */
 tl = window.tl || {};
 tl.pg = tl.pg || {};
