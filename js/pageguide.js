@@ -21,12 +21,13 @@
  *                       with pageguide.  Should be a method taking a single
  *                       parameter indicating the name of the interaction.
  *                       (default none)
- *     handle_doc_switch - Optional callback to enlight or adapt interface 
+ *     handle_doc_switch - Optional callback to enlight or adapt interface
  *                         depending on current documented element. Should be a
  *                         function taking 2 parameters, current and previous
  *                         data-tourtarget selectors. (default null)
  *     custom_open_button - Optional id for toggling pageguide. Default null.
  *                          If not specified then the default button is used.
+ *     pg_caption - Optional - Sets the visible caption
  */
 tl = window.tl || {};
 tl.pg = tl.pg || {};
@@ -36,7 +37,8 @@ tl.pg.default_prefs = {
     'loading_selector' : '#loading',
     'track_events_cb': function() { return; },
     'handle_doc_switch': null,
-    'custom_open_button': null
+    'custom_open_button': null,
+    'pg_caption' : 'page guide'
 };
 
 tl.pg.init = function(preferences) {
@@ -59,7 +61,7 @@ tl.pg.init = function(preferences) {
         jQuery('<div/>', {
             'title': 'Launch Page Guide',
             'class': 'tlypageguide_toggle'
-        }).append('page guide')
+        }).append(preferences.pg_caption)
           .append('<div><span>' + guide.data('tourtitle') + '</span></div>')
           .append('<a href="javascript:void(0);" title="close guide">close guide &raquo;</a>').appendTo(wrapper);
     }
@@ -192,7 +194,7 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
     var that = this;
 
     /* interaction: open/close PG interface */
-    var interactor = (that.custom_open_button == null) ? jQuery('.tlypageguide_toggle', this.$base) : jQuery(that.custom_open_button)
+    var interactor = (that.custom_open_button == null) ? jQuery('.tlypageguide_toggle', this.$base) : jQuery(that.custom_open_button);
     interactor.live('click', function() {
         if (jQuery('body').is('.tlypageguide-open')) {
             that.close();
@@ -248,7 +250,7 @@ tl.pg.PageGuide.prototype.show_message = function (new_index, left) {
     this.cur_idx = new_index;
     if(this.handle_doc_switch){
         this.handle_doc_switch(jQuery(new_item).data('tourtarget'),
-                               jQuery(old_item).data('tourtarget'));    
+                               jQuery(old_item).data('tourtarget'));
     }
 
     jQuery('div', this.$message).html(jQuery(new_item).children('div').html());
