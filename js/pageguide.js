@@ -1,7 +1,7 @@
 /*
  * Tracelytics PageGuide
  *
- * Copyright 2012 Tracelytics
+ * Copyright 2013 Tracelytics
  * Free to use under the MIT license.
  * http://www.opensource.org/licenses/mit-license.php
  *
