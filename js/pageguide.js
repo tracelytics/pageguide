@@ -67,7 +67,7 @@ tl.pg.init = function(preferences) {
             'class': 'tlypageguide_toggle'
         }).append(preferences.pg_caption)
           .append('<div><span>' + guide.data('tourtitle') + '</span></div>')
-          .append('<a href="javascript:void(0);" title="close guide">close guide &raquo;</a>').appendTo(wrapper);
+          .append('<a href="#" class="tlypageguide_close" title="close guide">close guide &raquo;</a>').appendTo(wrapper);
     }
 
     wrapper.append(guide);
@@ -215,7 +215,7 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
                     jQuery('.tlypageguide_toggle', this.$base) : 
                     jQuery(that.custom_open_button);
     interactor.live('click', function() {
-        if (jQuery('body').is('.tlypageguide-open')) {
+        if (this.is_open) {
             that.close();
         } else {
             that.open();
@@ -223,9 +223,10 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
         return false;
     });
 
-    jQuery('.tlypageguide_close', this.$message).live('click', function() {
-        that.close();
-        return false;
+    jQuery('.tlypageguide_close', this.$message.add($('.tlypageguide_toggle')))
+        .live('click', function() {
+            that.close();
+            return false;
     });
 
     /* interaction: item click */
