@@ -42,6 +42,10 @@ tl.pg.default_prefs = {
 };
 
 tl.pg.init = function(preferences) {
+    if (typeof(preferences) === 'undefined') {
+        preferences = tl.pg.default_prefs;
+    }
+    
     /* page guide object, for pages that have one */
     if (jQuery("#tlyPageGuide").length === 0) {
         return;
