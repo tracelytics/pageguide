@@ -94,6 +94,7 @@ tl.pg.PageGuide = function (pg_elem, preferences) {
     this.track_event = this.preferences.track_events_cb;
     this.handle_doc_switch = this.preferences.handle_doc_switch;
     this.custom_open_button = this.preferences.custom_open_button;
+    this.is_open = false;
 };
 
 tl.pg.isScrolledIntoView = function(elem) {
@@ -175,6 +176,12 @@ tl.pg.PageGuide.prototype._on_expand = function () {
 };
 
 tl.pg.PageGuide.prototype.open = function() {
+    if (this.is_open) {
+        return;
+    } else {
+        this.is_open = true;
+    }
+    
     this.track_event('PG.open');
 
     this._on_expand();
@@ -183,6 +190,12 @@ tl.pg.PageGuide.prototype.open = function() {
 };
 
 tl.pg.PageGuide.prototype.close = function() {
+    if (!this.is_open) {
+        return;
+    } else {
+        this.is_open = false;
+    }
+    
     this.track_event('PG.close');
 
     this.$items.toggleClass('expanded');
@@ -198,7 +211,9 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
     var that = this;
 
     /* interaction: open/close PG interface */
-    var interactor = (that.custom_open_button == null) ? jQuery('.tlypageguide_toggle', this.$base) : jQuery(that.custom_open_button);
+    var interactor = (that.custom_open_button == null) ? 
+                    jQuery('.tlypageguide_toggle', this.$base) : 
+                    jQuery(that.custom_open_button);
     interactor.live('click', function() {
         if (jQuery('body').is('.tlypageguide-open')) {
             that.close();
