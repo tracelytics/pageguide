@@ -280,8 +280,20 @@ tl.pg.PageGuide.prototype.show_message = function (new_index, left) {
     if (!tl.pg.isScrolledIntoView(jQuery(new_item))) {
         jQuery('html,body').animate({scrollTop: jQuery(new_item).offset().top - 50}, 500);
     }
+    var defaultHeight = 100;
+    var oldHeight = this.$message.css("height");
+    this.$message.css("height", "auto");
+    var height = this.$message.height();
+    this.$message.css("height", oldHeight);
+    if (height < defaultHeight) {
+        height = defaultHeight;
+    }
+    if (height > $(window).height()/2) {
+        height = $(window).height()/2;
+    }
+    height = height + "px";
 
-    this.$message.not(':visible').show().animate({ 'height': '100px'}, 500);
+    this.$message.not(':visible').show().animate({'height': height}, 500);
     this.roll_number(jQuery('span', this.$message), jQuery(new_item).children('ins').html(), left);
 };
 

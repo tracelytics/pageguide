@@ -236,6 +236,7 @@
   position: fixed;
   width: 90%;
   z-index: 1000;
+  overflow-y: auto;
 }
 #tlyPageGuideWrapper #tlyPageGuideMessages span {
   background: rgba(247, 0, 119, 0.95);
