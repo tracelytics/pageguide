@@ -348,7 +348,7 @@
 .tlypageguide-open .tlypageguide_shadow:after {
   display: block;
 }
-#tlyPageGuideWelcome {
+.tlypageguide_welcome {
   display: none;
   position: absolute;
   top: 0;
@@ -362,6 +362,8 @@
   height: 500px;
   min-height: 500px;
   background: #fff;
+  padding: 15px 20px;
+  overflow-y: scroll;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   -o-border-radius: 10px;
@@ -371,6 +373,6 @@
   -o-box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2);
   box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2);
 }
-#tlyPageGuideWelcome.open {
+.tlypageguide_welcome.open {
   display: block;
 }

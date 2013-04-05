@@ -73,7 +73,9 @@ tl.pg.init = function(preferences) {
     }
 
     if (preferences.show_welcome) {
-        jQuery('#tlyPageGuideWelcome')
+        jQuery('<div class="tlypageguide_welcome"></div>')
+            .append(jQuery('#tlyPageGuideWelcome'))
+            .append('<button class="start">let\'s go</button>')
             .appendTo(wrapper);
     }
 
@@ -102,7 +104,7 @@ tl.pg.PageGuide = function (pg_elem, preferences) {
     this.$message = jQuery('#tlyPageGuideMessages');
     this.$fwd = jQuery('a.tlypageguide_fwd', this.$base);
     this.$back = jQuery('a.tlypageguide_back', this.$base);
-    this.$welcome = jQuery('#tlyPageGuideWelcome');
+    this.$welcome = jQuery('.tlypageguide_welcome');
     this.cur_idx = 0;
     this.track_event = this.preferences.track_events_cb;
     this.handle_doc_switch = this.preferences.handle_doc_switch;
@@ -269,6 +271,11 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
         that.track_event('PG.back');
         that.show_message(new_index, true);
         return false;
+    });
+    
+    this.$welcome.on('click', '.start', function () {
+        that.$welcome.removeClass('open');
+        that.open();
     });
 
     /* register resize callback */
