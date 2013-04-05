@@ -1,3 +1,9 @@
+/* Variables
+================================================== */
+/* Mixins
+================================================== */
+/* Page Guide
+================================================== */
 #tlyPageGuideWrapper {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -300,11 +306,11 @@
   left: 10px;
 }
 #tlyPageGuideWrapper #tlyPageGuideMessages .tlypageguide_back {
-  -webkit-transform: rotate(-180deg) scale(1) skewX(0deg) skewY(0deg) translate(0px);
-  -moz-transform: rotate(-180deg) scale(1) skewX(0deg) skewY(0deg) translate(0px);
-  -o-transform: rotate(-180deg) scale(1) skewX(0deg) skewY(0deg) translate(0px);
-  -ms-transform: rotate(-180deg) scale(1) skewX(0deg) skewY(0deg) translate(0px);
-  transform: rotate(-180deg) scale(1) skewX(0deg) skewY(0deg) translate(0px);
+  -webkit-transform: rotate(-180deg) scale(1) skewX(0) skewY(0) translate(0);
+  -moz-transform: rotate(-180deg) scale(1) skewX(0) skewY(0) translate(0);
+  -o-transform: rotate(-180deg) scale(1) skewX(0) skewY(0) translate(0);
+  -ms-transform: rotate(-180deg) scale(1) skewX(0) skewY(0) translate(0);
+  transform: rotate(-180deg) scale(1) skewX(0) skewY(0) translate(0);
 }
 #tlyPageGuideWrapper #tlyPageGuideMessages .tlypageguide_fwd {
   left: 90px;
