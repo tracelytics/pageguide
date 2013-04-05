@@ -34,6 +34,7 @@ tl.pg = tl.pg || {};
 
 tl.pg.default_prefs = {
     'auto_show_first': true,
+    'show_welcome': false,
     'loading_selector' : '#loading',
     'track_events_cb': function() { return; },
     'handle_doc_switch': null,
@@ -45,7 +46,7 @@ tl.pg.init = function(preferences) {
     if (typeof(preferences) === 'undefined') {
         preferences = tl.pg.default_prefs;
     }
-    
+
     /* page guide object, for pages that have one */
     if (jQuery("#tlyPageGuide").length === 0) {
         return;
@@ -67,7 +68,13 @@ tl.pg.init = function(preferences) {
             'class': 'tlypageguide_toggle'
         }).append(preferences.pg_caption)
           .append('<div><span>' + guide.data('tourtitle') + '</span></div>')
-          .append('<a href="#" class="tlypageguide_close" title="close guide">close guide &raquo;</a>').appendTo(wrapper);
+          .append('<a href="#" class="tlypageguide_close" title="close guide">close guide &raquo;</a>')
+          .appendTo(wrapper);
+    }
+
+    if (preferences.show_welcome) {
+        jQuery('#tlyPageGuideWelcome')
+            .appendTo(wrapper);
     }
 
     wrapper.append(guide);
@@ -79,6 +86,11 @@ tl.pg.init = function(preferences) {
         pg.setup_handlers();
         pg.$base.children(".tlypageguide_toggle").animate({ "right": "-120px" }, 250);
     });
+
+    if (pg.preferences.show_welcome) {
+        pg.pop_welcome();
+    }
+
     return pg;
 };
 
@@ -90,6 +102,7 @@ tl.pg.PageGuide = function (pg_elem, preferences) {
     this.$message = jQuery('#tlyPageGuideMessages');
     this.$fwd = jQuery('a.tlypageguide_fwd', this.$base);
     this.$back = jQuery('a.tlypageguide_back', this.$base);
+    this.$welcome = jQuery('#tlyPageGuideWelcome');
     this.cur_idx = 0;
     this.track_event = this.preferences.track_events_cb;
     this.handle_doc_switch = this.preferences.handle_doc_switch;
@@ -334,4 +347,8 @@ tl.pg.PageGuide.prototype.position_tour = function () {
 
         arrow.css({ "left": setLeft + "px", "top": setTop + "px" });
     });
+};
+
+tl.pg.PageGuide.prototype.pop_welcome = function () {
+    this.$welcome.addClass('open');
 };

@@ -348,3 +348,29 @@
 .tlypageguide-open .tlypageguide_shadow:after {
   display: block;
 }
+#tlyPageGuideWelcome {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  width: 95%;
+  margin: auto;
+  max-width: 600px;
+  height: 500px;
+  min-height: 500px;
+  background: #fff;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -o-border-radius: 10px;
+  border-radius: 10px;
+  -webkit-box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2);
+  -o-box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2);
+}
+#tlyPageGuideWelcome.open {
+  display: block;
+}
