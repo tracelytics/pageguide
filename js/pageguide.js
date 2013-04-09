@@ -73,10 +73,38 @@ tl.pg.init = function(preferences) {
     }
 
     if (preferences.show_welcome) {
-        jQuery('<div class="tlypageguide_welcome"></div>')
-            .append(jQuery('#tlyPageGuideWelcome'))
-            .append('<button class="start">let\'s go</button>')
-            .appendTo(wrapper);
+        var key = 'tlypageguide_welcome_shown_' + this.hashUrl(), 
+            showWelcome = true,
+            dismiss;
+        // first, try to use localStorage
+        try {
+            if (localStorage.getItem(key)) {
+                showWelcome = false;
+            } else {
+                dismiss = function(key) {
+                    localStorage.setItem('tlypageguide_welcome_shown_'+hash, true);
+                };
+            }
+        // cookie fallback for older browsers
+        } catch(e) {
+            if (document.cookie.indexOf(key) > -1) {
+                showWelcome = false;
+            } else {
+                dismiss = function(key) {
+                    var exp = new Date();
+                    exp.setDate(exp.getDate() + 365);
+                    document.cookie = (key + '=true; expires=' + exp.toUTCString());
+                };
+            }
+        }
+        if (showWelcome) {
+            jQuery('<div class="tlypageguide_welcome"></div>')
+                .append(jQuery('#tlyPageGuideWelcome'))
+                .append('<button class="start">let\'s go</button>')
+                .appendTo(wrapper);
+            preferences.dismiss = dismiss;
+        }
+        preferences.show_welcome = showWelcome;
     }
 
     wrapper.append(guide);
@@ -111,6 +139,18 @@ tl.pg.PageGuide = function (pg_elem, preferences) {
     this.custom_open_button = this.preferences.custom_open_button;
     this.is_open = false;
 };
+
+tl.pg.hashUrl = function() {
+    var str = window.location.href;
+    var hash = 0, i, char;
+    if (str.length == 0) return hash;
+    for (i = 0; i < str.length; i++) {
+        char = str.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash;
+    }
+    return hash.toString();
+}
 
 tl.pg.isScrolledIntoView = function(elem) {
     var dvtop = jQuery(window).scrollTop(),
@@ -273,10 +313,23 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
         return false;
     });
     
-    this.$welcome.on('click', '.start', function () {
-        that.$welcome.removeClass('open');
-        that.open();
-    });
+    if (this.$welcome.length) {
+        if (this.$welcome.find('.ignore').length) {
+            // bind close fn to ignore
+        }
+        if (this.$welcome.find('.dismiss').length) {
+            // bind dismiss fn to .dismiss
+        }
+        if (this.preferences.require_completion) {
+            // bind dismiss fn to last "next" button
+        } else {
+            // bind dismiss fn to "let's go" button
+        }
+        this.$welcome.on('click', '.start', function () {
+            that.$welcome.removeClass('open');
+            that.open();
+        });
+    }
 
     /* register resize callback */
     jQuery(window).resize(function() { that.position_tour(); });

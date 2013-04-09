@@ -393,7 +393,7 @@
     }
 
     .tlypageguide_welcome {
-        display: none;
+        .pg-opacity(0);
         position: absolute;
         top: 0;
         left: 0;
@@ -410,8 +410,9 @@
         overflow-y: scroll;
         .pg-rounded-corners(10px);
         .pg-box-shadow(0, 0, 10px, 2px, rgba(0, 0, 0, 0.2));
+        .pg-transition-animation (all, 0.2s, linear);
 
         &.open {
-            display: block;
+            .pg-opacity(95);
         }
     }
