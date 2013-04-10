@@ -81,8 +81,8 @@ tl.pg.init = function(preferences) {
             if (localStorage.getItem(key)) {
                 showWelcome = false;
             } else {
-                dismiss = function(key) {
-                    localStorage.setItem('tlypageguide_welcome_shown_'+hash, true);
+                dismiss = function() {
+                    localStorage.setItem(key, true);
                 };
             }
         // cookie fallback for older browsers
@@ -90,7 +90,7 @@ tl.pg.init = function(preferences) {
             if (document.cookie.indexOf(key) > -1) {
                 showWelcome = false;
             } else {
-                dismiss = function(key) {
+                dismiss = function() {
                     var exp = new Date();
                     exp.setDate(exp.getDate() + 365);
                     document.cookie = (key + '=true; expires=' + exp.toUTCString());
@@ -98,10 +98,7 @@ tl.pg.init = function(preferences) {
             }
         }
         if (showWelcome) {
-            jQuery('<div class="tlypageguide_welcome"></div>')
-                .append(jQuery('#tlyPageGuideWelcome'))
-                .append('<button class="start">let\'s go</button>')
-                .appendTo(wrapper);
+            jQuery('#tlyPageGuideWelcome').appendTo(wrapper);
             preferences.dismiss = dismiss;
         }
         preferences.show_welcome = showWelcome;
@@ -132,7 +129,7 @@ tl.pg.PageGuide = function (pg_elem, preferences) {
     this.$message = jQuery('#tlyPageGuideMessages');
     this.$fwd = jQuery('a.tlypageguide_fwd', this.$base);
     this.$back = jQuery('a.tlypageguide_back', this.$base);
-    this.$welcome = jQuery('.tlypageguide_welcome');
+    this.$welcome = jQuery('#tlyPageGuideWelcome');
     this.cur_idx = 0;
     this.track_event = this.preferences.track_events_cb;
     this.handle_doc_switch = this.preferences.handle_doc_switch;
@@ -313,17 +310,20 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
         return false;
     });
     
-    if (this.$welcome.length) {
+    if (this.$welcome.length && this.preferences.show_welcome) {
         if (this.$welcome.find('.ignore').length) {
-            // bind close fn to ignore
+            this.$welcome.on('click', '.ignore', function () {
+                that.$welcome.removeClass('open');
+            });
         }
         if (this.$welcome.find('.dismiss').length) {
-            // bind dismiss fn to .dismiss
+            this.$welcome.on('click', '.dismiss', function () {
+                that.$welcome.removeClass('open');
+                that.preferences.dismiss();
+            });
         }
-        if (this.preferences.require_completion) {
-            // bind dismiss fn to last "next" button
-        } else {
-            // bind dismiss fn to "let's go" button
+        if (!this.preferences.require_completion) {
+            this.$welcome.on('click', '.start', this.preferences.dismiss);
         }
         this.$welcome.on('click', '.start', function () {
             that.$welcome.removeClass('open');

@@ -348,7 +348,7 @@
 .tlypageguide-open .tlypageguide_shadow:after {
   display: block;
 }
-.tlypageguide_welcome {
+#tlyPageGuideWelcome {
   filter: alpha(opacity=0);
   -moz-opacity: 0;
   -khtml-opacity: 0;
@@ -363,7 +363,7 @@
   margin: auto;
   max-width: 600px;
   height: 500px;
-  min-height: 500px;
+  max-height: 80%;
   background: #fff;
   padding: 15px 20px;
   overflow-y: scroll;
@@ -381,7 +381,7 @@
   -ms-transition: all 0.2s linear;
   transition: all 0.2s linear;
 }
-.tlypageguide_welcome.open {
+#tlyPageGuideWelcome.open {
   filter: alpha(opacity=0);
   -moz-opacity: 0.95;
   -khtml-opacity: 0.95;
