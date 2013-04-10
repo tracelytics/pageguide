@@ -35,6 +35,7 @@ tl.pg = tl.pg || {};
 tl.pg.default_prefs = {
     'auto_show_first': true,
     'show_welcome': false,
+    'show_welcome_always': false,
     'loading_selector' : '#loading',
     'track_events_cb': function() { return; },
     'handle_doc_switch': null,
@@ -227,6 +228,7 @@ tl.pg.PageGuide.prototype._on_expand = function () {
 };
 
 tl.pg.PageGuide.prototype.open = function() {
+    this.close_welcome();
     if (this.is_open) {
         return;
     } else {
@@ -268,7 +270,12 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
     interactor.live('click', function() {
         if (this.is_open) {
             that.close();
+        } else if (that.preferences.show_welcome_always) {
+            that.pop_welcome();
         } else {
+            if (that.preferences.show_welcome) {
+                that.preferences.dismiss();
+            }
             that.open();
         }
         return false;
@@ -308,26 +315,21 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
         that.show_message(new_index, true);
         return false;
     });
-    
-    if (this.preferences.show_welcome) {
+
+    if (this.$welcome.length) {
         if (this.$welcome.find('.tlypageguide_ignore').length) {
             this.$welcome.on('click', '.tlypageguide_ignore', function () {
-                that.$welcome.removeClass('open');
+                that.close_welcome();
             });
         }
         if (this.$welcome.find('.tlypageguide_dismiss').length) {
             this.$welcome.on('click', '.tlypageguide_dismiss', function () {
-                that.$welcome.removeClass('open');
+                that.close_welcome();
                 that.preferences.dismiss();
             });
         }
-        if (!this.preferences.require_completion) {
-            this.$welcome.on('click', '.tlypageguide_start', function () {
-                this.preferences.dismiss();
-            });
-        }
         this.$welcome.on('click', '.tlypageguide_start', function () {
-            that.$welcome.removeClass('open');
+            that.preferences.dismiss();
             that.open();
         });
     }
@@ -412,4 +414,8 @@ tl.pg.PageGuide.prototype.position_tour = function () {
 
 tl.pg.PageGuide.prototype.pop_welcome = function () {
     this.$welcome.addClass('open');
+};
+
+tl.pg.PageGuide.prototype.close_welcome = function () {
+    this.$welcome.removeClass('open');
 };
