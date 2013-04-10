@@ -39,7 +39,17 @@ tl.pg.default_prefs = {
     'track_events_cb': function() { return; },
     'handle_doc_switch': null,
     'custom_open_button': null,
-    'pg_caption' : 'page guide'
+    'pg_caption' : 'page guide',
+    'dismiss': function () {
+        var key = 'tlypageguide_welcome_shown_' + tl.pg.hashUrl();
+        try {
+            localStorage.setItem(key, true);
+        } catch(e) {
+            var exp = new Date();
+            exp.setDate(exp.getDate() + 365);
+            document.cookie = (key + '=true; expires=' + exp.toUTCString());
+        }
+    }
 };
 
 tl.pg.init = function(preferences) {
@@ -54,7 +64,8 @@ tl.pg.init = function(preferences) {
 
     var guide   = jQuery("#tlyPageGuide"),
         wrapper = jQuery('<div>', { id: 'tlyPageGuideWrapper' }),
-        message = jQuery('<div>', { id: 'tlyPageGuideMessages'});
+        message = jQuery('<div>', { id: 'tlyPageGuideMessages'}),
+        $welcome = jQuery('#tlyPageGuideWelcome');
 
     message.append('<a href="#" class="tlypageguide_close" title="Close Guide">close</a>')
       .append('<span></span>')
@@ -72,34 +83,22 @@ tl.pg.init = function(preferences) {
           .appendTo(wrapper);
     }
 
-    if (preferences.show_welcome) {
-        var key = 'tlypageguide_welcome_shown_' + this.hashUrl(), 
-            showWelcome = true,
-            dismiss;
+    if ($welcome.length > 0) {
+        var showWelcome = true,
+            key = 'tlypageguide_welcome_shown_' + tl.pg.hashUrl();
         // first, try to use localStorage
         try {
             if (localStorage.getItem(key)) {
                 showWelcome = false;
-            } else {
-                dismiss = function() {
-                    localStorage.setItem(key, true);
-                };
             }
         // cookie fallback for older browsers
         } catch(e) {
             if (document.cookie.indexOf(key) > -1) {
                 showWelcome = false;
-            } else {
-                dismiss = function() {
-                    var exp = new Date();
-                    exp.setDate(exp.getDate() + 365);
-                    document.cookie = (key + '=true; expires=' + exp.toUTCString());
-                };
             }
         }
         if (showWelcome) {
-            jQuery('#tlyPageGuideWelcome').appendTo(wrapper);
-            preferences.dismiss = dismiss;
+            $welcome.appendTo(wrapper);
         }
         preferences.show_welcome = showWelcome;
     }
@@ -310,22 +309,24 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
         return false;
     });
     
-    if (this.$welcome.length && this.preferences.show_welcome) {
-        if (this.$welcome.find('.ignore').length) {
-            this.$welcome.on('click', '.ignore', function () {
+    if (this.preferences.show_welcome) {
+        if (this.$welcome.find('.tlypageguide_ignore').length) {
+            this.$welcome.on('click', '.tlypageguide_ignore', function () {
                 that.$welcome.removeClass('open');
             });
         }
-        if (this.$welcome.find('.dismiss').length) {
-            this.$welcome.on('click', '.dismiss', function () {
+        if (this.$welcome.find('.tlypageguide_dismiss').length) {
+            this.$welcome.on('click', '.tlypageguide_dismiss', function () {
                 that.$welcome.removeClass('open');
                 that.preferences.dismiss();
             });
         }
         if (!this.preferences.require_completion) {
-            this.$welcome.on('click', '.start', this.preferences.dismiss);
+            this.$welcome.on('click', '.tlypageguide_start', function () {
+                this.preferences.dismiss();
+            });
         }
-        this.$welcome.on('click', '.start', function () {
+        this.$welcome.on('click', '.tlypageguide_start', function () {
             that.$welcome.removeClass('open');
             that.open();
         });
