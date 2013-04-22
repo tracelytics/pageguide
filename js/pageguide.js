@@ -226,7 +226,10 @@ tl.pg.PageGuide.prototype._on_expand = function () {
 };
 
 tl.pg.PageGuide.prototype.open = function() {
-    this.close_welcome();
+    if (this.preferences.show_welcome) {
+        this.preferences.dismiss_welcome();
+        this.close_welcome();
+    }
     if (this.is_open) {
         return;
     } else {
@@ -265,10 +268,12 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
     var interactor = (that.custom_open_button == null) ? 
                     jQuery('.tlypageguide_toggle', this.$base) : 
                     jQuery(that.custom_open_button);
-    interactor.live('click', function() {
+    interactor.on('click', function() {
         if (this.is_open) {
             that.close();
-        } else if (that.preferences.show_welcome && !that.preferences.check_welcome_dismissed()) {
+        } else if (that.preferences.show_welcome &&
+                  !that.preferences.check_welcome_dismissed() &&
+                  !that.$welcome.hasClass('open')) {
             that.pop_welcome();
         } else {
             that.open();
@@ -276,14 +281,14 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
         return false;
     });
 
-    jQuery('.tlypageguide_close', this.$message.add($('.tlypageguide_toggle')))
-        .live('click', function() {
+    jQuery('.tlypageguide_close', this.$message.add(jQuery('.tlypageguide_toggle')))
+        .on('click', function() {
             that.close();
             return false;
     });
 
     /* interaction: item click */
-    this.$all_items.live('click', function() {
+    this.$all_items.on('click', function() {
         var new_index = jQuery(this).data('idx');
 
         that.track_event('PG.specific_elt');
@@ -291,7 +296,7 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
     });
 
     /* interaction: fwd/back click */
-    this.$fwd.live('click', function() {
+    this.$fwd.on('click', function() {
         var new_index = (that.cur_idx + 1) % that.$items.length;
 
         that.track_event('PG.fwd');
@@ -299,7 +304,7 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
         return false;
     });
 
-    this.$back.live('click', function() {
+    this.$back.on('click', function() {
         /*
          * If -n < x < 0, then the result of x % n will be x, which is
          * negative. To get a positive remainder, compute (x + n) % n.
@@ -324,7 +329,6 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
             });
         }
         this.$welcome.on('click', '.tlypageguide_start', function () {
-            that.preferences.dismiss_welcome();
             that.open();
         });
     }
@@ -359,8 +363,8 @@ tl.pg.PageGuide.prototype.show_message = function (new_index, left) {
     if (height < defaultHeight) {
         height = defaultHeight;
     }
-    if (height > $(window).height()/2) {
-        height = $(window).height()/2;
+    if (height > jQuery(window).height()/2) {
+        height = jQuery(window).height()/2;
     }
     height = height + "px";
 
