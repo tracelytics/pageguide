@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+    <link rel="stylesheet" href="../css/pageguide.css" />
+    <style type="text/css">
+        .wrapper {
+            width: 100%;
+        }
+        .data-block {
+            margin: 0 auto;
+            width: 400px;
+            height: 500px;
+            padding: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="data-block first_element_to_target">
+            <h3>FIRST</h1>
+        </div>
+        <div class="data-block" id="second_element_to_target">
+            <h3>SECOND</h3>
+        </div>
+        <div class="data-block third_element_to_target">
+            <div class="is_here">
+                <h3>THIRD</h3>
+            </div>
+        </div>
+        <div class="data-block" id="fourth_element_to_target">
+            <h3>FOURTH</h3>
+        </div>
+    </div>
+        
+    <ul id="tlyPageGuide" data-tourtitle="REPLACE THIS WITH A TITLE">
+      <li class="tlypageguide_left" data-tourtarget=".first_element_to_target">
+        <div>
+          Here is the first item description. The number will appear to the left of the element.
+        </div>
+      </li>
+      <li class="tlypageguide_right" data-tourtarget="#second_element_to_target">
+        <div>
+          Here is the second item description. The number will appear to the right of the element.
+        </div>
+      </li>
+      <li class="tlypageguide_top" data-tourtarget=".third_element_to_target > div.is_here">
+        <div>
+          Here is the third item description. The number will appear above the element.
+        </div>
+      </li>
+      <li class="tlypageguide_bottom" data-tourtarget="#fourth_element_to_target">
+        <div>
+          Here is the fourth item description. The number will appear below the element.
+        </div>
+      </li>
+    </ul>
+    <div id="tlyPageGuideWelcome">
+        <p>Welcome to my new page! pageguide is here to help you learn more.</p>
+        <button class="tlypageguide_start">let's go</button>
+        <button class="tlypageguide_ignore">not now</button>
+        <button class="tlypageguide_dismiss">got it, thanks</button>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/pageguide.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function() { 
+            var pageguide = tl.pg.init();
+        });
+    </script>
+</body>
+</html>
