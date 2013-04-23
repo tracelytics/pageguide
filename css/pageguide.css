@@ -10,7 +10,7 @@
   box-sizing: border-box;
   color: #000;
   font-size: 12px;
-  font-family: Helvetica, Arial, sans serif;
+  font-family: Helvetica, Arial, sans-serif;
 }
 #tlyPageGuideWrapper .tlypageguide_toggle {
   -moz-box-sizing: border-box;
@@ -36,6 +36,7 @@
   text-decoration: none;
   top: 84px;
   width: 184px;
+  z-index: 9999;
   -webkit-transition: all 0.2s ease-in;
   -moz-transition: all 0.2s ease-in;
   -o-transition: all 0.2s ease-in;
@@ -349,6 +350,7 @@
   display: block;
 }
 #tlyPageGuideWelcome {
+  display: none;
   filter: alpha(opacity=0);
   -moz-opacity: 0;
   -khtml-opacity: 0;
@@ -361,19 +363,22 @@
   z-index: 9999;
   width: 95%;
   margin: auto;
-  max-width: 600px;
-  height: 500px;
+  max-width: 400px;
+  height: 300px;
   max-height: 80%;
-  background: #fff;
+  background: rgba(0, 0, 0, 0.85);
   padding: 15px 20px;
+  color: #fff;
+  font-size: 16px;
+  line-height: 22px;
+  -webkit-box-shadow: 0 0 9px 4px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 0 9px 4px rgba(0, 0, 0, 0.4);
+  -o-box-shadow: 0 0 9px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 9px 4px rgba(0, 0, 0, 0.4);
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   -o-border-radius: 10px;
   border-radius: 10px;
-  -webkit-box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2);
-  -o-box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2);
   -webkit-transition: all 0.2s linear;
   -moz-transition: all 0.2s linear;
   -o-transition: all 0.2s linear;
@@ -385,4 +390,47 @@
   -moz-opacity: 0.95;
   -khtml-opacity: 0.95;
   opacity: 0.95;
+}
+#tlyPageGuideWelcome button {
+  background: rgba(247, 0, 119, 0.95);
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  color: #fff;
+  font-size: 22px;
+  border: 0;
+  overflow: hidden;
+  text-align: center;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-family: Helvetica, Arial, sans-serif;
+}
+#tlyPageGuideOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  z-index: 9998;
+  filter: alpha(opacity=0);
+  -moz-opacity: 0;
+  -khtml-opacity: 0;
+  opacity: 0;
+}
+.tlyPageGuideWelcomeOpen #tlyPageGuideWelcome {
+  filter: alpha(opacity=0);
+  -moz-opacity: 0.95;
+  -khtml-opacity: 0.95;
+  opacity: 0.95;
+  display: block;
+}
+.tlyPageGuideWelcomeOpen #tlyPageGuideOverlay {
+  filter: alpha(opacity=0);
+  -moz-opacity: 0.7;
+  -khtml-opacity: 0.7;
+  opacity: 0.7;
+  display: block;
 }

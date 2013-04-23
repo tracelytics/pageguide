@@ -98,6 +98,7 @@ tl.pg.init = function(preferences) {
     if ($welcome.length > 0) {
         preferences.show_welcome = !preferences.check_welcome_dismissed();
         if (preferences.show_welcome) {
+            jQuery('body').prepend('<div id="tlyPageGuideOverlay"></div>');
             $welcome.appendTo(wrapper);
         }
     }
@@ -273,7 +274,7 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
             that.close();
         } else if (that.preferences.show_welcome &&
                   !that.preferences.check_welcome_dismissed() &&
-                  !that.$welcome.hasClass('open')) {
+                  !jQuery('body').hasClass('tlyPageGuideWelcomeOpen')) {
             that.pop_welcome();
         } else {
             that.open();
@@ -412,9 +413,9 @@ tl.pg.PageGuide.prototype.position_tour = function () {
 };
 
 tl.pg.PageGuide.prototype.pop_welcome = function () {
-    this.$welcome.addClass('open');
+    jQuery('body').addClass('tlyPageGuideWelcomeOpen');
 };
 
 tl.pg.PageGuide.prototype.close_welcome = function () {
-    this.$welcome.removeClass('open');
+    jQuery('body').removeClass('tlyPageGuideWelcomeOpen');
 };
