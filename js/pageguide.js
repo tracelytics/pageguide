@@ -11,23 +11,34 @@
 /*
  * PageGuide usage:
  *
- *   Preferences:
- *     auto_show_first - Whether or not to focus on the first visible item
- *                       immediately on PG open (default true)
- *     loading_selector - The CSS selector for the loading element. pageguide
- *                        will wait until this element is no longer visible
- *                        starting up.
- *     track_events_cb - Optional callback for tracking user interactions
- *                       with pageguide.  Should be a method taking a single
- *                       parameter indicating the name of the interaction.
- *                       (default none)
- *     handle_doc_switch - Optional callback to enlight or adapt interface
- *                         depending on current documented element. Should be a
- *                         function taking 2 parameters, current and previous
- *                         data-tourtarget selectors. (default null)
- *     custom_open_button - Optional id for toggling pageguide. Default null.
- *                          If not specified then the default button is used.
- *     pg_caption - Optional - Sets the visible caption
+ *  Preferences:
+ *  auto_show_first:    Whether or not to focus on the first visible item
+ *                      immediately on PG open (default true)
+ *  loading_selector:   The CSS selector for the loading element. pageguide
+ *                      will wait until this element is no longer visible
+ *                      starting up.
+ *  track_events_cb:    Optional callback for tracking user interactions
+ *                      with pageguide.  Should be a method taking a single
+ *                      parameter indicating the name of the interaction.
+ *                      (default none)
+ *  handle_doc_switch:  Optional callback to enlight or adapt interface
+ *                      depending on current documented element. Should be a
+ *                      function taking 2 parameters, current and previous
+ *                      data-tourtarget selectors. (default null)
+ *  custom_open_button: Optional id for toggling pageguide. Default null.
+ *                      If not specified then the default button is used.
+ *  pg_caption:         Optional - Sets the visible caption
+ *  dismiss_welcome:    Optional function to permanently dismiss the welcome
+ *                      message, corresponding to check_welcome_dismissed.
+ *                      Default: sets a localStorage or cookie value for the
+ *                      (hashed) current URL to indicate the welcome message
+ *                      has been dismissed, corresponds to default
+ *                      check_welcome_dismissed function.
+ *  check_welcome_dismissed: Optional function to check whether or not the
+ *                      welcome message has been dismissed. Must return true or
+ *                      false. Default: checks whether a localStorage or cookie
+ *                      value has been set for the (hashed) current URL, corresponds
+ *                      to default dismiss_welcome function.
  */
 tl = window.tl || {};
 tl.pg = tl.pg || {};
