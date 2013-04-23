@@ -60,14 +60,11 @@
 
 /* Page Guide
 ================================================== */
-
-    #tlyPageGuide li div { display: none; }
-
     #tlyPageGuideWrapper {
         .pg-border-box;
         color: #000;
         font-size:12px;
-        font-family: Helvetica, Arial, sans serif;
+        font-family: Helvetica, Arial, sans-serif;
 
         .tlypageguide_toggle {
             .pg-border-box;
@@ -88,10 +85,11 @@
             text-decoration: none;
             top: 84px;
             width: 184px;
+            z-index: 9999;
             .pg-transition-animation(all, 0.2s, ease-in);
 
             &:before {
-                .pg-icon-replacement("../img/tlyguide/tlyguide_icon.png", 16px, 16px, 0 0);
+                .pg-icon-replacement("/img/tlyguide/tlyguide_icon.png", 16px, 16px, 0 0);
                 content: " ";
                 left: 25px;
                 position: absolute;
@@ -170,6 +168,7 @@
                     }
                 }
 
+
                 ins {
                     background: none;
                     color: #fff;
@@ -178,6 +177,10 @@
                     overflow: hidden;
                     text-decoration: none;
                     width: 50px;
+                }
+
+                div {
+                    display: none;
                 }
 
                 &:after {
@@ -284,7 +287,7 @@
             position: fixed;
             width: 90%;
             z-index: 1000;
-
+            overflow-y: auto;
             span {
                 background: fade(@pg-highlight-color, 95%);
                 .pg-rounded-corners(3px);
@@ -335,7 +338,7 @@
 
             .tlypageguide_back,
             .tlypageguide_fwd {
-                .pg-icon-replacement ("../img/tlyguide/tlyguide_arrow.png", 30px, 30px, 10px 4px);
+                .pg-icon-replacement ("/img/tlyguide/tlyguide_arrow.png", 30px, 30px, 10px 4px);
                 position: absolute;
                 top: 34px;
                 left: 10px;
@@ -386,6 +389,69 @@
         }
 
         .tlypageguide_shadow:after {
+            display: block;
+        }
+    }
+
+    #tlyPageGuideWelcome {
+        display: none;
+        .pg-opacity(0);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 9999;
+        width: 95%;
+        margin: auto;
+        max-width: 400px;
+        height: 300px;
+        max-height: 80%;
+        background: rgba(0, 0, 0, 0.85);
+        padding: 15px 20px;
+        color: #fff;
+        font-size: 16px;
+        line-height: 22px;
+        .pg-box-shadow(0, 0, 9px, 4px, rgba(0, 0, 0, 0.4));
+        .pg-rounded-corners(10px);
+        .pg-transition-animation (all, 0.2s, linear);
+
+        &.open {
+            .pg-opacity(95);
+        }
+
+        button {
+            background: fade(@pg-highlight-color, 95%);
+            .pg-rounded-corners(3px);
+            color: #fff;
+            font-size: 22px;
+            border: 0;
+            overflow: hidden;
+            text-align: center;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+    }
+    #tlyPageGuideOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        z-index: 9998;
+        .pg-opacity(0);
+    }
+
+    .tlyPageGuideWelcomeOpen {
+        #tlyPageGuideWelcome {
+            .pg-opacity(95);
+            display: block;
+        }
+        #tlyPageGuideOverlay {
+            .pg-opacity(70);
             display: block;
         }
     }
