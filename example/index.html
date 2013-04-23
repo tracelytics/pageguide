@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+    <link rel="stylesheet" href="../css/pageguide.css" />
+    <style type="text/css">
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+        }
+        .wrapper {
+            margin: 0 auto;
+            width: 100%;
+            max-width: 1025px;
+        }
+        .data-block {
+            width: 100%;
+            min-height: 700px;
+        }
+        .data-block img {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <h1>Pageguide Example</h1>
+        <div class="data-block first_element_to_target">
+            <h3>FIRST</h3>
+            <img src="img/img1.jpg" alt="Brisbane"/>
+            <p><a href="http://www.flickr.com/photos/ipyo/4948872706/in/photostream/" target="_blank">Credit</a></p>
+        </div>
+        <div class="data-block" id="second_element_to_target">
+            <h3>SECOND</h3>
+            <img src="img/img2.jpg" alt="Glen Canyon"/>
+            <p><a href="http://www.flickr.com/photos/alanenglish/7523729938/" target="_blank">Credit</a></p>
+        </div>
+        <div class="data-block third_element_to_target">
+            <div class="is_here">
+                <h3>THIRD</h3>
+                <img src="img/img3.jpg" alt="London"/>
+                <p><a href="http://www.flickr.com/photos/fishyfish/200610788/" target="_blank">Credit</a></p>
+            </div>
+        </div>
+        <div class="data-block" id="fourth_element_to_target">
+            <h3>FOURTH</h3>
+            <img src="img/img4.jpg" alt="Paros"/>
+            <p><a href="http://www.flickr.com/photos/97373666@N00/3123603304/in/photostream/" target="_blank">Credit</a></p>
+        </div>
+    </div>
+        
+    <ul id="tlyPageGuide" data-tourtitle="REPLACE THIS WITH A TITLE">
+      <li class="tlypageguide_left" data-tourtarget=".first_element_to_target">
+        <div>
+          Here is the first item description. The number will appear to the left of the element.
+        </div>
+      </li>
+      <li class="tlypageguide_right" data-tourtarget="#second_element_to_target">
+        <div>
+          Here is the second item description. The number will appear to the right of the element.
+        </div>
+      </li>
+      <li class="tlypageguide_top" data-tourtarget=".third_element_to_target > div.is_here">
+        <div>
+          Here is the third item description. The number will appear above the element.
+        </div>
+      </li>
+      <li class="tlypageguide_bottom" data-tourtarget="#fourth_element_to_target">
+        <div>
+          Here is the fourth item description. The number will appear below the element.
+        </div>
+      </li>
+    </ul>
+    <div id="tlyPageGuideWelcome">
+        <p>Welcome to my new page! pageguide is here to help you learn more.</p>
+        <button class="tlypageguide_start">let's go</button>
+        <button class="tlypageguide_ignore">not now</button>
+        <button class="tlypageguide_dismiss">got it, thanks</button>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/pageguide.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function() { 
+            var pageguide = tl.pg.init();
+        });
+    </script>
+</body>
+</html>
