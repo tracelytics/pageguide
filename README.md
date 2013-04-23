@@ -10,6 +10,7 @@ An interactive guide for web page elements using jQuery and CSS3. Check it out I
 * [Requirements](#requirements)
 * [Tested In](#tested-in)
 * [Contribute](#contribute)
+* [License](#license)
 
 ## How-To:
 1. Add references in your code to pageguide.js, jQuery & pageguide.css
@@ -167,3 +168,8 @@ Pageguide can take a hash of options in `init()`. All are optional.
 
 ## Contribute
 Bugfix?  Cool new feature?  Alternate style?  Send us a pull request!
+
+## License
+Copyright (c) 2013 Tracelytics, AppNeta
+
+Pageguide is freely redistributable under the MIT License. See LICENSE for details.
