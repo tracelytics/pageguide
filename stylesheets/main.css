@@ -1,1 +1,198 @@
-p{font-size:14px}p.description{margin:0 0 40px 0}h2{border-top:1px solid #ccc;color:#099;font-size:16px;font-weight:bold;margin:40px 0 20px;padding:20px 0 0}.wrapper{overflow:hidden}header{background:transparent}section{background:transparent;margin:0 0 0 350px}.intro{height:120px}.intro .tracelytcs_logo{background:url("../img/logo_color.png") no-repeat scroll 0 10px transparent;border-right:1px solid #ccc;float:left;height:130px;margin:0 10px 0 0;overflow:hidden;text-indent:-999px;width:100px}.intro h1{margin:0 0 15px 100px;padding:10px 0 0 0}.intro p{margin:0 0 0 100px}.start{background-color:#099;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;background-color:#099;background-image:-webkit-linear-gradient(bottom,#099,#00e5e5);background-image:-moz-linear-gradient(bottom,#099,#00e5e5);background-image:-o-linear-gradient(bottom,#099,#00e5e5);background-image:-ms-linear-gradient(bottom,#099,#00e5e5);background-image:linear-gradient(bottom,#099,#00e5e5);color:#fff!important;display:block;font-size:16px;text-align:left;text-decoration:none;width:185px;box-shadow:0 1px 0 #00e5e5 inset,0 5px 0 0 #004c4d,0 10px 5px #999;position:relative;font-size:14px;font-weight:bold;margin:10px 0 50px 0;padding:5px 5px 5px 25px}.start:active{background-color:#00e5e5;background-image:-webkit-linear-gradient(bottom,#00e5e5,#099);background-image:-moz-linear-gradient(bottom,#00e5e5,#099);background-image:-o-linear-gradient(bottom,#00e5e5,#099);background-image:-ms-linear-gradient(bottom,#00e5e5,#099);background-image:linear-gradient(bottom,#00e5e5,#099);box-shadow:0 1px 0 #00e5e5 inset,0 2px 0 0 #004c4d,0 5px 3px #999;top:3px}.start:before{background-color:#004c4d;background-image:url("http://www.tracelytics.com/img/sprite_icons.png?v=3");background-position:-248px -139px;background-repeat:no-repeat;border-radius:5px;box-shadow:0 2px 0 #000 inset,0 1px 0 #00e5e5;content:" ";height:22px;margin-top:-11px;position:absolute;right:10px;top:50%;width:22px}.start:active:before{box-shadow:0 1px 0 #1affff inset,0 3px 0 #000,0 6px 3px #004c4d;margin-top:-12px;top:43%}.upsell{border-top:1px solid #ccc;clear:both;margin:30px 0 0;padding:30px 0 0}.view{clear:both;margin:20px 0 10px 0}.view a{line-height:20px}.first_ftw,.second_ftw{border:dashed 2px #ccc;font-size:16px;margin:20px 0 20px 0;padding:10px;text-align:center}.way_down_here{border:dashed 2px #ccc;padding:10px;width:174px;margin:0 auto;margin-top:800px;margin-bottom:600px}.way_down_here a{display:block;text-align:center}.big_arrow_right,.more_here{display:block;height:74px;margin:22px 0 10px;position:relative}.big_arrow_right:before,.more_here:before{background:transparent url("../img/big_arrow.png") 0 0 no-repeat;content:" ";display:block;height:74px;position:absolute;top:0;right:0;width:214px}.big_arrow_right span,.more_here span{background:rgba(0,153,153,0.1);color:#099;display:inline-block;font-size:16px;font-weight:bold;height:33px;line-height:32px;margin:20px 0 0;text-align:center;width:286px}.more_here:before{background-position:-86px 0;-webkit-transform:rotate(90deg) scale(1) skewx(0) skewy(0) translate(0);-moz-transform:rotate(90deg) scale(1) skewx(0) skewy(0) translate(0);-o-transform:rotate(90deg) scale(1) skewx(0) skewy(0) translate(0);-ms-transform:rotate(90deg) scale(1) skewx(0) skewy(0) translate(0);transform:rotate(90deg) scale(1) skewx(0) skewy(0) translate(0);right:180px;top:84px;width:130px}.more_here span{width:100%}.steps li{margin:0 20px 0 30px}.steps li pre{margin:10px 0 10px 0}
+/* Utils
+================================================== */
+/* Buttons
+================================================== */
+p {
+  font-size: 14px;
+}
+p.description {
+  margin: 0 0 40px 0;
+}
+h2 {
+  border-top: 1px solid #CCCCCC;
+  color: #009999;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 40px 0 20px;
+  padding: 20px 0 0;
+}
+.wrapper {
+  overflow: hidden;
+}
+header {
+  background: transparent;
+}
+section {
+  background: transparent;
+  margin: 0 0 0 350px;
+}
+.intro {
+  height: 120px;
+}
+.intro .tracelytcs_logo {
+  background: url("../img/logo_color.png") no-repeat scroll 0 10px transparent;
+  border-right: 1px solid #CCCCCC;
+  float: left;
+  height: 130px;
+  margin: 0 10px 0 0;
+  overflow: hidden;
+  text-indent: -999px;
+  width: 100px;
+}
+.intro h1 {
+  margin: 0 0 15px 100px;
+  padding: 10px 0 0 0;
+}
+.intro p {
+  margin: 0 0 0 100px;
+}
+.start {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  background-color: #009999;
+  background-image: -webkit-linear-gradient(bottom, #009999, #00e5e5);
+  background-image: -moz-linear-gradient(bottom, #009999, #00e5e5);
+  background-image: -o-linear-gradient(bottom, #009999, #00e5e5);
+  background-image: -ms-linear-gradient(bottom, #009999, #00e5e5);
+  background-image: linear-gradient(bottom, #009999, #00e5e5);
+  color: #ffffff !important;
+  display: block;
+  font-size: 16px;
+  text-align: left;
+  text-decoration: none;
+  width: 185px;
+  box-shadow: 0 1px 0 #00e5e5 inset, 0 5px 0 0 #004c4d, 0 10px 5px #999999;
+  position: relative;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 10px 0 50px 0;
+  padding: 5px 5px 5px 25px;
+}
+.start:active {
+  background-color: #00e5e5;
+  background-image: -webkit-linear-gradient(bottom, #00e5e5, #009999);
+  background-image: -moz-linear-gradient(bottom, #00e5e5, #009999);
+  background-image: -o-linear-gradient(bottom, #00e5e5, #009999);
+  background-image: -ms-linear-gradient(bottom, #00e5e5, #009999);
+  background-image: linear-gradient(bottom, #00e5e5, #009999);
+  box-shadow: 0 1px 0 #00e5e5 inset, 0 2px 0 0 #004c4d, 0 5px 3px #999999;
+  top: 3px;
+}
+.start:before {
+  background-color: #004c4d;
+  background-image: url("http://www.tracelytics.com/img/sprite_icons.png?v=3");
+  background-position: -248px -139px;
+  background-repeat: no-repeat;
+  border-radius: 5px;
+  box-shadow: 0 2px 0 #000000 inset, 0 1px 0 #00e5e5;
+  content: " ";
+  height: 22px;
+  margin-top: -11px;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  width: 22px;
+}
+.start:active:before {
+  box-shadow: 0 1px 0 #1affff inset, 0 3px 0 #000000, 0 6px 3px #004c4d;
+  margin-top: -12px;
+  top: 43%;
+}
+.upsell {
+  border-top: 1px solid #CCCCCC;
+  clear: both;
+  margin: 30px 0 0;
+  padding: 30px 0 0;
+}
+.view {
+  clear: both;
+  margin: 20px 0 10px 0;
+}
+.view a {
+  line-height: 20px;
+}
+.first_ftw,
+.second_ftw {
+  border: dashed 2px #ccc;
+  font-size: 16px;
+  margin: 20px 0 20px 0;
+  padding: 10px;
+  text-align: center;
+}
+.way_down_here {
+  border: dashed 2px #ccc;
+  padding: 10px;
+  width: 174px;
+  margin: 0 auto;
+  margin-top: 800px;
+  margin-bottom: 600px;
+}
+.way_down_here a {
+  display: block;
+  text-align: center;
+}
+.big_arrow_right,
+.more_here {
+  display: block;
+  height: 74px;
+  margin: 22px 0 10px;
+  position: relative;
+}
+.big_arrow_right:before,
+.more_here:before {
+  background: transparent url("../img/big_arrow.png") 0 0 no-repeat;
+  content: " ";
+  display: block;
+  height: 74px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 214px;
+}
+.big_arrow_right span,
+.more_here span {
+  background: rgba(0, 153, 153, 0.1);
+  color: #009999;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: bold;
+  height: 33px;
+  line-height: 32px;
+  margin: 20px 0 0;
+  text-align: center;
+  width: 286px;
+}
+.more_here:before {
+  background-position: -86px 0;
+  -webkit-transform: rotate(90deg) scale(1) skewX(0) skewY(0) translate(0);
+  -moz-transform: rotate(90deg) scale(1) skewX(0) skewY(0) translate(0);
+  -o-transform: rotate(90deg) scale(1) skewX(0) skewY(0) translate(0);
+  -ms-transform: rotate(90deg) scale(1) skewX(0) skewY(0) translate(0);
+  transform: rotate(90deg) scale(1) skewX(0) skewY(0) translate(0);
+  right: 180px;
+  top: 84px;
+  width: 130px;
+}
+.more_here span {
+  width: 100%;
+}
+.steps li {
+  margin: 0 20px 0 30px;
+}
+.steps li pre {
+  margin: 10px 0 10px 0;
+}
+#tlyPageGuideWelcome h3 {
+  color: #fff;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 2.5em;
+}
+#tlyPageGuideWelcome .modal-button-container {
+  position: absolute;
+  bottom: 30px;
+}
+#tlyPageGuideWelcome .modal-button-container button {
+  font-size: 20px;
+}
