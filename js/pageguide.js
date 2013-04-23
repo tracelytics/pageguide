@@ -35,10 +35,12 @@
  *                      has been dismissed, corresponds to default
  *                      check_welcome_dismissed function.
  *  check_welcome_dismissed: Optional function to check whether or not the
- *                      welcome message has been dismissed. Must return true or
- *                      false. Default: checks whether a localStorage or cookie
- *                      value has been set for the (hashed) current URL, corresponds
- *                      to default dismiss_welcome function.
+ *                      welcome message has been dismissed. Must return true
+ *                      or false. This function should check against whatever
+ *                      state change is made in dismiss_welcome. Default:
+ *                      checks whether a localStorage or cookie value has been
+ *                      set for the (hashed) current URL, corresponds to default
+ *                      dismiss_welcome function.
  */
 tl = window.tl || {};
 tl.pg = tl.pg || {};
