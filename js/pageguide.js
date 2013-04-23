@@ -11,23 +11,36 @@
 /*
  * PageGuide usage:
  *
- *   Preferences:
- *     auto_show_first - Whether or not to focus on the first visible item
- *                       immediately on PG open (default true)
- *     loading_selector - The CSS selector for the loading element. pageguide
- *                        will wait until this element is no longer visible
- *                        starting up.
- *     track_events_cb - Optional callback for tracking user interactions
- *                       with pageguide.  Should be a method taking a single
- *                       parameter indicating the name of the interaction.
- *                       (default none)
- *     handle_doc_switch - Optional callback to enlight or adapt interface
- *                         depending on current documented element. Should be a
- *                         function taking 2 parameters, current and previous
- *                         data-tourtarget selectors. (default null)
- *     custom_open_button - Optional id for toggling pageguide. Default null.
- *                          If not specified then the default button is used.
- *     pg_caption - Optional - Sets the visible caption
+ *  Preferences:
+ *  auto_show_first:    Whether or not to focus on the first visible item
+ *                      immediately on PG open (default true)
+ *  loading_selector:   The CSS selector for the loading element. pageguide
+ *                      will wait until this element is no longer visible
+ *                      starting up.
+ *  track_events_cb:    Optional callback for tracking user interactions
+ *                      with pageguide.  Should be a method taking a single
+ *                      parameter indicating the name of the interaction.
+ *                      (default none)
+ *  handle_doc_switch:  Optional callback to enlight or adapt interface
+ *                      depending on current documented element. Should be a
+ *                      function taking 2 parameters, current and previous
+ *                      data-tourtarget selectors. (default null)
+ *  custom_open_button: Optional id for toggling pageguide. Default null.
+ *                      If not specified then the default button is used.
+ *  pg_caption:         Optional - Sets the visible caption
+ *  dismiss_welcome:    Optional function to permanently dismiss the welcome
+ *                      message, corresponding to check_welcome_dismissed.
+ *                      Default: sets a localStorage or cookie value for the
+ *                      (hashed) current URL to indicate the welcome message
+ *                      has been dismissed, corresponds to default
+ *                      check_welcome_dismissed function.
+ *  check_welcome_dismissed: Optional function to check whether or not the
+ *                      welcome message has been dismissed. Must return true
+ *                      or false. This function should check against whatever
+ *                      state change is made in dismiss_welcome. Default:
+ *                      checks whether a localStorage or cookie value has been
+ *                      set for the (hashed) current URL, corresponds to default
+ *                      dismiss_welcome function.
  */
 tl = window.tl || {};
 tl.pg = tl.pg || {};
@@ -38,14 +51,37 @@ tl.pg.default_prefs = {
     'track_events_cb': function() { return; },
     'handle_doc_switch': null,
     'custom_open_button': null,
-    'pg_caption' : 'page guide'
+    'pg_caption' : 'page guide',
+    'check_welcome_dismissed': function () {
+        var key = 'tlypageguide_welcome_shown_' + tl.pg.hashUrl();
+        // first, try to use localStorage
+        try {
+            if (localStorage.getItem(key)) {
+                return true;
+            }
+        // cookie fallback for older browsers
+        } catch(e) {
+            if (document.cookie.indexOf(key) > -1) {
+                return true;
+            }
+        }
+        return false;
+    },
+    'dismiss_welcome': function () {
+        var key = 'tlypageguide_welcome_shown_' + tl.pg.hashUrl();
+        try {
+            localStorage.setItem(key, true);
+        } catch(e) {
+            var exp = new Date();
+            exp.setDate(exp.getDate() + 365);
+            document.cookie = (key + '=true; expires=' + exp.toUTCString());
+        }
+    }
 };
 
 tl.pg.init = function(preferences) {
-    if (typeof(preferences) === 'undefined') {
-        preferences = tl.pg.default_prefs;
-    }
-    
+    preferences = jQuery.extend({}, tl.pg.default_prefs, preferences);
+
     /* page guide object, for pages that have one */
     if (jQuery("#tlyPageGuide").length === 0) {
         return;
@@ -53,7 +89,8 @@ tl.pg.init = function(preferences) {
 
     var guide   = jQuery("#tlyPageGuide"),
         wrapper = jQuery('<div>', { id: 'tlyPageGuideWrapper' }),
-        message = jQuery('<div>', { id: 'tlyPageGuideMessages'});
+        message = jQuery('<div>', { id: 'tlyPageGuideMessages'}),
+        $welcome = jQuery('#tlyPageGuideWelcome');
 
     message.append('<a href="#" class="tlypageguide_close" title="Close Guide">close</a>')
       .append('<span></span>')
@@ -67,7 +104,16 @@ tl.pg.init = function(preferences) {
             'class': 'tlypageguide_toggle'
         }).append(preferences.pg_caption)
           .append('<div><span>' + guide.data('tourtitle') + '</span></div>')
-          .append('<a href="#" class="tlypageguide_close" title="close guide">close guide &raquo;</a>').appendTo(wrapper);
+          .append('<a href="#" class="tlypageguide_close" title="close guide">close guide &raquo;</a>')
+          .appendTo(wrapper);
+    }
+
+    if ($welcome.length > 0) {
+        preferences.show_welcome = !preferences.check_welcome_dismissed();
+        if (preferences.show_welcome) {
+            jQuery('body').prepend('<div id="tlyPageGuideOverlay"></div>');
+            $welcome.appendTo(wrapper);
+        }
     }
 
     wrapper.append(guide);
@@ -79,23 +125,41 @@ tl.pg.init = function(preferences) {
         pg.setup_handlers();
         pg.$base.children(".tlypageguide_toggle").animate({ "right": "-120px" }, 250);
     });
+
+    if (pg.preferences.show_welcome) {
+        pg.pop_welcome();
+    }
+
     return pg;
 };
 
 tl.pg.PageGuide = function (pg_elem, preferences) {
-    this.preferences = jQuery.extend({}, tl.pg.default_prefs, preferences);
+    this.preferences = preferences;
     this.$base = pg_elem;
     this.$all_items = jQuery('#tlyPageGuide > li', this.$base);
     this.$items = jQuery([]); /* fill me with visible elements on pg expand */
     this.$message = jQuery('#tlyPageGuideMessages');
     this.$fwd = jQuery('a.tlypageguide_fwd', this.$base);
     this.$back = jQuery('a.tlypageguide_back', this.$base);
+    this.$welcome = jQuery('#tlyPageGuideWelcome');
     this.cur_idx = 0;
     this.track_event = this.preferences.track_events_cb;
     this.handle_doc_switch = this.preferences.handle_doc_switch;
     this.custom_open_button = this.preferences.custom_open_button;
     this.is_open = false;
 };
+
+tl.pg.hashUrl = function() {
+    var str = window.location.href;
+    var hash = 0, i, char;
+    if (str.length == 0) return hash;
+    for (i = 0; i < str.length; i++) {
+        char = str.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash;
+    }
+    return hash.toString();
+}
 
 tl.pg.isScrolledIntoView = function(elem) {
     var dvtop = jQuery(window).scrollTop(),
@@ -176,6 +240,10 @@ tl.pg.PageGuide.prototype._on_expand = function () {
 };
 
 tl.pg.PageGuide.prototype.open = function() {
+    if (this.preferences.show_welcome) {
+        this.preferences.dismiss_welcome();
+        this.close_welcome();
+    }
     if (this.is_open) {
         return;
     } else {
@@ -214,23 +282,27 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
     var interactor = (that.custom_open_button == null) ? 
                     jQuery('.tlypageguide_toggle', this.$base) : 
                     jQuery(that.custom_open_button);
-    interactor.live('click', function() {
+    interactor.on('click', function() {
         if (this.is_open) {
             that.close();
+        } else if (that.preferences.show_welcome &&
+                  !that.preferences.check_welcome_dismissed() &&
+                  !jQuery('body').hasClass('tlyPageGuideWelcomeOpen')) {
+            that.pop_welcome();
         } else {
             that.open();
         }
         return false;
     });
 
-    jQuery('.tlypageguide_close', this.$message.add($('.tlypageguide_toggle')))
-        .live('click', function() {
+    jQuery('.tlypageguide_close', this.$message.add(jQuery('.tlypageguide_toggle')))
+        .on('click', function() {
             that.close();
             return false;
     });
 
     /* interaction: item click */
-    this.$all_items.live('click', function() {
+    this.$all_items.on('click', function() {
         var new_index = jQuery(this).data('idx');
 
         that.track_event('PG.specific_elt');
@@ -238,7 +310,7 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
     });
 
     /* interaction: fwd/back click */
-    this.$fwd.live('click', function() {
+    this.$fwd.on('click', function() {
         var new_index = (that.cur_idx + 1) % that.$items.length;
 
         that.track_event('PG.fwd');
@@ -246,7 +318,7 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
         return false;
     });
 
-    this.$back.live('click', function() {
+    this.$back.on('click', function() {
         /*
          * If -n < x < 0, then the result of x % n will be x, which is
          * negative. To get a positive remainder, compute (x + n) % n.
@@ -257,6 +329,23 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
         that.show_message(new_index, true);
         return false;
     });
+
+    if (this.$welcome.length) {
+        if (this.$welcome.find('.tlypageguide_ignore').length) {
+            this.$welcome.on('click', '.tlypageguide_ignore', function () {
+                that.close_welcome();
+            });
+        }
+        if (this.$welcome.find('.tlypageguide_dismiss').length) {
+            this.$welcome.on('click', '.tlypageguide_dismiss', function () {
+                that.close_welcome();
+                that.preferences.dismiss_welcome();
+            });
+        }
+        this.$welcome.on('click', '.tlypageguide_start', function () {
+            that.open();
+        });
+    }
 
     /* register resize callback */
     jQuery(window).resize(function() { that.position_tour(); });
@@ -288,8 +377,8 @@ tl.pg.PageGuide.prototype.show_message = function (new_index, left) {
     if (height < defaultHeight) {
         height = defaultHeight;
     }
-    if (height > $(window).height()/2) {
-        height = $(window).height()/2;
+    if (height > jQuery(window).height()/2) {
+        height = jQuery(window).height()/2;
     }
     height = height + "px";
 
@@ -334,4 +423,12 @@ tl.pg.PageGuide.prototype.position_tour = function () {
 
         arrow.css({ "left": setLeft + "px", "top": setTop + "px" });
     });
+};
+
+tl.pg.PageGuide.prototype.pop_welcome = function () {
+    jQuery('body').addClass('tlyPageGuideWelcomeOpen');
+};
+
+tl.pg.PageGuide.prototype.close_welcome = function () {
+    jQuery('body').removeClass('tlyPageGuideWelcomeOpen');
 };

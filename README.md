@@ -1,15 +1,25 @@
 pageguide.js
 ============
 
-An interactive guide for web page elements using jQuery and CSS3.
+An interactive guide for web page elements using jQuery and CSS3. Check it out IRL at http://tracelytics.github.com/pageguide!
 
-## How-to:
+## Table of Contents
+* [How-To](#how-to)
+* [An Example](#an-example)
+* [Options](#options)
+* [Requirements](#requirements)
+* [Tested In](#tested-in)
+* [Contribute](#contribute)
+* [License](#license)
+
+## How-To:
 1. Add references in your code to pageguide.js, jQuery & pageguide.css
 2. Add a document ready callback to setup the page guide
 3. Add a simple `<ul>` to the bottom of the pages you want the pageguide to appear on.
 4. Customize the page guide tour title.
+5. (Optional) Add a welcome message to display to your users on page load.
 
-## An example:
+## An Example:
 
 ### Step 1 - Add pageguide.js 
 
@@ -59,9 +69,107 @@ pageguide.js matches the first occurrence of the selector you specify in the `<u
       </li>
     </ul>
 
+### Step 6 (optional) - Add `#tlyPageGuideWelcome` near the bottom of your page. 
 
-## See it IRL:
-* http://tracelytics.github.com/pageguide
+    <div id="tlyPageGuideWelcome">
+        <p>Here's a snappy modal to welcome you to my new page! pageguide is here to help you learn more.</p>
+        <p>
+            This button will launch pageguide:
+            <button class="tlypageguide_start">let's go</button>
+        </p>
+        <p>
+            This button will close the modal without doing anything:
+            <button class="tlypageguide_ignore">not now</button>
+        </p>
+        <p>
+            This button will close the modal and prevent it from being opened again:
+            <button class="tlypageguide_dismiss">got it, thanks</button>
+        </p>
+    </div>
+
+This element will display as an introductory welcome modal to your users when they visit your page. There are three elements you can include inside `#tlyPageGuideWelcome` to let users control its behavior:
+- `.tlypageguide_start` (required): Closes the welcome modal and launches pageguide. 
+- `.tlypageguide_ignore` (optional): Simply closes the welcome modal.
+- `.tlypageguide_dismiss` (optional): Closes the welcome modal and never shows it again.
+
+By default, the modal will continue to launch on page load until a user either a) launches pageguide, or b) dismisses the message by clicking `.tlypageguide_dismiss`. User preference for a particular URL is stored in localStorage with a cookie fallback.
+
+## Options
+
+Pageguide can take a hash of options in `init()`. All are optional.
+
+<table>
+    <tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>What it do</th>
+	</tr>
+	<tr>
+		<td><code>auto_show_first</code></td>
+		<td>boolean</td>
+		<td><code>true</code></td>
+		<td>Whether or not to focus on the first visible item immediately on PG open</td>
+	</tr>
+	<tr>
+		<td><code>loading_selector</code></td>
+		<td>selector</td>
+		<td><code>'#loading'</code></td>
+		<td>The CSS selector for the loading element. pageguide will wait until this element is no longer visible starting up.</td>
+	</tr>
+	<tr>
+		<td><code>track_events_cb</code></td>
+		<td>function</td>
+		<td>noop</td>
+		<td>Optional callback for tracking user interactions with pageguide.  Should be a method taking a single parameter indicating the name of the interaction. (default none)</td>
+	</tr>
+    <tr>
+    	<td><code>handle_doc_switch</code></td>
+		<td>function</td>
+		<td><code>null</code></td>
+		<td>Optional callback to enlight or adapt interface depending on current documented element. Should be a function taking 2 parameters, current and previous data-tourtarget selectors. (default null)</td>
+	</tr>
+    <tr>
+    	<td><code>custom_open_button</code></td>
+		<td>selector</td>
+		<td><code>null</code></td>
+		<td>Optional id for toggling pageguide. Default null. If not specified then the default button is used.</td>
+	</tr>
+    <tr>
+    	<td><code>pg_caption</code></td>
+		<td>string</td>
+		<td><code>page guide</code></td>
+		<td>Optional - Sets the visible caption</td>
+	</tr>
+    <tr>
+    	<td><code>dismiss_welcome</code></td>
+		<td>function</td>
+		<td>(see source)</td>
+		<td>Optional function to permanently dismiss the welcome message, corresponding to <code>check_welcome_dismissed</code>. Default: sets a localStorage or cookie value for the (hashed) current URL to indicate the welcome message has been dismissed, corresponds to default <code>check_welcome_dismissed</code> function.</td>
+	</tr>
+    <tr>
+        <td><code>check_welcome_dismissed</code></td>
+		<td>function</td>
+		<td>(see source)</td>
+		<td>Optional function to check whether or not the welcome message has been dismissed. Must return true or false. This function should check against whatever state change is made in dismiss_welcome. Default: checks whether a localStorage or cookie value has been set for the (hashed) current URL, corresponds to default dismiss_welcome function.</td>
+	</tr>
+</table>
+
+## Requirements
+
+* jQuery 1.7 - 2.0
+
+## Tested In:
+
+* OSX
+  * Chrome 26
+  * Firefox 20
+  * Safari 6.0.4
 
 ## Contribute
 Bugfix?  Cool new feature?  Alternate style?  Send us a pull request!
+
+## License
+Copyright (c) 2013 Tracelytics, AppNeta
+
+Pageguide is freely redistributable under the MIT License. See LICENSE for details.
