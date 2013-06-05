@@ -402,8 +402,13 @@ tl.pg.PageGuide.prototype.position_tour = function () {
     this.$items.each(function() {
         var arrow   = jQuery(this),
             target  = jQuery(arrow.data('tourtarget')).filter(':visible:first'),
+            position = arrow.data('position'),
             setLeft = target.offset().left,
             setTop  = target.offset().top;
+        
+        if (position == "fixed") {
+            setTop  -= jQuery(window).scrollTop();
+        }
 
         if (arrow.hasClass("tlypageguide_top")) {
             setTop -= 60;
@@ -421,7 +426,7 @@ tl.pg.PageGuide.prototype.position_tour = function () {
             setLeft += 5;
         }
 
-        arrow.css({ "left": setLeft + "px", "top": setTop + "px" });
+        arrow.css({ "left": setLeft + "px", "top": setTop + "px", "position": position});
     });
 };
 
