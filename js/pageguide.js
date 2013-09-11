@@ -87,6 +87,9 @@ tl.pg.init = function(preferences) {
         return;
     }
 
+    // remove any stale pageguides
+    jQuery('#tlyPageGuideWrapper').remove();
+
     var guide   = jQuery("#tlyPageGuide"),
         wrapper = jQuery('<div>', { id: 'tlyPageGuideWrapper' }),
         message = jQuery('<div>', { id: 'tlyPageGuideMessages'}),
@@ -98,7 +101,7 @@ tl.pg.init = function(preferences) {
       .append('<a href="#" class="tlypageguide_back" title="Previous">Previous</a>')
       .append('<a href="#" class="tlypageguide_fwd" title="Next">Next</a>');
 
-    if (preferences.custom_open_button == null) {
+    if (preferences.custom_open_button == null && $('.tlypageguide_toggle').length < 1) {
         jQuery('<div/>', {
             'title': 'Launch Page Guide',
             'class': 'tlypageguide_toggle'
@@ -152,14 +155,16 @@ tl.pg.PageGuide = function (pg_elem, preferences) {
 tl.pg.hashUrl = function() {
     var str = window.location.href;
     var hash = 0, i, char;
-    if (str.length == 0) return hash;
+    if (str.length === 0) {
+        return hash;
+    }
     for (i = 0; i < str.length; i++) {
         char = str.charCodeAt(i);
         hash = ((hash<<5)-hash)+char;
         hash = hash & hash;
     }
     return hash.toString();
-}
+};
 
 tl.pg.isScrolledIntoView = function(elem) {
     var dvtop = jQuery(window).scrollTop(),
@@ -249,7 +254,7 @@ tl.pg.PageGuide.prototype.open = function() {
     } else {
         this.is_open = true;
     }
-    
+
     this.track_event('PG.open');
 
     this._on_expand();
@@ -263,7 +268,7 @@ tl.pg.PageGuide.prototype.close = function() {
     } else {
         this.is_open = false;
     }
-    
+
     this.track_event('PG.close');
 
     this.$items.toggleClass('expanded');
@@ -279,11 +284,11 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
     var that = this;
 
     /* interaction: open/close PG interface */
-    var interactor = (that.custom_open_button == null) ? 
-                    jQuery('.tlypageguide_toggle', this.$base) : 
+    var interactor = (that.custom_open_button == null) ?
+                    jQuery('.tlypageguide_toggle', this.$base) :
                     jQuery(that.custom_open_button);
     interactor.on('click', function() {
-        if (this.is_open) {
+        if (that.is_open) {
             that.close();
         } else if (that.preferences.show_welcome &&
                   !that.preferences.check_welcome_dismissed() &&
@@ -405,7 +410,7 @@ tl.pg.PageGuide.prototype.position_tour = function () {
             position = arrow.data('position'),
             setLeft = target.offset().left,
             setTop  = target.offset().top;
-        
+
         if (position == "fixed") {
             setTop  -= jQuery(window).scrollTop();
         }
