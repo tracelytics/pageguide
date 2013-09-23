@@ -276,6 +276,9 @@ tl.pg.PageGuide.prototype.close = function() {
         jQuery(this).hide();
     });
     /* clear number tags and shading elements */
+    $('[class~="tlypageguide_shadow"]').removeClass(function(i, c) {
+        return c.match(/tlypageguide_shadow.*?\b/g).join(" ");
+    });
     jQuery('ins').remove();
     jQuery('body').removeClass('tlypageguide-open');
 };
