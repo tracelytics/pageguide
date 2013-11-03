@@ -127,11 +127,11 @@ tl.pg.init = function(preferences) {
     pg.ready(function() {
         pg.setup_handlers();
         pg.$base.children(".tlypageguide_toggle").animate({ "right": "-120px" }, 250);
-    });
 
-    if (pg.preferences.show_welcome) {
-        pg.pop_welcome();
-    }
+        if (pg.preferences.show_welcome) {
+            pg.pop_welcome();
+        }
+    });
 
     return pg;
 };
