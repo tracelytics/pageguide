@@ -19,9 +19,9 @@ module.exports = function(grunt) {
       src: {
         src: ['js/*.js']
       },
-      //test: {
-      //  src: ['js/tests/unit/*.js']
-      //}
+      test: {
+        src: ['js/tests/unit/*.js']
+      }
     },
 
     uglify: {
@@ -48,6 +48,10 @@ module.exports = function(grunt) {
       }
     },
 
+    qunit: {
+      files: ['js/tests/*.html']
+    },
+
     connect: {
       server: {
         options: {
@@ -59,15 +63,16 @@ module.exports = function(grunt) {
 
   });
 
-  // Load the plugin that provides the "uglify" task.
+  // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-recess');
 
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'jshint', 'uglify', 'recess']);
+  grunt.registerTask('default', ['clean', 'jshint', 'qunit', 'uglify', 'recess']);
   grunt.registerTask('server', ['default', 'connect']);
 
 };
