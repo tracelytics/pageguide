@@ -180,17 +180,20 @@ Below are some instructions for developing with pageguide.js:
     $ cd pageguide
     ```
 
-1. We use [Grunt](http://gruntjs.com/) to develop, test, and build pageguide.js
+1. We use [Grunt](http://gruntjs.com/) to develop, test, and compile pageguide.js
+   into `/dist`:
 
     ```bash
     $ cd pageguide
+    $ npm install -g grunt-cli
     $ npm install
     $ grunt
     ```
 
 1. Create a feature branch and make some code changes
 
-1. Add unit tests (in `/js/test/unit`)
+1. Add unit tests (in `/js/test/unit`) and ensure your tests pass by running
+   `grunt`.
 
 1. Send us a detailed pull request explaining your changes.
 
