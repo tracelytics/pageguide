@@ -171,7 +171,8 @@ Bugfix?  Cool new feature?  Alternate style?  Send us a pull request!
 
 Below are some instructions for developing with pageguide.js:
 
-0. Make sure [Node.js](http://nodejs.org/) is installed. I recommend you use [NVM](https://github.com/creationix/nvm).
+1. Make sure [Node.js](http://nodejs.org/) is installed. We recommend you use [NVM](https://github.com/creationix/nvm).
+
 1. Clone pageguide.js
 
     ```bash
@@ -179,7 +180,7 @@ Below are some instructions for developing with pageguide.js:
     $ cd pageguide
     ```
 
-2. We use [Grunt](http://gruntjs.com/) to develop, test, and build pageguide.js
+1. We use [Grunt](http://gruntjs.com/) to develop, test, and build pageguide.js
 
     ```bash
     $ cd pageguide
@@ -187,9 +188,11 @@ Below are some instructions for developing with pageguide.js:
     $ grunt
     ```
 
-3. Create a feature branch and make some code changes
-4. Add unit tests (in `/js/test/unit`)
-5. Send us a detailed pull request explaining your changes.
+1. Create a feature branch and make some code changes
+
+1. Add unit tests (in `/js/test/unit`)
+
+1. Send us a detailed pull request explaining your changes.
 
 ## License
 Copyright (c) 2013 Tracelytics, AppNeta
