@@ -21,7 +21,7 @@ An interactive guide for web page elements using jQuery and CSS3. Check it out I
 
 ## An Example:
 
-### Step 1 - Add pageguide.js 
+### Step 1 - Add pageguide.js
 
 Add `<script src="pageguide.js"></script>` to the bottom of your html document, right before your closing `</body>` tag.
 
@@ -31,7 +31,7 @@ We provide both the standard js as well as a minified version.
 
 Add `<link rel="stylesheet" href="stylesheets/pageguide.css">` to the header of your html document.
 
-We provide a css file as well as a minified version. Alternatively, we use <a href="http://lesscss.org/" target="_blank">LESS CSS</a> at Tracelytics, so we provide that as well. 
+We provide a css file as well as a minified version. Alternatively, we use <a href="http://lesscss.org/" target="_blank">LESS CSS</a> at Tracelytics, so we provide that as well.
 
 ### Step 3 - Add setup code
 
@@ -69,7 +69,7 @@ pageguide.js matches the first occurrence of the selector you specify in the `<u
       </li>
     </ul>
 
-### Step 6 (optional) - Add `#tlyPageGuideWelcome` near the bottom of your page. 
+### Step 6 (optional) - Add `#tlyPageGuideWelcome` near the bottom of your page.
 
     <div id="tlyPageGuideWelcome">
         <p>Here's a snappy modal to welcome you to my new page! pageguide is here to help you learn more.</p>
@@ -88,7 +88,7 @@ pageguide.js matches the first occurrence of the selector you specify in the `<u
     </div>
 
 This element will display as an introductory welcome modal to your users when they visit your page. There are three elements you can include inside `#tlyPageGuideWelcome` to let users control its behavior:
-- `.tlypageguide_start` (required): Closes the welcome modal and launches pageguide. 
+- `.tlypageguide_start` (required): Closes the welcome modal and launches pageguide.
 - `.tlypageguide_ignore` (optional): Simply closes the welcome modal.
 - `.tlypageguide_dismiss` (optional): Closes the welcome modal and never shows it again.
 
@@ -168,6 +168,28 @@ Pageguide can take a hash of options in `init()`. All are optional.
 
 ## Contribute
 Bugfix?  Cool new feature?  Alternate style?  Send us a pull request!
+
+Below are some instructions for developing with pageguide.js:
+
+0. Make sure [Node.js](http://nodejs.org/) is installed. I recommend you use [NVM](https://github.com/creationix/nvm).
+1. Clone pageguide.js
+
+    ```bash
+    $ git clone git@github.com:tracelytics/pageguide.git
+    $ cd pageguide
+    ```
+
+2. We use [Grunt](http://gruntjs.com/) to develop, test, and build pageguide.js
+
+    ```bash
+    $ cd pageguide
+    $ npm install
+    $ grunt
+    ```
+
+3. Create a feature branch and make some code changes
+4. Add unit tests (in `/js/test/unit`)
+5. Send us a detailed pull request explaining your changes.
 
 ## License
 Copyright (c) 2013 Tracelytics, AppNeta
