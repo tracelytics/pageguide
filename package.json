@@ -1,0 +1,21 @@
+{
+  "name": "pageguide",
+  "author": "Appneta",
+  "version": "1.0.0",
+  "description": "An interactive guide for web page element using jQuery and CSS3",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tracelytics/pageguide.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tracelytics/pageguide/issues"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.7",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-jshint": "~0.7.2",
+    "grunt-recess": "~0.4.0",
+    "grunt-contrib-connect": "~0.5.0"
+  }
+}
