@@ -13,7 +13,7 @@ An interactive guide for web page elements using jQuery and CSS3. Check it out I
 * [License](#license)
 
 ## How-To:
-1. Add references in your code to pageguide.js, jQuery & pageguide.css
+1. Add references in your code to jQuery, pageguide.min.js & pageguide.min.css
 2. Add a document ready callback to setup the page guide
 3. Add a simple `<ul>` to the bottom of the pages you want the pageguide to appear on.
 4. Customize the page guide tour title.
@@ -21,17 +21,17 @@ An interactive guide for web page elements using jQuery and CSS3. Check it out I
 
 ## An Example:
 
-### Step 1 - Add pageguide.js
+### Step 1 - Add pageguide js
 
-Add `<script src="pageguide.js"></script>` to the bottom of your html document, right before your closing `</body>` tag.
+Add `<script src="{YOUR_PATH}/pageguide.min.js"></script>` to the bottom of your html document, right before your closing `</body>` tag.
 
-We provide both the standard js as well as a minified version.
+Minified js is located in /dist/js/ (the source file is in /js/).
 
 ### Step 2 - Add pageguide.css
 
-Add `<link rel="stylesheet" href="stylesheets/pageguide.css">` to the header of your html document.
+Add `<link rel="stylesheet" href="{YOUR_PATH}/pageguide.css">` to the header of your html document.
 
-We provide a css file as well as a minified version. Alternatively, we use <a href="http://lesscss.org/" target="_blank">LESS CSS</a> at Tracelytics, so we provide that as well.
+Minified css can be found in /dist/css/. Source LESS file is in /less/.
 
 ### Step 3 - Add setup code
 
