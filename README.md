@@ -3,6 +3,8 @@ pageguide.js
 
 An interactive guide for web page elements using jQuery and CSS3. Check it out IRL at http://tracelytics.github.com/pageguide!
 
+[![Build Status](https://travis-ci.org/tracelytics/pageguide.png)](https://travis-ci.org/tracelytics/pageguide)
+
 ## Table of Contents
 * [How-To](#how-to)
 * [An Example](#an-example)
