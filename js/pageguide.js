@@ -54,6 +54,7 @@ tl.pg = tl.pg || {};
         'handle_doc_switch': null,
         'custom_open_button': null,
         'pg_caption' : 'page guide',
+        'tourtitle': 'Open Page Guide for help',
         'check_welcome_dismissed': function () {
             var key = 'tlypageguide_welcome_shown_' + tl.pg.hashUrl();
             // first, try to use localStorage
@@ -81,8 +82,21 @@ tl.pg = tl.pg || {};
         }
     };
 
+    tl.pg.guide_markup =
+        '<a href="#" class="tlypageguide_close" title="Close Guide">close</a>' +
+        '<span class="tlypageguide_index"></span>' +
+        '<div class="tlypageguide_text"></div>' +
+        '<a href="#" class="tlypageguide_back" title="Previous">Previous</a>' +
+        '<a href="#" class="tlypageguide_fwd" title="Next">Next</a>';
+
+    tl.pg.toggle_markup =
+        '<div class="tlypageguide_toggle" title="Launch Page Guide">' +
+            '<div><span class="tlypageguide_toggletitle"></span></div>' +
+            '<a href="#" class="tlypageguide_close" title="close guide">close guide &raquo;</a>' +
+        '</div>';
+
     tl.pg.init = function(preferences) {
-        preferences = $.extend({}, tl.pg.default_prefs, preferences);
+        var preferences = $.extend({}, tl.pg.default_prefs, preferences);
         clearInterval(tl.pg.interval);
 
         /* page guide object, for pages that have one */
@@ -90,24 +104,18 @@ tl.pg = tl.pg || {};
             return;
         }
 
-        var guide   = $("#tlyPageGuide"),
-            wrapper = $('<div>', { id: 'tlyPageGuideWrapper' }),
-            message = $('<div>', { id: 'tlyPageGuideMessages'});
+        var guide = $("#tlyPageGuide");
+        var wrapper = $('<div>', { id: 'tlyPageGuideWrapper' });
+        var message = $('<div>', { id: 'tlyPageGuideMessages'});
 
-        message.append('<a href="#" class="tlypageguide_close" title="Close Guide">close</a>')
-          .append('<span></span>')
-          .append('<div></div>')
-          .append('<a href="#" class="tlypageguide_back" title="Previous">Previous</a>')
-          .append('<a href="#" class="tlypageguide_fwd" title="Next">Next</a>');
+        var tourtitle = guide.data('tourtitle') || preferences.tourtitle;
+
+        message.append(tl.pg.guide_markup);
 
         if (preferences.custom_open_button == null && $('.tlypageguide_toggle').length < 1) {
-            $('<div/>', {
-                'title': 'Launch Page Guide',
-                'class': 'tlypageguide_toggle'
-            }).append(preferences.pg_caption)
-              .append('<div><span>' + guide.data('tourtitle') + '</span></div>')
-              .append('<a href="#" class="tlypageguide_close" title="close guide">close guide &raquo;</a>')
-              .appendTo(wrapper);
+            wrapper.append(tl.pg.toggle_markup);
+            wrapper.find('.tlypageguide_toggle').prepend(preferences.pg_caption);
+            wrapper.find('.tlypageguide_toggletitle').text(tourtitle);
         }
 
         wrapper.append(guide);
