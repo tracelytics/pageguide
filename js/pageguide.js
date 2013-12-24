@@ -81,19 +81,16 @@ tl.pg.default_prefs = {
 
 tl.pg.init = function(preferences) {
     preferences = jQuery.extend({}, tl.pg.default_prefs, preferences);
+    clearInterval(tl.pg.interval);
 
     /* page guide object, for pages that have one */
     if (jQuery("#tlyPageGuide").length === 0) {
         return;
     }
 
-    // remove any stale pageguides
-    jQuery('#tlyPageGuideWrapper').remove();
-
     var guide   = jQuery("#tlyPageGuide"),
         wrapper = jQuery('<div>', { id: 'tlyPageGuideWrapper' }),
-        message = jQuery('<div>', { id: 'tlyPageGuideMessages'}),
-        $welcome = jQuery('#tlyPageGuideWelcome');
+        message = jQuery('<div>', { id: 'tlyPageGuideMessages'});
 
     message.append('<a href="#" class="tlypageguide_close" title="Close Guide">close</a>')
       .append('<span></span>')
@@ -111,26 +108,19 @@ tl.pg.init = function(preferences) {
           .appendTo(wrapper);
     }
 
-    if ($welcome.length > 0) {
-        preferences.show_welcome = !preferences.check_welcome_dismissed();
-        if (preferences.show_welcome) {
-            jQuery('body').prepend('<div id="tlyPageGuideOverlay"></div>');
-            $welcome.appendTo(wrapper);
-        }
-    }
-
     wrapper.append(guide);
     wrapper.append(message);
+
+    // remove any stale pageguides
+    jQuery('#tlyPageGuideWrapper').remove();
+
     jQuery('body').append(wrapper);
 
     var pg = new tl.pg.PageGuide(jQuery('#tlyPageGuideWrapper'), preferences);
     pg.ready(function() {
+        pg.setup_welcome();
         pg.setup_handlers();
         pg.$base.children(".tlypageguide_toggle").animate({ "right": "-120px" }, 250);
-
-        if (pg.preferences.show_welcome) {
-            pg.pop_welcome();
-        }
     });
 
     return pg;
@@ -175,12 +165,48 @@ tl.pg.isScrolledIntoView = function(elem) {
     return (elbtm >= dvtop) && (eltop <= dvbtm - 100);
 };
 
+tl.pg.PageGuide.prototype.setup_welcome = function () {
+    var $welcome = jQuery('#tlyPageGuideWelcome');
+    var that = this;
+    if ($welcome.length > 0) {
+        that.preferences.show_welcome = !that.preferences.check_welcome_dismissed();
+        if (that.preferences.show_welcome) {
+            if (!jQuery('#tlyPageGuideOverlay').length) {
+                jQuery('body').prepend('<div id="tlyPageGuideOverlay"></div>');
+            }
+            $welcome.appendTo(that.$base);
+        }
+
+        if ($welcome.find('.tlypageguide_ignore').length) {
+            $welcome.on('click', '.tlypageguide_ignore', function () {
+                that.close_welcome();
+                that.track_event('PG.ignoreWelcome');
+            });
+        }
+        if ($welcome.find('.tlypageguide_dismiss').length) {
+            $welcome.on('click', '.tlypageguide_dismiss', function () {
+                that.close_welcome();
+                that.preferences.dismiss_welcome();
+                that.track_event('PG.dismissWelcome');
+            });
+        }
+        $welcome.on('click', '.tlypageguide_start', function () {
+            that.open();
+            that.track_event('PG.startFromWelcome');
+        });
+
+        if (that.preferences.show_welcome) {
+            that.pop_welcome();
+        }
+    }
+};
+
 tl.pg.PageGuide.prototype.ready = function(callback) {
-    var that = this,
-        interval = window.setInterval(function() {
+    var that = this;
+    tl.pg.interval = window.setInterval(function() {
             if (!jQuery(that.preferences.loading_selector).is(':visible')) {
                 callback();
-                clearInterval(interval);
+                clearInterval(tl.pg.interval);
             }
         }, 250);
     return this;
@@ -229,6 +255,7 @@ tl.pg.PageGuide.prototype._on_expand = function () {
             ie += node_text;
         }
 
+        jQuery(this).find('ins').remove();
         jQuery(this).prepend('<ins>' + (i + 1) + '</ins>');
         jQuery(this).data('idx', i);
     });
@@ -290,6 +317,7 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
     var interactor = (that.custom_open_button == null) ?
                     jQuery('.tlypageguide_toggle', this.$base) :
                     jQuery(that.custom_open_button);
+    interactor.off();
     interactor.on('click', function() {
         if (that.is_open) {
             that.close();
@@ -310,9 +338,9 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
     });
 
     /* interaction: item click */
+    this.$all_items.off();
     this.$all_items.on('click', function() {
         var new_index = jQuery(this).data('idx');
-
         that.track_event('PG.specific_elt');
         that.show_message(new_index);
     });
@@ -338,23 +366,6 @@ tl.pg.PageGuide.prototype.setup_handlers = function () {
         return false;
     });
 
-    if (this.$welcome.length) {
-        if (this.$welcome.find('.tlypageguide_ignore').length) {
-            this.$welcome.on('click', '.tlypageguide_ignore', function () {
-                that.close_welcome();
-            });
-        }
-        if (this.$welcome.find('.tlypageguide_dismiss').length) {
-            this.$welcome.on('click', '.tlypageguide_dismiss', function () {
-                that.close_welcome();
-                that.preferences.dismiss_welcome();
-            });
-        }
-        this.$welcome.on('click', '.tlypageguide_start', function () {
-            that.open();
-        });
-    }
-
     /* register resize callback */
     jQuery(window).resize(function() { that.position_tour(); });
 };
@@ -378,10 +389,10 @@ tl.pg.PageGuide.prototype.show_message = function (new_index, left) {
         jQuery('html,body').animate({scrollTop: jQuery(new_item).offset().top - 50}, 500);
     }
     var defaultHeight = 100;
-    var oldHeight = this.$message.css("height");
+    var oldHeight = parseFloat(this.$message.css("height"));
     this.$message.css("height", "auto");
-    var height = this.$message.height();
-    this.$message.css("height", oldHeight);
+    var height = parseFloat(this.$message.outerHeight());
+    this.$message.css("height", oldHeight + 'px');
     if (height < defaultHeight) {
         height = defaultHeight;
     }
@@ -390,7 +401,7 @@ tl.pg.PageGuide.prototype.show_message = function (new_index, left) {
     }
     height = height + "px";
 
-    this.$message.not(':visible').show().animate({'height': height}, 500);
+    this.$message.show().animate({'height': height}, 500);
     this.roll_number(jQuery('span', this.$message), jQuery(new_item).children('ins').html(), left);
 };
 
@@ -440,6 +451,7 @@ tl.pg.PageGuide.prototype.position_tour = function () {
 
 tl.pg.PageGuide.prototype.pop_welcome = function () {
     jQuery('body').addClass('tlyPageGuideWelcomeOpen');
+    this.track_event('PG.welcomeShown');
 };
 
 tl.pg.PageGuide.prototype.close_welcome = function () {
