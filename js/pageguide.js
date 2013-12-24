@@ -82,12 +82,14 @@ tl.pg = tl.pg || {};
         }
     };
 
-    tl.pg.guide_markup =
-        '<a href="#" class="tlypageguide_close" title="Close Guide">close</a>' +
-        '<span class="tlypageguide_index"></span>' +
-        '<div class="tlypageguide_text"></div>' +
-        '<a href="#" class="tlypageguide_back" title="Previous">Previous</a>' +
-        '<a href="#" class="tlypageguide_fwd" title="Next">Next</a>';
+    tl.pg.message_markup =
+        '<div id="tlyPageGuideWrapper">' +
+            '<a href="#" class="tlypageguide_close" title="Close Guide">close</a>' +
+            '<span class="tlypageguide_index"></span>' +
+            '<div class="tlypageguide_text"></div>' +
+            '<a href="#" class="tlypageguide_back" title="Previous">Previous</a>' +
+            '<a href="#" class="tlypageguide_fwd" title="Next">Next</a>' +
+        '</div>';
 
     tl.pg.toggle_markup =
         '<div class="tlypageguide_toggle" title="Launch Page Guide">' +
@@ -104,27 +106,24 @@ tl.pg = tl.pg || {};
             return;
         }
 
-        var guide = $("#tlyPageGuide");
-        var wrapper = $('<div>', { id: 'tlyPageGuideWrapper' });
-        var message = $('<div>', { id: 'tlyPageGuideMessages'});
+        var $guide = $("#tlyPageGuide");
+        var $wrapper = $('<div>', { id: 'tlyPageGuideWrapper' });
+        var $message = $(tl.pg.message_markup);
 
-        var tourtitle = guide.data('tourtitle') || preferences.tourtitle;
-
-        message.append(tl.pg.guide_markup);
+        var tourtitle = $guide.data('tourtitle') || preferences.tourtitle;
 
         if (preferences.custom_open_button == null && $('.tlypageguide_toggle').length < 1) {
-            wrapper.append(tl.pg.toggle_markup);
-            wrapper.find('.tlypageguide_toggle').prepend(preferences.pg_caption);
-            wrapper.find('.tlypageguide_toggletitle').text(tourtitle);
+            $wrapper.append(tl.pg.toggle_markup);
+            $wrapper.find('.tlypageguide_toggle').prepend(preferences.pg_caption);
+            $wrapper.find('.tlypageguide_toggletitle').text(tourtitle);
         }
 
-        wrapper.append(guide);
-        wrapper.append(message);
+        $wrapper.append([$guide, $message]);
 
         // remove any stale pageguides
         $('#tlyPageGuideWrapper').remove();
 
-        $('body').append(wrapper);
+        $('body').append($wrapper);
 
         var pg = new tl.pg.PageGuide($('#tlyPageGuideWrapper'), preferences);
         pg.ready(function() {
@@ -139,11 +138,11 @@ tl.pg = tl.pg || {};
     tl.pg.PageGuide = function (pg_elem, preferences) {
         this.preferences = preferences;
         this.$base = pg_elem;
-        this.$all_items = $('#tlyPageGuide > li', this.$base);
+        this.$all_items = this.$base.find('#tlyPageGuide > li');
         this.$items = $([]); /* fill me with visible elements on pg expand */
         this.$message = $('#tlyPageGuideMessages');
-        this.$fwd = $('a.tlypageguide_fwd', this.$base);
-        this.$back = $('a.tlypageguide_back', this.$base);
+        this.$fwd = this.$base.find('a.tlypageguide_fwd');
+        this.$back = this.$base.find('a.tlypageguide_back');
         this.$welcome = $('#tlyPageGuideWelcome');
         this.cur_idx = 0;
         this.track_event = this.preferences.track_events_cb;
@@ -325,7 +324,7 @@ tl.pg = tl.pg || {};
 
         /* interaction: open/close PG interface */
         var interactor = (that.custom_open_button == null) ?
-                        $('.tlypageguide_toggle', this.$base) :
+                        this.$base.find('.tlypageguide_toggle') :
                         $(that.custom_open_button);
         interactor.off();
         interactor.on('click', function() {
@@ -412,7 +411,7 @@ tl.pg = tl.pg || {};
         height = height + "px";
 
         this.$message.show().animate({'height': height}, 500);
-        this.roll_number($('span', this.$message), $(new_item).children('ins').html(), left);
+        this.roll_number(this.$message.find('span'), $(new_item).children('ins').html(), left);
     };
 
     tl.pg.PageGuide.prototype.roll_number = function (num_wrapper, new_text, left) {
