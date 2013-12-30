@@ -79,16 +79,19 @@ tl.pg = tl.pg || {};
                 exp.setDate(exp.getDate() + 365);
                 document.cookie = (key + '=true; expires=' + exp.toUTCString());
             }
-        }
+        },
+        'ready_callback': null
     };
 
-    tl.pg.message_markup =
+    tl.pg.wrapper_markup =
         '<div id="tlyPageGuideWrapper">' +
-            '<a href="#" class="tlypageguide_close" title="Close Guide">close</a>' +
-            '<span class="tlypageguide_index"></span>' +
-            '<div class="tlypageguide_text"></div>' +
-            '<a href="#" class="tlypageguide_back" title="Previous">Previous</a>' +
-            '<a href="#" class="tlypageguide_fwd" title="Next">Next</a>' +
+            '<div id="tlyPageGuideMessages">' +
+                '<a href="#" class="tlypageguide_close" title="Close Guide">close</a>' +
+                '<span class="tlypageguide_index"></span>' +
+                '<div class="tlypageguide_text"></div>' +
+                '<a href="#" class="tlypageguide_back" title="Previous">Previous</a>' +
+                '<a href="#" class="tlypageguide_fwd" title="Next">Next</a>' +
+            '</div>' +
         '</div>';
 
     tl.pg.toggle_markup =
@@ -98,7 +101,7 @@ tl.pg = tl.pg || {};
         '</div>';
 
     tl.pg.init = function(preferences) {
-        var preferences = $.extend({}, tl.pg.default_prefs, preferences);
+        preferences = $.extend({}, tl.pg.default_prefs, preferences);
         clearInterval(tl.pg.interval);
 
         /* page guide object, for pages that have one */
@@ -107,8 +110,8 @@ tl.pg = tl.pg || {};
         }
 
         var $guide = $("#tlyPageGuide");
-        var $wrapper = $('<div>', { id: 'tlyPageGuideWrapper' });
-        var $message = $(tl.pg.message_markup);
+        var $wrapper = $(tl.pg.wrapper_markup);
+        //var $message = $(tl.pg.message_markup);
 
         var tourtitle = $guide.data('tourtitle') || preferences.tourtitle;
 
@@ -118,7 +121,7 @@ tl.pg = tl.pg || {};
             $wrapper.find('.tlypageguide_toggletitle').text(tourtitle);
         }
 
-        $wrapper.append([$guide, $message]);
+        $wrapper.prepend($guide);
 
         // remove any stale pageguides
         $('#tlyPageGuideWrapper').remove();
@@ -126,12 +129,15 @@ tl.pg = tl.pg || {};
         $('body').append($wrapper);
 
         var pg = new tl.pg.PageGuide($('#tlyPageGuideWrapper'), preferences);
+
         pg.ready(function() {
             pg.setup_welcome();
             pg.setup_handlers();
             pg.$base.children(".tlypageguide_toggle").animate({ "right": "-120px" }, 250);
+            if (typeof(preferences.ready_callback) === 'function') {
+                preferences.ready_callback();
+            }
         });
-
         return pg;
     };
 
