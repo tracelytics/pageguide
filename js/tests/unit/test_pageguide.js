@@ -15,7 +15,16 @@ $(function () {
         equal($('body').hasClass('tlypageguide-open'), false, 'no open class');
         equal($('body').hasClass('tlyPageGuideWelcomeOpen'), false, 'no welcome open class');
         equal($('.tlypageguide_shadow').length, 0, 'no shadow elements');
-    })
+    });
+
+    loadAndTest('isScrolledIntoView', function () {
+        expect(2);
+
+        // NOTE: had to test on a qunit element because the fixture gets offset by defauly
+        ok(tl.pg.isScrolledIntoView('#qunit-header'), 'top element scrolled into view');
+        equal(tl.pg.isScrolledIntoView('.data-block:last'), false, 'bottom element not scrolled into view');
+    });
+
 
     module('DOM: elements exist');
 
@@ -73,22 +82,41 @@ $(function () {
         });
     });
 
-    loadInitAndTest('nav forward', function () {
-        expect(1);
+    loadInitAndTest('arrow nav forward', function () {
+        var itemLength = $('#tlyPageGuide > li').length;
+        expect(itemLength);
 
         $('.tlypageguide_toggle').trigger('click');
-        $('.tlypageguide_fwd').trigger('click');
-        equal($('#tlyPageGuide > li:eq(1) > .tlyPageGuideStepText').text(),
-            $('.tlypageguide_text').text(), 'second caption displayed');
+        for (var i=1; i<=itemLength; i++) {
+            var index = i % 4;
+            $('.tlypageguide_fwd').trigger('click');
+            equal($('#tlyPageGuide > li:eq(' + index + ') > .tlyPageGuideStepText').text(),
+                $('.tlypageguide_text').text(), 'caption ' + index + ' displayed');
+        }
     });
 
-    loadInitAndTest('nav backward', function () {
-        expect(1);
+    loadInitAndTest('arrow nav backward', function () {
+        var itemLength = $('#tlyPageGuide > li').length;
+        expect(itemLength);
 
         $('.tlypageguide_toggle').trigger('click');
-        $('.tlypageguide_back').trigger('click');
-        equal($('#tlyPageGuide > li:eq(' + ($('#tlyPageGuide > li').length - 1) + ') > .tlyPageGuideStepText').text(),
-            $('.tlypageguide_text').text(), 'last caption displayed');
+        for (var i=itemLength-1; i>=0; i--) {
+            $('.tlypageguide_back').trigger('click');
+            equal($('#tlyPageGuide > li:eq(' + i + ') > .tlyPageGuideStepText').text(),
+                $('.tlypageguide_text').text(), 'caption ' + i + ' displayed');
+        }
+    });
+
+    loadInitAndTest('bubble click nav', function () {
+        var itemLength = $('#tlyPageGuide > li').length;
+        expect(itemLength);
+
+        $('.tlypageguide_toggle').trigger('click');
+        $('.tlyPageGuideStepIndex').each(function (i, el) {
+            $(el).trigger('click');
+            equal($('#tlyPageGuide > li:eq(' + i + ') > .tlyPageGuideStepText').text(),
+                $('.tlypageguide_text').text(), 'caption ' + i + ' displayed');
+        });
     });
 
     // HELPER FUNCTIONS FOR TESTING
@@ -149,5 +177,4 @@ $(function () {
         equal($('.tlypageguide_shadow:visible').length, 0, 'step shadows hidden');
         equal($('#tlyPageGuide ins:visible').length, 0, 'step indices hidden');
     }
-
 });
