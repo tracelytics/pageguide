@@ -83,10 +83,47 @@ $(function () {
     module("DOM: basic interaction");
 
     loadInitAndTest('open', function () {
-        expect(2);
+        expect(6);
 
         $('.tlypageguide_toggle').trigger('click');
         ok($('body').hasClass('tlypageguide-open'), 'body class');
         ok($('#tlyPageGuideMessages').is(':visible'), 'message area shown');
+        equal($('.tlypageguide-active').length, 1, 'only one active element');
+        equal($('#tlyPageGuide > li:eq(0) > .tlyPageGuideStepText').text(),
+            $('.tlypageguide_text').text(), 'first caption displayed');
+
+        var numSteps = $('#tlyPageGuide > li').length;
+        equal($('.tlypageguide_shadow:visible').length, numSteps, 'all step shadows shown');
+        equal($('#tlyPageGuide ins:visible').length, numSteps, 'all step indices shown');
     });
+
+    function testClose (closeAction) {
+        expect(3);
+        $('.tlypageguide_toggle').trigger('click');
+        closeAction();
+        ok($('#tlyPageGuideMessages').not(':visible'), 'message area hidden');
+        equal($('.tlypageguide_shadow:visible').length, 0, 'step shadows hidden');
+        equal($('#tlyPageGuide ins:visible').length, 0, 'step indices hidden');
+    }
+
+    loadInitAndTest('close from toggle', function () {
+        testClose(function () {
+            $('.tlypageguide_toggle').trigger('click');
+        });
+    });
+
+    loadInitAndTest('close from toggle', function () {
+        testClose(function () {
+            $('.tlypageguide_close').trigger('click');
+        });
+    })
+
+    loadInitAndTest('nav forward', function () {
+        expect(1);
+
+        $('.tlypageguide_toggle').trigger('click');
+        $('.tlypageguide_fwd').trigger('click');
+        equal($('#tlyPageGuide > li:eq(1) > .tlyPageGuideStepText').text(),
+            $('.tlypageguide_text').text(), 'second caption displayed');
+    })
 })
