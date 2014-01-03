@@ -281,9 +281,9 @@ tl.pg = tl.pg || {};
                 ie += node_text;
             }
 
-            $(this).find('ins').remove();
+            $(this).find('.tlyPageGuideStepIndex').remove();
             $(this).html('<div class="tlyPageGuideStepText">' + $(this).text() + '</div>');
-            $(this).prepend('<ins>' + (i + 1) + '</ins>');
+            $(this).prepend('<ins class="tlyPageGuideStepIndex">' + (i + 1) + '</ins>');
             $(this).data('idx', i);
         });
 
