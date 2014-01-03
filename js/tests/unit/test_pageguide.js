@@ -56,18 +56,8 @@ $(function () {
     loadInitAndTest('open', function () {
         expect(6);
 
-        // note: cannot verify current displayed index, since it is set on a 200ms ('fast')
-        // animation delay. may fix in future w/css changes
         $('.tlypageguide_toggle').trigger('click');
-        ok($('body').hasClass('tlypageguide-open'), 'body class');
-        ok($('#tlyPageGuideMessages').is(':visible'), 'message area shown');
-        equal($('.tlypageguide-active').length, 1, 'only one active element');
-        equal($('#tlyPageGuide > li:eq(0) > .tlyPageGuideStepText').text(),
-            $('.tlypageguide_text').text(), 'first caption displayed');
-
-        var numSteps = $('#tlyPageGuide > li').length;
-        equal($('.tlypageguide_shadow:visible').length, numSteps, 'all step shadows shown');
-        equal($('#tlyPageGuide ins:visible').length, numSteps, 'all step indices shown');
+        testOpen();
     });
 
     loadInitAndTest('close from toggle', function () {
@@ -118,6 +108,68 @@ $(function () {
                 $('.tlypageguide_text').text(), 'caption ' + i + ' displayed');
         });
     });
+
+    module('DOM: welcome message');
+
+    loadInitAndTest('welcome start click', function () {
+        expect(9);
+
+        $('.tlypageguide_start').trigger('click');
+        testOpen();
+        ok(checkLocalStorageItem(), 'localStorage item exists');
+        ok($('#tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
+        ok($('#tlyPageGuideOverlay').not(':visible'), 'overlay hidden');
+        localStorage.clear();
+    }, '#examplePlusWelcome');
+
+    loadInitAndTest('welcome start and open', function () {
+        expect(8);
+
+        $('.tlypageguide_start').trigger('click');
+        $('.tlypageguide_close').trigger('click');
+        $('.tlypageguide_toggle').trigger('click');
+        ok($('#tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
+        ok($('#tlyPageGuideOverlay').not(':visible'), 'overlay hidden');
+        testOpen();
+        localStorage.clear();
+    }, '#examplePlusWelcome');
+
+    loadInitAndTest('welcome toggle click', function () {
+        expect(9);
+
+        $('.tlypageguide_toggle').trigger('click');
+        testOpen();
+        ok(checkLocalStorageItem(), 'localStorage item exists');
+        ok($('#tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
+        ok($('#tlyPageGuideOverlay').not(':visible'), 'overlay hidden');
+        localStorage.clear();
+    }, '#examplePlusWelcome');
+
+    loadInitAndTest('welcome ignore click', function () {
+        expect(5);
+
+        $('.tlypageguide_ignore').trigger('click');
+        ok($('#tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
+        ok($('#tlyPageGuideOverlay').not(':visible'), 'overlay hidden');
+        equal(checkLocalStorageItem(), false, 'no localStorage item yet');
+        $('.tlypageguide_toggle').trigger('click');
+        ok($('#tlyPageGuideWelcome').is(':visible'), 'welcome shown again');
+        ok($('#tlyPageGuideOverlay').is(':visible'), 'overlay shown again');
+    }, '#examplePlusWelcome');
+
+    loadInitAndTest('welcome dismiss click', function () {
+        expect(11);
+
+        $('.tlypageguide_dismiss').trigger('click');
+        ok($('#tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
+        ok($('#tlyPageGuideOverlay').not(':visible'), 'overlay hidden');
+        ok(checkLocalStorageItem(), 'localStorage item exists');
+        $('.tlypageguide_toggle').trigger('click');
+        ok($('#tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
+        ok($('#tlyPageGuideOverlay').not(':visible'), 'overlay hidden');
+        testOpen();
+        localStorage.clear();
+    }, '#examplePlusWelcome');
 
     // HELPER FUNCTIONS FOR TESTING
 
@@ -176,5 +228,31 @@ $(function () {
         ok($('#tlyPageGuideMessages').not(':visible'), 'message area hidden');
         equal($('.tlypageguide_shadow:visible').length, 0, 'step shadows hidden');
         equal($('#tlyPageGuide ins:visible').length, 0, 'step indices hidden');
+    }
+
+    /**
+     * test an open interaction. once again, all open interactions result in the same
+     * state, so we can reuse the assertions.
+     * NOTE: cannot verify current displayed index, since it is set on a 200ms ('fast')
+     * animation delay. may fix in future w/css changes
+     **/
+    function testOpen () {
+        ok($('body').hasClass('tlypageguide-open'), 'body class');
+        ok($('#tlyPageGuideMessages').is(':visible'), 'message area shown');
+        equal($('.tlypageguide-active').length, 1, 'only one active element');
+        equal($('#tlyPageGuide > li:eq(0) > .tlyPageGuideStepText').text(),
+            $('.tlypageguide_text').text(), 'first caption displayed');
+
+        var numSteps = $('#tlyPageGuide > li').length;
+        equal($('.tlypageguide_shadow:visible').length, numSteps, 'all step shadows shown');
+        equal($('#tlyPageGuide ins:visible').length, numSteps, 'all step indices shown');
+    }
+
+    /**
+     * check for the localstorage item used by default to determine whether to
+     * display the welcome message
+     **/
+    function checkLocalStorageItem () {
+        return !!localStorage.getItem('tlypageguide_welcome_shown_' + tl.pg.hashUrl());
     }
 });
