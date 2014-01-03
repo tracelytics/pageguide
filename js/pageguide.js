@@ -180,6 +180,17 @@ tl.pg = tl.pg || {};
         return (elbtm >= dvtop) && (eltop <= dvbtm - 100);
     };
 
+    /**
+     * remove all traces of pageguide from the DOM.
+     **/
+    tl.pg.destroy = function () {
+        $('#tlyPageGuideWrapper').remove();
+        $('#tlyPageGuideOverlay').remove();
+        $('.tlypageguide_shadow').removeClass('tlypageguide_shadow');
+        $('body').removeClass('tlypageguide-open');
+        $('body').removeClass('tlyPageGuideWelcomeOpen');
+    };
+
     tl.pg.PageGuide.prototype.setup_welcome = function () {
         var $welcome = $('#tlyPageGuideWelcome');
         var that = this;
