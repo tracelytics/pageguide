@@ -111,7 +111,6 @@ tl.pg = tl.pg || {};
 
         var $guide = $("#tlyPageGuide");
         var $wrapper = $(tl.pg.wrapper_markup);
-        //var $message = $(tl.pg.message_markup);
 
         var tourtitle = $guide.data('tourtitle') || preferences.tourtitle;
 
