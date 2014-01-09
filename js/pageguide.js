@@ -92,6 +92,7 @@ tl.pg = tl.pg || {};
                 '<a href="#" class="tlypageguide_back" title="Previous">Previous</a>' +
                 '<a href="#" class="tlypageguide_fwd" title="Next">Next</a>' +
             '</div>' +
+            '<div id="tlyPageGuideContent"></div>' +
         '</div>';
 
     tl.pg.toggle_markup =
@@ -125,7 +126,7 @@ tl.pg = tl.pg || {};
         // remove any stale pageguides
         $('#tlyPageGuideWrapper').remove();
 
-        $('body').append($wrapper);
+        $('body').prepend($wrapper);
 
         var pg = new tl.pg.PageGuide($('#tlyPageGuideWrapper'), preferences);
 
@@ -133,6 +134,10 @@ tl.pg = tl.pg || {};
             pg.setup_welcome();
             pg.setup_handlers();
             pg.$base.children(".tlypageguide_toggle").animate({ "right": "-120px" }, 250);
+            pg.addSteps();
+            pg.checkTargets();
+            pg.positionOverlays();
+            console.log(pg.targetData);
             if (typeof(preferences.ready_callback) === 'function') {
                 preferences.ready_callback();
             }
@@ -154,10 +159,16 @@ tl.pg = tl.pg || {};
         this.handle_doc_switch = this.preferences.handle_doc_switch;
         this.custom_open_button = this.preferences.custom_open_button;
         this.is_open = false;
+        this.targetData = {};
+        this.hashTable = {};
+        this.changeQueue = [];
     };
 
-    tl.pg.hashUrl = function() {
-        var str = window.location.href;
+    tl.pg.hashUrl = function () {
+        return tl.pg.hashCode(window.location.href);
+    };
+
+    tl.pg.hashCode = function (str) {
         var hash = 0, i, char;
         if (str.length === 0) {
             return hash;
@@ -237,64 +248,164 @@ tl.pg = tl.pg || {};
         return this;
     };
 
+    /**
+     * grab any pageguide steps on the page that have not yet been added
+     * to the pg object.
+     **/
+    tl.pg.PageGuide.prototype.addSteps = function () {
+        var self = this;
+        $('#tlyPageGuide > li').each(function (i, el) {
+            var $el = $(el);
+            var tourTarget = $el.data('tourtarget');
+            if (self.targetData[tourTarget] == null) {
+                self.targetData[tourTarget] = {
+                    targetStyle: {},
+                    content: $el.html()
+                };
+                var hashCode = tl.pg.hashCode(tourTarget) + '';
+                self.hashTable[hashCode] = tourTarget;
+                $('#tlyPageGuideContent').append(
+                    '<div class="tlypageguide_TESTshadow tlypageguide_TESTshadow' + hashCode + '"></div>'
+                );
+            }
+        });
+    };
+
+    /**
+     * go through all the current targets and check whether the elements are
+     * on the page and visible.
+     **/
+    tl.pg.PageGuide.prototype.checkTargets = function () {
+        var self = this;
+        var visibleIndex = 0;
+        for (var target in self.targetData) {
+            var $el = $(target);
+            var newTargetData = {
+                targetStyle: {
+                    display: (!!$el.length && $el.is(':visible')) ? 'block' : 'none'
+                }
+            };
+            if (newTargetData.targetStyle.display) {
+                var offset = $el.offset();
+                $.extend(newTargetData.targetStyle, {
+                    top: offset.top,
+                    left: offset.left,
+                    width: $el.outerWidth(),
+                    height: $el.outerHeight(),
+                    'z-index': $el.css('z-index')
+                    // some kind of special casing for fixed positioning
+                });
+                visibleIndex++;
+                newTargetData.index = visibleIndex;
+            }
+            var diff = {
+                target: target
+            };
+            // compare new styles with existing ones
+            for (prop in newTargetData.targetStyle) {
+                if (newTargetData.targetStyle[prop] !== self.targetData[target][prop]) {
+                    if (diff.targetStyle == null) {
+                        diff.targetStyle = {};
+                    }
+                    diff.targetStyle[prop] = newTargetData.targetStyle[prop];
+                }
+            }
+            // compare index with existing index
+            if (newTargetData.targetStyle.index !== self.targetData[target].index) {
+                diff.index = newTargetData.targetStyle.index;
+            }
+            // push diff onto changequeue if changes have been made
+            if (diff.hasOwnProperty('targetStyle') || diff.hasOwnProperty('index')) {
+                self.changeQueue.push(diff);
+            }
+            $.extend(self.targetData[target], newTargetData);
+        }
+    };
+
+    tl.pg.PageGuide.prototype.positionOverlays = function () {
+        var self = this;
+        for (var i=0; i<self.changeQueue.length; i++) {
+            var changes = self.changeQueue[i];
+            var selector = '.tlypageguide_TESTshadow' + tl.pg.hashCode(changes.target);
+            var $el = $('#tlyPageGuideContent').find(selector);
+            if (changes.targetStyle != null) {
+                var style = $.extend({}, changes.targetStyle);
+                for (var prop in style) {
+                    // fix this
+                    if (prop === 'z-index') {
+                        style[prop] += 1;
+                    } else if (typeof style[prop] === 'number') {
+                        // TODO: change width, height, etc as necessary
+                        style[prop] = style[prop] + 'px';
+                    }
+                }
+                $el.css(style);
+            }
+            if (changes.index != null) {
+                // change the index
+            }
+        }
+        self.changeQueue = [];
+    };
+
     /* to be executed on pg expand */
     tl.pg.PageGuide.prototype._on_expand = function () {
-        var that = this,
-            $d = document,
-            $w = window;
+        // var that = this,
+        //     $d = document,
+        //     $w = window;
 
-        /* set up initial state */
-        this.position_tour();
-        this.cur_idx = 0;
+        // /* set up initial state */
+        // this.position_tour();
+        // this.cur_idx = 0;
 
-        // create a new stylesheet:
-        var ns = $d.createElement('style');
-        $d.getElementsByTagName('head')[0].appendChild(ns);
+        // // create a new stylesheet:
+        // var ns = $d.createElement('style');
+        // $d.getElementsByTagName('head')[0].appendChild(ns);
 
-        // keep Safari happy
-        if (!$w.createPopup) {
-            ns.appendChild($d.createTextNode(''));
-            ns.setAttribute("type", "text/css");
-        }
+        // // keep Safari happy
+        // if (!$w.createPopup) {
+        //     ns.appendChild($d.createTextNode(''));
+        //     ns.setAttribute("type", "text/css");
+        // }
 
-        // get a pointer to the stylesheet you just created
-        var sh = $d.styleSheets[$d.styleSheets.length - 1];
+        // // get a pointer to the stylesheet you just created
+        // var sh = $d.styleSheets[$d.styleSheets.length - 1];
 
-        // space for IE rule set
-        var ie = "";
+        // // space for IE rule set
+        // var ie = "";
 
-        /* add number tags and PG shading elements */
-        this.$items.each(function(i) {
-            var $p = $($(this).data('tourtarget') + ":visible:first");
-            $p.addClass("tlypageguide_shadow tlypageguide_shadow" + i);
+        // /* add number tags and PG shading elements */
+        // this.$items.each(function(i) {
+        //     var $p = $($(this).data('tourtarget') + ":visible:first");
+        //     $p.addClass("tlypageguide_shadow tlypageguide_shadow" + i);
 
-            var node_text = '.tlypageguide_shadow' + i + ':after { height: ' +
-                                $p.outerHeight() + 'px; width: ' + $p.outerWidth(false) + 'px; }';
+        //     var node_text = '.tlypageguide_shadow' + i + ':after { height: ' +
+        //                         $p.outerHeight() + 'px; width: ' + $p.outerWidth(false) + 'px; }';
 
-            if (!$w.createPopup) {
-                // modern browsers
-                var k = $d.createTextNode(node_text, 0);
-                ns.appendChild(k);
-            } else {
-                // for IE
-                ie += node_text;
-            }
+        //     if (!$w.createPopup) {
+        //         // modern browsers
+        //         var k = $d.createTextNode(node_text, 0);
+        //         ns.appendChild(k);
+        //     } else {
+        //         // for IE
+        //         ie += node_text;
+        //     }
 
-            $(this).find('.tlyPageGuideStepIndex').remove();
-            $(this).html('<div class="tlyPageGuideStepText">' + $(this).text() + '</div>');
-            $(this).prepend('<ins class="tlyPageGuideStepIndex">' + (i + 1) + '</ins>');
-            $(this).data('idx', i);
-        });
+        //     $(this).find('.tlyPageGuideStepIndex').remove();
+        //     $(this).html('<div class="tlyPageGuideStepText">' + $(this).text() + '</div>');
+        //     $(this).prepend('<ins class="tlyPageGuideStepIndex">' + (i + 1) + '</ins>');
+        //     $(this).data('idx', i);
+        // });
 
-        // is IE? slam styles in all at once:
-        if ($w.createPopup) {
-            sh.cssText = ie;
-        }
+        // // is IE? slam styles in all at once:
+        // if ($w.createPopup) {
+        //     sh.cssText = ie;
+        // }
 
-        /* decide to show first? */
-        if (this.preferences.auto_show_first && this.$items.length > 0) {
-            this.show_message(0);
-        }
+        // /* decide to show first? */
+        // if (this.preferences.auto_show_first && this.$items.length > 0) {
+        //     this.show_message(0);
+        // }
     };
 
     tl.pg.PageGuide.prototype.open = function() {
