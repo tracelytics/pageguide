@@ -134,10 +134,6 @@ tl.pg = tl.pg || {};
             pg.setup_welcome();
             pg.setup_handlers();
             pg.$base.children(".tlypageguide_toggle").animate({ "right": "-120px" }, 250);
-            pg.addSteps();
-            pg.checkTargets();
-            pg.positionOverlays();
-            console.log(pg.targetData);
             if (typeof(preferences.ready_callback) === 'function') {
                 preferences.ready_callback();
             }
@@ -162,6 +158,7 @@ tl.pg = tl.pg || {};
         this.targetData = {};
         this.hashTable = {};
         this.changeQueue = [];
+        this.visibleTargets = [];
     };
 
     tl.pg.hashUrl = function () {
@@ -278,6 +275,7 @@ tl.pg = tl.pg || {};
     tl.pg.PageGuide.prototype.checkTargets = function () {
         var self = this;
         var visibleIndex = 0;
+        var newVisibleTargets = [];
         for (var target in self.targetData) {
             var $el = $(target);
             var newTargetData = {
@@ -297,6 +295,7 @@ tl.pg = tl.pg || {};
                 });
                 visibleIndex++;
                 newTargetData.index = visibleIndex;
+                newVisibleTargets.push(target);
             }
             var diff = {
                 target: target
@@ -320,6 +319,7 @@ tl.pg = tl.pg || {};
             }
             $.extend(self.targetData[target], newTargetData);
         }
+        self.visibleTargets = newVisibleTargets;
     };
 
     tl.pg.PageGuide.prototype.positionOverlays = function () {
@@ -348,8 +348,16 @@ tl.pg = tl.pg || {};
         self.changeQueue = [];
     };
 
+    tl.pg.PageGuide.prototype.refreshVisibleSteps = function () {
+        var self = this;
+        self.addSteps();
+        self.checkTargets();
+        self.positionOverlays();
+    };
+
     /* to be executed on pg expand */
     tl.pg.PageGuide.prototype._on_expand = function () {
+        var self = this;
         // var that = this,
         //     $d = document,
         //     $w = window;
@@ -406,6 +414,43 @@ tl.pg = tl.pg || {};
         // if (this.preferences.auto_show_first && this.$items.length > 0) {
         //     this.show_message(0);
         // }
+        self.refreshVisibleSteps();
+
+        if (self.preferences.auto_show_first && self.visibleTargets.length) {
+            self.show_step(0);
+        }
+    };
+
+    /**
+     * show the step specified by either a numeric index or a selector.
+     * @index:  index of the currently visible step to show.
+     **/
+    tl.pg.PageGuide.prototype.show_step = function (index) {
+        var self = this;
+        var targetKey = self.visibleTargets[index];
+        var target = self.targetData[targetKey];
+
+        self.$message.find('.tlypageguide_text').html(target.content);
+
+        // DOM stuff
+        var defaultHeight = 100;
+        var oldHeight = parseFloat(self.$message.css("height"));
+        self.$message.css("height", "auto");
+        var height = parseFloat(self.$message.outerHeight());
+        self.$message.css("height", oldHeight + 'px');
+        if (height < defaultHeight) {
+            height = defaultHeight;
+        }
+        if (height > $(window).height()/2) {
+            height = $(window).height()/2;
+        }
+        height = height + "px";
+
+        if (!tl.pg.isScrolledIntoView($(targetKey))) {
+            $('html,body').animate({scrollTop: target.targetStyle.top - 50}, 500);
+        }
+        self.$message.show().animate({'height': height}, 500);
+        self.roll_number(self.$message.find('span'), target.index);
     };
 
     tl.pg.PageGuide.prototype.open = function() {
