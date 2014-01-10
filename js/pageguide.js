@@ -417,7 +417,7 @@ tl.pg = tl.pg || {};
         self.refreshVisibleSteps();
 
         if (self.preferences.auto_show_first && self.visibleTargets.length) {
-            self.show_step(0);
+            self.show_message(0);
         }
     };
 
@@ -425,12 +425,13 @@ tl.pg = tl.pg || {};
      * show the step specified by either a numeric index or a selector.
      * @index:  index of the currently visible step to show.
      **/
-    tl.pg.PageGuide.prototype.show_step = function (index) {
+    tl.pg.PageGuide.prototype.show_message = function (index) {
         var self = this;
         var targetKey = self.visibleTargets[index];
         var target = self.targetData[targetKey];
 
         self.$message.find('.tlypageguide_text').html(target.content);
+        self.cur_idx = index;
 
         // DOM stuff
         var defaultHeight = 100;
@@ -453,35 +454,61 @@ tl.pg = tl.pg || {};
         self.roll_number(self.$message.find('span'), target.index);
     };
 
+    tl.pg.PageGuide.prototype.navigateBack = function () {
+        var self = this;
+        /*
+         * If -n < x < 0, then the result of x % n will be x, which is
+         * negative. To get a positive remainder, compute (x + n) % n.
+         */
+        var new_index = (self.cur_idx + self.visibleTargets.length - 1) % self.visibleTargets.length;
+
+        self.track_event('PG.back');
+        self.show_message(new_index, true);
+        return false;
+    };
+
+    tl.pg.PageGuide.prototype.navigateForward = function () {
+        var self = this;
+        var new_index = (self.cur_idx + 1) % self.visibleTargets.length;
+
+        self.track_event('PG.fwd');
+        self.show_message(new_index, true);
+        return false;
+    };
+
     tl.pg.PageGuide.prototype.open = function() {
-        if (this.preferences.show_welcome) {
-            this.preferences.dismiss_welcome();
-            this.close_welcome();
+        var self = this;
+        if (self.preferences.show_welcome) {
+            self.preferences.dismiss_welcome();
+            self.close_welcome();
         }
-        if (this.is_open) {
+        if (self.is_open) {
             return;
         } else {
-            this.is_open = true;
+            self.is_open = true;
         }
 
-        this.track_event('PG.open');
+        self.track_event('PG.open');
 
-        this._on_expand();
-        this.$items.toggleClass('expanded');
+        self._on_expand();
+        self.$items.toggleClass('expanded');
         $('body').addClass('tlypageguide-open');
     };
 
     tl.pg.PageGuide.prototype.close = function() {
-        if (!this.is_open) {
+        var self = this;
+        if (!self.is_open) {
             return;
         } else {
-            this.is_open = false;
+            self.is_open = false;
         }
 
-        this.track_event('PG.close');
+        self.track_event('PG.close');
 
-        this.$items.toggleClass('expanded');
-        this.$message.animate({ height: "0" }, 500, function() {
+        //self.$items.toggleClass('expanded');
+        // TODO: fix this
+        $('.tlypageguide_TESTshadow').css('display', 'none');
+        self.$message.animate({ height: "0" }, 500, function() {
             $(this).hide();
         });
         /* clear number tags and shading elements */
@@ -494,6 +521,7 @@ tl.pg = tl.pg || {};
 
     tl.pg.PageGuide.prototype.setup_handlers = function () {
         var that = this;
+        var self = this;
 
         /* interaction: open/close PG interface */
         var interactor = (that.custom_open_button == null) ?
@@ -529,22 +557,12 @@ tl.pg = tl.pg || {};
 
         /* interaction: fwd/back click */
         this.$fwd.on('click', function() {
-            var new_index = (that.cur_idx + 1) % that.$items.length;
-
-            that.track_event('PG.fwd');
-            that.show_message(new_index);
+            self.navigateForward();
             return false;
         });
 
         this.$back.on('click', function() {
-            /*
-             * If -n < x < 0, then the result of x % n will be x, which is
-             * negative. To get a positive remainder, compute (x + n) % n.
-             */
-            var new_index = (that.cur_idx + that.$items.length - 1) % that.$items.length;
-
-            that.track_event('PG.back');
-            that.show_message(new_index, true);
+            self.navigateBack();
             return false;
         });
 
@@ -552,40 +570,40 @@ tl.pg = tl.pg || {};
         $(window).resize(function() { that.position_tour(); });
     };
 
-    tl.pg.PageGuide.prototype.show_message = function (new_index, left) {
-        var old_idx = this.cur_idx,
-            old_item = this.$items[old_idx],
-            new_item = this.$items[new_index];
+    // tl.pg.PageGuide.prototype.show_message = function (new_index, left) {
+    //     var old_idx = this.cur_idx,
+    //         old_item = this.$items[old_idx],
+    //         new_item = this.$items[new_index];
 
-        this.cur_idx = new_index;
-        if(this.handle_doc_switch){
-            this.handle_doc_switch($(new_item).data('tourtarget'),
-                                   $(old_item).data('tourtarget'));
-        }
+    //     this.cur_idx = new_index;
+    //     if(this.handle_doc_switch){
+    //         this.handle_doc_switch($(new_item).data('tourtarget'),
+    //                                $(old_item).data('tourtarget'));
+    //     }
 
-        $('div', this.$message).html($(new_item).children('div').html());
-        this.$items.removeClass("tlypageguide-active");
-        $(new_item).addClass("tlypageguide-active");
+    //     $('div', this.$message).html($(new_item).children('div').html());
+    //     this.$items.removeClass("tlypageguide-active");
+    //     $(new_item).addClass("tlypageguide-active");
 
-        if (!tl.pg.isScrolledIntoView($(new_item))) {
-            $('html,body').animate({scrollTop: $(new_item).offset().top - 50}, 500);
-        }
-        var defaultHeight = 100;
-        var oldHeight = parseFloat(this.$message.css("height"));
-        this.$message.css("height", "auto");
-        var height = parseFloat(this.$message.outerHeight());
-        this.$message.css("height", oldHeight + 'px');
-        if (height < defaultHeight) {
-            height = defaultHeight;
-        }
-        if (height > $(window).height()/2) {
-            height = $(window).height()/2;
-        }
-        height = height + "px";
+    //     if (!tl.pg.isScrolledIntoView($(new_item))) {
+    //         $('html,body').animate({scrollTop: $(new_item).offset().top - 50}, 500);
+    //     }
+    //     var defaultHeight = 100;
+    //     var oldHeight = parseFloat(this.$message.css("height"));
+    //     this.$message.css("height", "auto");
+    //     var height = parseFloat(this.$message.outerHeight());
+    //     this.$message.css("height", oldHeight + 'px');
+    //     if (height < defaultHeight) {
+    //         height = defaultHeight;
+    //     }
+    //     if (height > $(window).height()/2) {
+    //         height = $(window).height()/2;
+    //     }
+    //     height = height + "px";
 
-        this.$message.show().animate({'height': height}, 500);
-        this.roll_number(this.$message.find('span'), $(new_item).children('ins').html(), left);
-    };
+    //     this.$message.show().animate({'height': height}, 500);
+    //     this.roll_number(this.$message.find('span'), $(new_item).children('ins').html(), left);
+    // };
 
     tl.pg.PageGuide.prototype.roll_number = function (num_wrapper, new_text, left) {
         num_wrapper.animate({ 'text-indent': (left ? '' : '-') + '50px' }, 'fast', function() {
