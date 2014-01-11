@@ -6,6 +6,7 @@ An interactive guide for web page elements using jQuery and CSS3. Check it out I
 [![Build Status](https://travis-ci.org/tracelytics/pageguide.png)](https://travis-ci.org/tracelytics/pageguide)
 
 ## Table of Contents
+* [Quick Start](#quick-start)
 * [How-To](#how-to)
 * [An Example](#an-example)
 * [Options](#options)
@@ -13,6 +14,16 @@ An interactive guide for web page elements using jQuery and CSS3. Check it out I
 * [Tested In](#tested-in)
 * [Contribute](#contribute)
 * [License](#license)
+
+## Quick Start
+
+Three quick start options are available:
+
+* Download the latest [release](https://github.com/tracelytics/pageguide/releases)
+* Clone the repo: `git clone https://github.com/tracelytics/pageguide.git`
+* Install with [Bower](http://bower.io/): `bower install pageguide`
+
+Read the [Getting Started](http://tracelytics.github.io/pageguide/) page for information on the framework contents and more.
 
 ## How-To:
 1. Add references in your code to jQuery, pageguide.min.js & pageguide.min.css
