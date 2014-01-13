@@ -1,4 +1,5 @@
 $(function () {
+    var pg = {}; // reference for pageguide object
 
     module('tl.pg');
 
@@ -206,7 +207,7 @@ $(function () {
      **/
     function loadInitAndTest (title, cb, selector) {
         loadAndTest(title, function () {
-            tl.pg.init({
+            pg = tl.pg.init({
                 ready_callback: function () {
                     cb();
                     start();

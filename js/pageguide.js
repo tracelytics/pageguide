@@ -144,8 +144,6 @@ tl.pg = tl.pg || {};
     tl.pg.PageGuide = function (pg_elem, preferences) {
         this.preferences = preferences;
         this.$base = pg_elem;
-        this.$all_items = this.$base.find('#tlyPageGuide > li');
-        this.$items = $([]); /* fill me with visible elements on pg expand */
         this.$message = $('#tlyPageGuideMessages');
         this.$fwd = this.$base.find('a.tlypageguide_fwd');
         this.$back = this.$base.find('a.tlypageguide_back');
@@ -167,7 +165,7 @@ tl.pg = tl.pg || {};
 
     tl.pg.hashCode = function (str) {
         var hash = 0, i, char;
-        if (str.length === 0) {
+        if (str == null || str.length === 0) {
             return hash;
         }
         for (i = 0; i < str.length; i++) {
@@ -200,44 +198,44 @@ tl.pg = tl.pg || {};
 
     tl.pg.PageGuide.prototype.setup_welcome = function () {
         var $welcome = $('#tlyPageGuideWelcome');
-        var that = this;
+        var self = this;
         if ($welcome.length > 0) {
-            that.preferences.show_welcome = !that.preferences.check_welcome_dismissed();
-            if (that.preferences.show_welcome) {
+            self.preferences.show_welcome = !self.preferences.check_welcome_dismissed();
+            if (self.preferences.show_welcome) {
                 if (!$('#tlyPageGuideOverlay').length) {
                     $('body').prepend('<div id="tlyPageGuideOverlay"></div>');
                 }
-                $welcome.appendTo(that.$base);
+                $welcome.appendTo(self.$base);
             }
 
             if ($welcome.find('.tlypageguide_ignore').length) {
                 $welcome.on('click', '.tlypageguide_ignore', function () {
-                    that.close_welcome();
-                    that.track_event('PG.ignoreWelcome');
+                    self.close_welcome();
+                    self.track_event('PG.ignoreWelcome');
                 });
             }
             if ($welcome.find('.tlypageguide_dismiss').length) {
                 $welcome.on('click', '.tlypageguide_dismiss', function () {
-                    that.close_welcome();
-                    that.preferences.dismiss_welcome();
-                    that.track_event('PG.dismissWelcome');
+                    self.close_welcome();
+                    self.preferences.dismiss_welcome();
+                    self.track_event('PG.dismissWelcome');
                 });
             }
             $welcome.on('click', '.tlypageguide_start', function () {
-                that.open();
-                that.track_event('PG.startFromWelcome');
+                self.open();
+                self.track_event('PG.startFromWelcome');
             });
 
-            if (that.preferences.show_welcome) {
-                that.pop_welcome();
+            if (self.preferences.show_welcome) {
+                self.pop_welcome();
             }
         }
     };
 
     tl.pg.PageGuide.prototype.ready = function(callback) {
-        var that = this;
+        var self = this;
         tl.pg.interval = window.setInterval(function() {
-                if (!$(that.preferences.loading_selector).is(':visible')) {
+                if (!$(self.preferences.loading_selector).is(':visible')) {
                     callback();
                     clearInterval(tl.pg.interval);
                 }
@@ -305,7 +303,7 @@ tl.pg = tl.pg || {};
                 target: target
             };
             // compare new styles with existing ones
-            for (prop in newTargetData.targetStyle) {
+            for (var prop in newTargetData.targetStyle) {
                 if (newTargetData.targetStyle[prop] !== self.targetData[target][prop]) {
                     if (diff.targetStyle == null) {
                         diff.targetStyle = {};
@@ -378,33 +376,35 @@ tl.pg = tl.pg || {};
         var self = this;
         var targetKey = self.visibleTargets[index];
         var target = self.targetData[targetKey];
-        var selector = '.tlypageguide_shadow' + tl.pg.hashCode(targetKey);
+        if (target != null) {
+            var selector = '.tlypageguide_shadow' + tl.pg.hashCode(targetKey);
 
-        $('.tlypageguide-active').removeClass('tlypageguide-active');
-        $(selector).addClass('tlypageguide-active');
+            $('.tlypageguide-active').removeClass('tlypageguide-active');
+            $(selector).addClass('tlypageguide-active');
 
-        self.$message.find('.tlypageguide_text').html(target.content);
-        self.cur_idx = index;
+            self.$message.find('.tlypageguide_text').html(target.content);
+            self.cur_idx = index;
 
-        // DOM stuff
-        var defaultHeight = 100;
-        var oldHeight = parseFloat(self.$message.css("height"));
-        self.$message.css("height", "auto");
-        var height = parseFloat(self.$message.outerHeight());
-        self.$message.css("height", oldHeight + 'px');
-        if (height < defaultHeight) {
-            height = defaultHeight;
+            // DOM stuff
+            var defaultHeight = 100;
+            var oldHeight = parseFloat(self.$message.css("height"));
+            self.$message.css("height", "auto");
+            var height = parseFloat(self.$message.outerHeight());
+            self.$message.css("height", oldHeight + 'px');
+            if (height < defaultHeight) {
+                height = defaultHeight;
+            }
+            if (height > $(window).height()/2) {
+                height = $(window).height()/2;
+            }
+            height = height + "px";
+
+            if (!tl.pg.isScrolledIntoView($(targetKey))) {
+                $('html,body').animate({scrollTop: target.targetStyle.top - 50}, 500);
+            }
+            self.$message.show().animate({'height': height}, 500);
+            self.roll_number(self.$message.find('span'), target.index);
         }
-        if (height > $(window).height()/2) {
-            height = $(window).height()/2;
-        }
-        height = height + "px";
-
-        if (!tl.pg.isScrolledIntoView($(targetKey))) {
-            $('html,body').animate({scrollTop: target.targetStyle.top - 50}, 500);
-        }
-        self.$message.show().animate({'height': height}, 500);
-        self.roll_number(self.$message.find('span'), target.index);
     };
 
     tl.pg.PageGuide.prototype.navigateBack = function () {
@@ -444,7 +444,6 @@ tl.pg = tl.pg || {};
         self.track_event('PG.open');
 
         self._on_expand();
-        self.$items.toggleClass('expanded');
         $('body').addClass('tlypageguide-open');
     };
 
@@ -458,7 +457,6 @@ tl.pg = tl.pg || {};
 
         self.track_event('PG.close');
 
-        //self.$items.toggleClass('expanded');
         // TODO: fix this
         $('.tlypageguide_shadow').css('display', 'none');
         $('.tlypageguide-active').removeClass('tlypageguide-active');
@@ -470,23 +468,22 @@ tl.pg = tl.pg || {};
     };
 
     tl.pg.PageGuide.prototype.setup_handlers = function () {
-        var that = this;
         var self = this;
 
         /* interaction: open/close PG interface */
-        var interactor = (that.custom_open_button == null) ?
-                        this.$base.find('.tlypageguide_toggle') :
-                        $(that.custom_open_button);
+        var interactor = (self.custom_open_button == null) ?
+                        self.$base.find('.tlypageguide_toggle') :
+                        $(self.custom_open_button);
         interactor.off();
         interactor.on('click', function() {
-            if (that.is_open) {
-                that.close();
-            } else if (that.preferences.show_welcome &&
-                      !that.preferences.check_welcome_dismissed() &&
+            if (self.is_open) {
+                self.close();
+            } else if (self.preferences.show_welcome &&
+                      !self.preferences.check_welcome_dismissed() &&
                       !$('body').hasClass('tlyPageGuideWelcomeOpen')) {
-                that.pop_welcome();
+                self.pop_welcome();
             } else {
-                that.open();
+                self.open();
             }
             return false;
         });
@@ -501,7 +498,8 @@ tl.pg = tl.pg || {};
         /* interaction: item click */
         $('body').on('click', '.tlyPageGuideStepIndex', function () {
             var selector = self.hashTable[$(this).parent().data('selectorhash')];
-            var index = self.targetData[selector].index;
+            var target = self.targetData[selector];
+            var index = (target) ? target.index : 1;
             self.track_event('PG.specific_elt');
             self.show_message(index - 1);
         });
