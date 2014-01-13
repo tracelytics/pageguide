@@ -361,62 +361,7 @@ tl.pg = tl.pg || {};
     /* to be executed on pg expand */
     tl.pg.PageGuide.prototype._on_expand = function () {
         var self = this;
-        // var that = this,
-        //     $d = document,
-        //     $w = window;
 
-        // /* set up initial state */
-        // this.position_tour();
-        // this.cur_idx = 0;
-
-        // // create a new stylesheet:
-        // var ns = $d.createElement('style');
-        // $d.getElementsByTagName('head')[0].appendChild(ns);
-
-        // // keep Safari happy
-        // if (!$w.createPopup) {
-        //     ns.appendChild($d.createTextNode(''));
-        //     ns.setAttribute("type", "text/css");
-        // }
-
-        // // get a pointer to the stylesheet you just created
-        // var sh = $d.styleSheets[$d.styleSheets.length - 1];
-
-        // // space for IE rule set
-        // var ie = "";
-
-        // /* add number tags and PG shading elements */
-        // this.$items.each(function(i) {
-        //     var $p = $($(this).data('tourtarget') + ":visible:first");
-        //     $p.addClass("tlypageguide_shadow tlypageguide_shadow" + i);
-
-        //     var node_text = '.tlypageguide_shadow' + i + ':after { height: ' +
-        //                         $p.outerHeight() + 'px; width: ' + $p.outerWidth(false) + 'px; }';
-
-        //     if (!$w.createPopup) {
-        //         // modern browsers
-        //         var k = $d.createTextNode(node_text, 0);
-        //         ns.appendChild(k);
-        //     } else {
-        //         // for IE
-        //         ie += node_text;
-        //     }
-
-        //     $(this).find('.tlyPageGuideStepIndex').remove();
-        //     $(this).html('<div class="tlyPageGuideStepText">' + $(this).text() + '</div>');
-        //     $(this).prepend('<ins class="tlyPageGuideStepIndex">' + (i + 1) + '</ins>');
-        //     $(this).data('idx', i);
-        // });
-
-        // // is IE? slam styles in all at once:
-        // if ($w.createPopup) {
-        //     sh.cssText = ie;
-        // }
-
-        // /* decide to show first? */
-        // if (this.preferences.auto_show_first && this.$items.length > 0) {
-        //     this.show_message(0);
-        // }
         self.refreshVisibleSteps();
 
         if (self.preferences.auto_show_first && self.visibleTargets.length) {
@@ -519,11 +464,7 @@ tl.pg = tl.pg || {};
         self.$message.animate({ height: "0" }, 500, function() {
             $(this).hide();
         });
-        /* clear number tags and shading elements */
-        // $('[class~="tlypageguide_shadow"]').removeClass(function(i, c) {
-        //     return c.match(/tlypageguide_shadow.*?\b/g).join(" ");
-        // });
-        $('ins').remove();
+
         $('body').removeClass('tlypageguide-open');
     };
 
@@ -580,82 +521,10 @@ tl.pg = tl.pg || {};
         });
     };
 
-    // tl.pg.PageGuide.prototype.show_message = function (new_index, left) {
-    //     var old_idx = this.cur_idx,
-    //         old_item = this.$items[old_idx],
-    //         new_item = this.$items[new_index];
-
-    //     this.cur_idx = new_index;
-    //     if(this.handle_doc_switch){
-    //         this.handle_doc_switch($(new_item).data('tourtarget'),
-    //                                $(old_item).data('tourtarget'));
-    //     }
-
-    //     $('div', this.$message).html($(new_item).children('div').html());
-    //     this.$items.removeClass("tlypageguide-active");
-    //     $(new_item).addClass("tlypageguide-active");
-
-    //     if (!tl.pg.isScrolledIntoView($(new_item))) {
-    //         $('html,body').animate({scrollTop: $(new_item).offset().top - 50}, 500);
-    //     }
-    //     var defaultHeight = 100;
-    //     var oldHeight = parseFloat(this.$message.css("height"));
-    //     this.$message.css("height", "auto");
-    //     var height = parseFloat(this.$message.outerHeight());
-    //     this.$message.css("height", oldHeight + 'px');
-    //     if (height < defaultHeight) {
-    //         height = defaultHeight;
-    //     }
-    //     if (height > $(window).height()/2) {
-    //         height = $(window).height()/2;
-    //     }
-    //     height = height + "px";
-
-    //     this.$message.show().animate({'height': height}, 500);
-    //     this.roll_number(this.$message.find('span'), $(new_item).children('ins').html(), left);
-    // };
-
     tl.pg.PageGuide.prototype.roll_number = function (num_wrapper, new_text, left) {
         num_wrapper.animate({ 'text-indent': (left ? '' : '-') + '50px' }, 'fast', function() {
             num_wrapper.html(new_text);
             num_wrapper.css({ 'text-indent': (left ? '-' : '') + '50px' }, 'fast').animate({ 'text-indent': "0" }, 'fast');
-        });
-    };
-
-    tl.pg.PageGuide.prototype.position_tour = function () {
-        /* set PG element positions for visible tourtargets */
-        this.$items = this.$all_items.filter(function () {
-            return $($(this).data('tourtarget')).is(':visible');
-        });
-
-        this.$items.each(function() {
-            var arrow   = $(this),
-                target  = $(arrow.data('tourtarget')).filter(':visible:first'),
-                position = arrow.data('position'),
-                setLeft = target.offset().left,
-                setTop  = target.offset().top;
-
-            if (position == "fixed") {
-                setTop  -= $(window).scrollTop();
-            }
-
-            if (arrow.hasClass("tlypageguide_top")) {
-                setTop -= 60;
-            } else if (arrow.hasClass("tlypageguide_bottom")) {
-                setTop += target.outerHeight() + 15;
-            } else {
-                setTop += 5;
-            }
-
-            if (arrow.hasClass("tlypageguide_right")) {
-                setLeft += target.outerWidth(false) + 15;
-            } else if (arrow.hasClass("tlypageguide_left")) {
-                setLeft -= 65;
-            } else {
-                setLeft += 5;
-            }
-
-            arrow.css({ "left": setLeft + "px", "top": setTop + "px", "position": position});
         });
     };
 
