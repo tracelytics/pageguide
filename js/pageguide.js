@@ -254,6 +254,7 @@ tl.pg = tl.pg || {};
         $('#tlyPageGuide > li').each(function (i, el) {
             var $el = $(el);
             var tourTarget = $el.data('tourtarget');
+            var positionClass = $el.attr('class');
             if (self.targetData[tourTarget] == null) {
                 self.targetData[tourTarget] = {
                     targetStyle: {},
@@ -262,7 +263,9 @@ tl.pg = tl.pg || {};
                 var hashCode = tl.pg.hashCode(tourTarget) + '';
                 self.hashTable[hashCode] = tourTarget;
                 $('#tlyPageGuideContent').append(
-                    '<div class="tlypageguide_TESTshadow tlypageguide_TESTshadow' + hashCode + '"></div>'
+                    '<div class="tlypageguide_TESTshadow tlypageguide_TESTshadow' + hashCode + '">' +
+                        '<span class="tlyPageGuideStepIndex ' + positionClass +'"></span>' +
+                    '</div>'
                 );
             }
         });
@@ -310,8 +313,8 @@ tl.pg = tl.pg || {};
                 }
             }
             // compare index with existing index
-            if (newTargetData.targetStyle.index !== self.targetData[target].index) {
-                diff.index = newTargetData.targetStyle.index;
+            if (newTargetData.index !== self.targetData[target].index) {
+                diff.index = newTargetData.index;
             }
             // push diff onto changequeue if changes have been made
             if (diff.hasOwnProperty('targetStyle') || diff.hasOwnProperty('index')) {
@@ -342,7 +345,7 @@ tl.pg = tl.pg || {};
                 $el.css(style);
             }
             if (changes.index != null) {
-                // change the index
+                $el.find('.tlyPageGuideStepIndex').text(changes.index);
             }
         }
         self.changeQueue = [];
@@ -429,6 +432,10 @@ tl.pg = tl.pg || {};
         var self = this;
         var targetKey = self.visibleTargets[index];
         var target = self.targetData[targetKey];
+        var selector = '.tlypageguide_TESTshadow' + tl.pg.hashCode(targetKey);
+
+        $('.tlypageguide-active').removeClass('tlypageguide-active');
+        $(selector).addClass('tlypageguide-active');
 
         self.$message.find('.tlypageguide_text').html(target.content);
         self.cur_idx = index;
@@ -508,13 +515,14 @@ tl.pg = tl.pg || {};
         //self.$items.toggleClass('expanded');
         // TODO: fix this
         $('.tlypageguide_TESTshadow').css('display', 'none');
+        $('.tlypageguide-active').removeClass('tlypageguide-active');
         self.$message.animate({ height: "0" }, 500, function() {
             $(this).hide();
         });
         /* clear number tags and shading elements */
-        $('[class~="tlypageguide_shadow"]').removeClass(function(i, c) {
-            return c.match(/tlypageguide_shadow.*?\b/g).join(" ");
-        });
+        // $('[class~="tlypageguide_shadow"]').removeClass(function(i, c) {
+        //     return c.match(/tlypageguide_shadow.*?\b/g).join(" ");
+        // });
         $('ins').remove();
         $('body').removeClass('tlypageguide-open');
     };
@@ -556,18 +564,20 @@ tl.pg = tl.pg || {};
         });
 
         /* interaction: fwd/back click */
-        this.$fwd.on('click', function() {
+        self.$fwd.on('click', function() {
             self.navigateForward();
             return false;
         });
 
-        this.$back.on('click', function() {
+        self.$back.on('click', function() {
             self.navigateBack();
             return false;
         });
 
         /* register resize callback */
-        $(window).resize(function() { that.position_tour(); });
+        $(window).resize(function() {
+            self.refreshVisibleSteps();
+        });
     };
 
     // tl.pg.PageGuide.prototype.show_message = function (new_index, left) {
