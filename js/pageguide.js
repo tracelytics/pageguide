@@ -263,7 +263,8 @@ tl.pg = tl.pg || {};
                 var hashCode = tl.pg.hashCode(tourTarget) + '';
                 self.hashTable[hashCode] = tourTarget;
                 $('#tlyPageGuideContent').append(
-                    '<div class="tlypageguide_TESTshadow tlypageguide_TESTshadow' + hashCode + '">' +
+                    '<div class="tlypageguide_shadow tlypageguide_shadow' + hashCode +
+                    '" data-selectorhash="' + hashCode + '">' +
                         '<span class="tlyPageGuideStepIndex ' + positionClass +'"></span>' +
                     '</div>'
                 );
@@ -329,7 +330,7 @@ tl.pg = tl.pg || {};
         var self = this;
         for (var i=0; i<self.changeQueue.length; i++) {
             var changes = self.changeQueue[i];
-            var selector = '.tlypageguide_TESTshadow' + tl.pg.hashCode(changes.target);
+            var selector = '.tlypageguide_shadow' + tl.pg.hashCode(changes.target);
             var $el = $('#tlyPageGuideContent').find(selector);
             if (changes.targetStyle != null) {
                 var style = $.extend({}, changes.targetStyle);
@@ -377,7 +378,7 @@ tl.pg = tl.pg || {};
         var self = this;
         var targetKey = self.visibleTargets[index];
         var target = self.targetData[targetKey];
-        var selector = '.tlypageguide_TESTshadow' + tl.pg.hashCode(targetKey);
+        var selector = '.tlypageguide_shadow' + tl.pg.hashCode(targetKey);
 
         $('.tlypageguide-active').removeClass('tlypageguide-active');
         $(selector).addClass('tlypageguide-active');
@@ -459,7 +460,7 @@ tl.pg = tl.pg || {};
 
         //self.$items.toggleClass('expanded');
         // TODO: fix this
-        $('.tlypageguide_TESTshadow').css('display', 'none');
+        $('.tlypageguide_shadow').css('display', 'none');
         $('.tlypageguide-active').removeClass('tlypageguide-active');
         self.$message.animate({ height: "0" }, 500, function() {
             $(this).hide();
@@ -490,18 +491,19 @@ tl.pg = tl.pg || {};
             return false;
         });
 
-        $('.tlypageguide_close', this.$message.add($('.tlypageguide_toggle')))
+        /* close guide */
+        $('.tlypageguide_close', self.$message.add($('.tlypageguide_toggle')))
             .on('click', function() {
-                that.close();
+                self.close();
                 return false;
         });
 
         /* interaction: item click */
-        this.$all_items.off();
-        this.$all_items.on('click', function() {
-            var new_index = $(this).data('idx');
-            that.track_event('PG.specific_elt');
-            that.show_message(new_index);
+        $('body').on('click', '.tlyPageGuideStepIndex', function () {
+            var selector = self.hashTable[$(this).parent().data('selectorhash')];
+            var index = self.targetData[selector].index;
+            self.track_event('PG.specific_elt');
+            self.show_message(index - 1);
         });
 
         /* interaction: fwd/back click */

@@ -61,8 +61,6 @@
 /* Page Guide
 ================================================== */
 
-    //#tlyPageGuide li div { display: none; }
-
     #tlyPageGuideWrapper {
         .pg-border-box;
         color: #000;
@@ -305,7 +303,11 @@
 
     // NEW
 
-    .tlypageguide_TESTshadow {
+    #tlyPageGuide {
+        display: none;
+    }
+
+    .tlypageguide_shadow {
         position: absolute;
         display: none;
         background-color: fade(@pg-highlight-color, 10%);
@@ -324,9 +326,7 @@
         text-align: center;
         width: 50px;
         z-index: 5000;
-
         .pg-opacity(100);
-        height:46px;
         min-height: 15px;
         max-height: 46px;
 

@@ -80,7 +80,7 @@ $(function () {
         for (var i=1; i<=itemLength; i++) {
             var index = i % 4;
             $('.tlypageguide_fwd').trigger('click');
-            equal($('#tlyPageGuide > li:eq(' + index + ') > .tlyPageGuideStepText').text(),
+            equal($('#tlyPageGuide > li:eq(' + index + ')').text(),
                 $('.tlypageguide_text').text(), 'caption ' + index + ' displayed');
         }
     });
@@ -92,7 +92,7 @@ $(function () {
         $('.tlypageguide_toggle').trigger('click');
         for (var i=itemLength-1; i>=0; i--) {
             $('.tlypageguide_back').trigger('click');
-            equal($('#tlyPageGuide > li:eq(' + i + ') > .tlyPageGuideStepText').text(),
+            equal($('#tlyPageGuide > li:eq(' + i + ')').text(),
                 $('.tlypageguide_text').text(), 'caption ' + i + ' displayed');
         }
     });
@@ -104,7 +104,7 @@ $(function () {
         $('.tlypageguide_toggle').trigger('click');
         $('.tlyPageGuideStepIndex').each(function (i, el) {
             $(el).trigger('click');
-            equal($('#tlyPageGuide > li:eq(' + i + ') > .tlyPageGuideStepText').text(),
+            equal($('#tlyPageGuide > li:eq(' + i + ')').text(),
                 $('.tlypageguide_text').text(), 'caption ' + i + ' displayed');
         });
     });
@@ -227,7 +227,7 @@ $(function () {
         closeAction();
         ok($('#tlyPageGuideMessages').not(':visible'), 'message area hidden');
         equal($('.tlypageguide_shadow:visible').length, 0, 'step shadows hidden');
-        equal($('#tlyPageGuide ins:visible').length, 0, 'step indices hidden');
+        equal($('.tlyPageGuideStepIndex:visible').length, 0, 'step indices hidden');
     }
 
     /**
@@ -240,12 +240,12 @@ $(function () {
         ok($('body').hasClass('tlypageguide-open'), 'body class');
         ok($('#tlyPageGuideMessages').is(':visible'), 'message area shown');
         equal($('.tlypageguide-active').length, 1, 'only one active element');
-        equal($('#tlyPageGuide > li:eq(0) > .tlyPageGuideStepText').text(),
+        equal($('#tlyPageGuide > li:eq(0)').text(),
             $('.tlypageguide_text').text(), 'first caption displayed');
 
         var numSteps = $('#tlyPageGuide > li').length;
         equal($('.tlypageguide_shadow:visible').length, numSteps, 'all step shadows shown');
-        equal($('#tlyPageGuide ins:visible').length, numSteps, 'all step indices shown');
+        equal($('.tlyPageGuideStepIndex:visible').length, numSteps, 'all step indices shown');
     }
 
     /**
