@@ -149,6 +149,7 @@ tl.pg = tl.pg || {};
         this.$back = this.$base.find('a.tlypageguide_back');
         this.$welcome = $('#tlyPageGuideWelcome');
         this.cur_idx = 0;
+        this.cur_selector = null;
         this.track_event = this.preferences.track_events_cb;
         this.handle_doc_switch = this.preferences.handle_doc_switch;
         this.custom_open_button = this.preferences.custom_open_button;
@@ -285,7 +286,7 @@ tl.pg = tl.pg || {};
                     display: (!!$el.length && $el.is(':visible')) ? 'block' : 'none'
                 }
             };
-            if (newTargetData.targetStyle.display) {
+            if (newTargetData.targetStyle.display === 'block') {
                 var offset = $el.offset();
                 $.extend(newTargetData.targetStyle, {
                     top: offset.top,
@@ -384,6 +385,7 @@ tl.pg = tl.pg || {};
 
             self.$message.find('.tlypageguide_text').html(target.content);
             self.cur_idx = index;
+            self.cur_selector = targetKey;
 
             // DOM stuff
             var defaultHeight = 100;
@@ -443,7 +445,11 @@ tl.pg = tl.pg || {};
 
         self.track_event('PG.open');
 
-        self._on_expand();
+        self.refreshVisibleSteps();
+
+        if (self.preferences.auto_show_first && self.visibleTargets.length) {
+            self.show_message(0);
+        }
         $('body').addClass('tlypageguide-open');
     };
 
