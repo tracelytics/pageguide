@@ -46,7 +46,10 @@ tl = window.tl || {};
 tl.pg = tl.pg || {};
 
 (function ($) {
-
+    /**
+     * default preferences. can be overridden by user settings passed into
+     * tl.pg.init().
+     **/
     tl.pg.default_prefs = {
         'auto_show_first': true,
         'loading_selector' : '#loading',
@@ -83,6 +86,7 @@ tl.pg = tl.pg || {};
         'ready_callback': null
     };
 
+    // boilerplate markup for the message display element and shadow/index bubble container.
     tl.pg.wrapper_markup =
         '<div id="tlyPageGuideWrapper">' +
             '<div id="tlyPageGuideMessages">' +
@@ -95,12 +99,18 @@ tl.pg = tl.pg || {};
             '<div id="tlyPageGuideContent"></div>' +
         '</div>';
 
+    // boilerplate markup for the toggle element.
     tl.pg.toggle_markup =
         '<div class="tlypageguide_toggle" title="Launch Page Guide">' +
             '<div><span class="tlypageguide_toggletitle"></span></div>' +
             '<a href="#" class="tlypageguide_close" title="close guide">close guide &raquo;</a>' +
         '</div>';
 
+    /**
+     * initiates the pageguide using the given preferences. must be idempotent, that is,
+     * able to run multiple times without changing state.
+     * preferences (object): any preferences the user wishes to override.
+     **/
     tl.pg.init = function(preferences) {
         preferences = $.extend({}, tl.pg.default_prefs, preferences);
         clearInterval(tl.pg.interval);
@@ -141,6 +151,13 @@ tl.pg = tl.pg || {};
         return pg;
     };
 
+    /**
+     * constructor for the base PageGuide object. contains: relevant elements,
+     * user-defined preferences, and state information. all of this data is public.
+     * pg_elem (jQuery element): the base wrapper element which contains all the pg
+     *     elements
+     * preferences (object): combined user-defined and default preferences.
+     **/
     tl.pg.PageGuide = function (pg_elem, preferences) {
         this.preferences = preferences;
         this.$base = pg_elem;
@@ -160,10 +177,19 @@ tl.pg = tl.pg || {};
         this.visibleTargets = [];
     };
 
+    /**
+     * hash the current page's url. used in the default check_welcome_dismissed
+     * and dismiss_welcome functions
+     **/
     tl.pg.hashUrl = function () {
         return tl.pg.hashCode(window.location.href);
     };
 
+    /**
+     * generate a random numeric hash for a given string. originally from:
+     * http://stackoverflow.com/a/7616484/1135244
+     * str (string): the string to be hashed
+     **/
     tl.pg.hashCode = function (str) {
         var hash = 0, i, char;
         if (str == null || str.length === 0) {
@@ -177,6 +203,11 @@ tl.pg = tl.pg || {};
         return hash.toString();
     };
 
+    /**
+     * check whether the element targeted by the given selector is within the
+     * currently scrolled viewport.
+     * elem (string): selector for the element in question
+     **/
     tl.pg.isScrolledIntoView = function(elem) {
         var dvtop = $(window).scrollTop(),
             dvbtm = dvtop + $(window).height(),
@@ -197,6 +228,11 @@ tl.pg = tl.pg || {};
         $('body').removeClass('tlyPageGuideWelcomeOpen');
     };
 
+    /**
+     * check for a welcome message. if it exists, determine whether or not to show it,
+     * using self.preferences.check_welcome_dismissed. then, bind relevant handlers to
+     * the buttons included in the welcome message element.
+     **/
     tl.pg.PageGuide.prototype.setup_welcome = function () {
         var $welcome = $('#tlyPageGuideWelcome');
         var self = this;
@@ -233,6 +269,13 @@ tl.pg = tl.pg || {};
         }
     };
 
+    /**
+     * timer function. will poll the DOM at 250ms intervals until the user-defined
+     * self.preferences.loading_selector becomes visible, at which point it will
+     * execute the given callback. useful in cases where the DOM elements pageguide
+     * depends on are loaded asynchronously.
+     * callback (function): executes when loading selector is visible
+     **/
     tl.pg.PageGuide.prototype.ready = function(callback) {
         var self = this;
         tl.pg.interval = window.setInterval(function() {
@@ -246,7 +289,8 @@ tl.pg = tl.pg || {};
 
     /**
      * grab any pageguide steps on the page that have not yet been added
-     * to the pg object.
+     * to the pg object. for each one, append a shadow element and corresponding
+     * index bubble to #tlyPageGuideContent.
      **/
     tl.pg.PageGuide.prototype.addSteps = function () {
         var self = this;
@@ -273,7 +317,8 @@ tl.pg = tl.pg || {};
 
     /**
      * go through all the current targets and check whether the elements are
-     * on the page and visible.
+     * on the page and visible. if so, record all appropriate css data in self.targetData.
+     * any changes in each self.targetData element get pushed to self.changeQueue.
      **/
     tl.pg.PageGuide.prototype.checkTargets = function () {
         var self = this;
@@ -325,6 +370,11 @@ tl.pg = tl.pg || {};
         self.visibleTargets = newVisibleTargets;
     };
 
+    /**
+     * position the shadow elements (and their attached index bubbles) in their
+     * appropriate places over the visible targets. executes by iterating through
+     * all the changes that have been pushed to self.changeQueue
+     **/
     tl.pg.PageGuide.prototype.positionOverlays = function () {
         var self = this;
         for (var i=0; i<self.changeQueue.length; i++) {
@@ -351,6 +401,12 @@ tl.pg = tl.pg || {};
         self.changeQueue = [];
     };
 
+    /**
+     * find all pageguide steps and appropriately position their corresponding pageguide
+     * elements. ideal to run on its own whenever pageguide is opened, or when a DOM
+     * change takes place that will not affect the visibility of the target elements
+     * (e.g. resize)
+     **/
     tl.pg.PageGuide.prototype.refreshVisibleSteps = function () {
         var self = this;
         self.addSteps();
@@ -358,20 +414,24 @@ tl.pg = tl.pg || {};
         self.positionOverlays();
     };
 
-    /* to be executed on pg expand */
-    tl.pg.PageGuide.prototype._on_expand = function () {
+    /**
+     * update visible steps on page, and also navigate to the next available step if
+     * necessary. this is especially useful when DOM changes take place while the
+     * pageguide is open, meaning its target elements may be affected.
+     **/
+    tl.pg.PageGuide.prototype.updateVisible = function () {
         var self = this;
-
         self.refreshVisibleSteps();
-
-        if (self.preferences.auto_show_first && self.visibleTargets.length) {
-            self.show_message(0);
+        if (self.cur_selector != null && self.cur_selector !== self.visibleTargets[self.cur_idx]) {
+            // mod by target length in case user was viewing last target and it got removed
+            var newIndex = self.cur_idx % self.visibleTargets.length;
+            self.show_message(newIndex);
         }
     };
 
     /**
      * show the step specified by either a numeric index or a selector.
-     * @index:  index of the currently visible step to show.
+     * index (number): index of the currently visible step to show.
      **/
     tl.pg.PageGuide.prototype.show_message = function (index) {
         var self = this;
@@ -409,6 +469,9 @@ tl.pg = tl.pg || {};
         }
     };
 
+    /**
+     * navigate to the previous step. if at the first step, loop around to the last.
+     **/
     tl.pg.PageGuide.prototype.navigateBack = function () {
         var self = this;
         /*
@@ -422,6 +485,9 @@ tl.pg = tl.pg || {};
         return false;
     };
 
+    /**
+     * navigate to the next step. if at last step, loop back to the first.
+     **/
     tl.pg.PageGuide.prototype.navigateForward = function () {
         var self = this;
         var new_index = (self.cur_idx + 1) % self.visibleTargets.length;
@@ -431,6 +497,11 @@ tl.pg = tl.pg || {};
         return false;
     };
 
+    /**
+     * open the pageguide! can be fired at any time, though it's usually done via
+     * the toggle element (either boilerplate or user-specified) or the welcome
+     * modal.
+     **/
     tl.pg.PageGuide.prototype.open = function() {
         var self = this;
         if (self.preferences.show_welcome) {
@@ -453,6 +524,10 @@ tl.pg = tl.pg || {};
         $('body').addClass('tlypageguide-open');
     };
 
+    /**
+     * close the pageguide. can also be fired at any time, though usually done via
+     * the toggle or the close button.
+     **/
     tl.pg.PageGuide.prototype.close = function() {
         var self = this;
         if (!self.is_open) {
@@ -473,6 +548,9 @@ tl.pg = tl.pg || {};
         $('body').removeClass('tlypageguide-open');
     };
 
+    /**
+     * bind all relevant event handlers within the document.
+     **/
     tl.pg.PageGuide.prototype.setup_handlers = function () {
         var self = this;
 
@@ -527,6 +605,12 @@ tl.pg = tl.pg || {};
         });
     };
 
+    /**
+     * animate a given number to roll to the side.
+     * num_wrapper (jQuery element): the element whose number to roll
+     * new_text (string): the new text to roll across the element
+     * left (boolean): whether or not to roll to the left-hand side
+     **/
     tl.pg.PageGuide.prototype.roll_number = function (num_wrapper, new_text, left) {
         num_wrapper.animate({ 'text-indent': (left ? '' : '-') + '50px' }, 'fast', function() {
             num_wrapper.html(new_text);
@@ -534,11 +618,17 @@ tl.pg = tl.pg || {};
         });
     };
 
+    /**
+     * pop up the welcome modal.
+     **/
     tl.pg.PageGuide.prototype.pop_welcome = function () {
         $('body').addClass('tlyPageGuideWelcomeOpen');
         this.track_event('PG.welcomeShown');
     };
 
+    /**
+     * close the welcome modal.
+     **/
     tl.pg.PageGuide.prototype.close_welcome = function () {
         $('body').removeClass('tlyPageGuideWelcomeOpen');
     };
