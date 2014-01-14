@@ -52,7 +52,7 @@ $(function () {
     }, '#examplePlusWelcome');
 
 
-    module("DOM: basic interaction");
+    module('DOM: basic interaction');
 
     loadInitAndTest('open', function () {
         expect(6);
@@ -107,6 +107,125 @@ $(function () {
             $(el).trigger('click');
             equal($('#tlyPageGuide > li:eq(' + i + ')').text(),
                 $('.tlypageguide_text').text(), 'caption ' + i + ' displayed');
+        });
+    });
+
+    module('DOM: target changes');
+
+    loadInitAndTest('remove target before open', function () {
+        var originalStepLength = $('#tlyPageGuide > li').length;
+        expect(originalStepLength + 1);
+
+        $('#second_element_to_target').remove();
+        $('.tlypageguide_toggle').trigger('click');
+        equal($('.tlypageguide_shadow:visible').length, (originalStepLength - 1),
+            'correct number of step shadows');
+        equal($('.tlyPageGuideStepIndex:visible').length, (originalStepLength - 1),
+            'correct number of step indices');
+        testSequentialIndices();
+    });
+
+    loadInitAndTest('add target back in after removing and opening', function () {
+        var originalStepLength = $('#tlyPageGuide > li').length;
+        expect(originalStepLength + 2);
+
+        var secondElementHtml = $('#second_element_to_target').html();
+        $('#second_element_to_target').remove();
+        $('.tlypageguide_toggle').trigger('click');
+
+        $('.tlypageguide_close').trigger('click');
+        $('#exampleContent > .wrapper').append(
+            '<div id="second_element_to_target">' + secondElementHtml + '</div>'
+        );
+
+        $('.tlypageguide_toggle').trigger('click');
+        equal($('.tlypageguide_shadow:visible').length, originalStepLength,
+            'correct number of step shadows');
+        equal($('.tlyPageGuideStepIndex:visible').length, originalStepLength,
+            'correct number of step indices');
+        testSequentialIndices();
+    });
+
+    loadInitAndTest('hide target before open', function () {
+        var originalStepLength = $('#tlyPageGuide > li').length;
+        expect(originalStepLength + 1);
+
+        $('#second_element_to_target').hide();
+        $('.tlypageguide_toggle').trigger('click');
+        equal($('.tlypageguide_shadow:visible').length, (originalStepLength - 1),
+            '# of step shadows reflect missing element');
+        equal($('.tlyPageGuideStepIndex:visible').length, (originalStepLength - 1),
+            '# of step indices reflect missing element');
+        testSequentialIndices();
+    });
+
+    loadInitAndTest('show target after hiding and opening', function () {
+        var originalStepLength = $('#tlyPageGuide > li').length;
+        expect(originalStepLength + 2);
+
+        $('#second_element_to_target').hide();
+        $('.tlypageguide_toggle').trigger('click');
+
+        $('.tlypageguide_close').trigger('click');
+        $('#second_element_to_target').show();
+        $('.tlypageguide_toggle').trigger('click');
+        equal($('.tlypageguide_shadow:visible').length, originalStepLength,
+            'correct number of step shadows');
+        equal($('.tlyPageGuideStepIndex:visible').length, originalStepLength,
+            'correct number of step indices');
+        testSequentialIndices();
+    });
+
+    loadInitAndTest('remove target while open', function () {
+        var originalStepLength = $('#tlyPageGuide > li').length;
+        expect(originalStepLength + 1);
+
+        $('.tlypageguide_toggle').trigger('click');
+        $('#second_element_to_target').remove();
+        pg.updateVisible();
+
+        equal($('.tlypageguide_shadow:visible').length, (originalStepLength - 1),
+            'correct number of step shadows');
+        equal($('.tlyPageGuideStepIndex:visible').length, (originalStepLength - 1),
+            'correct number of step indices');
+        testSequentialIndices();
+    });
+
+    loadInitAndTest('hide current targets while open', function () {
+        var originalStepLength = $('#tlyPageGuide > li').length;
+        expect((originalStepLength + 1) * originalStepLength);
+
+        $('.data-block').each(function (i, el) {
+            $('.tlypageguide_toggle').trigger('click');
+            pg.show_message(i);
+            $(el).hide();
+            pg.updateVisible();
+            equal($('.tlypageguide_shadow:visible').length, (originalStepLength - 1),
+                'correct number of step shadows');
+            equal($('.tlyPageGuideStepIndex:visible').length, (originalStepLength - 1),
+                'correct number of step indices');
+            testSequentialIndices();
+            $(el).show();
+            $('.tlypageguide_close').trigger('click');
+        });
+    });
+
+    loadInitAndTest('show current targets while open', function () {
+        var originalStepLength = $('#tlyPageGuide > li').length;
+        expect((originalStepLength + 2) * originalStepLength);
+
+        $('.data-block').each(function (i, el) {
+            $(el).hide();
+            $('.tlypageguide_toggle').trigger('click');
+            pg.show_message(i);
+            $(el).show();
+            pg.updateVisible();
+            equal($('.tlypageguide_shadow:visible').length, originalStepLength,
+                'correct number of step shadows');
+            equal($('.tlyPageGuideStepIndex:visible').length, originalStepLength,
+                'correct number of step indices');
+            testSequentialIndices();
+            $('.tlypageguide_close').trigger('click');
         });
     });
 
@@ -247,6 +366,16 @@ $(function () {
         var numSteps = $('#tlyPageGuide > li').length;
         equal($('.tlypageguide_shadow:visible').length, numSteps, 'all step shadows shown');
         equal($('.tlyPageGuideStepIndex:visible').length, numSteps, 'all step indices shown');
+    }
+
+    /**
+     * go through all the visible step indices (number bubbles) and make sure they
+     * each increase sequentially by 1.
+     **/
+    function testSequentialIndices () {
+        $('.tlyPageGuideStepIndex:visible').each(function (i, el) {
+            equal(i, (parseFloat($(el).text()) - 1), 'step ' + i + ' has correct number');
+        });
     }
 
     /**
