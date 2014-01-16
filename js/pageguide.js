@@ -161,9 +161,10 @@ tl.pg = tl.pg || {};
     tl.pg.PageGuide = function (pg_elem, preferences) {
         this.preferences = preferences;
         this.$base = pg_elem;
-        this.$message = $('#tlyPageGuideMessages');
+        this.$message = this.$base.find('#tlyPageGuideMessages');
         this.$fwd = this.$base.find('a.tlypageguide_fwd');
         this.$back = this.$base.find('a.tlypageguide_back');
+        this.$content = this.$base.find('#tlyPageGuideContent')
         this.$welcome = $('#tlyPageGuideWelcome');
         this.cur_idx = 0;
         this.cur_selector = null;
@@ -223,7 +224,6 @@ tl.pg = tl.pg || {};
     tl.pg.destroy = function () {
         $('#tlyPageGuideWrapper').remove();
         $('#tlyPageGuideOverlay').remove();
-        $('.tlypageguide_shadow').removeClass('tlypageguide_shadow');
         $('body').removeClass('tlypageguide-open');
         $('body').removeClass('tlyPageGuideWelcomeOpen');
     };
@@ -305,7 +305,7 @@ tl.pg = tl.pg || {};
                 };
                 var hashCode = tl.pg.hashCode(tourTarget) + '';
                 self.hashTable[hashCode] = tourTarget;
-                $('#tlyPageGuideContent').append(
+                self.$content.append(
                     '<div class="tlypageguide_shadow tlypageguide_shadow' + hashCode +
                     '" data-selectorhash="' + hashCode + '">' +
                         '<span class="tlyPageGuideStepIndex ' + positionClass +'"></span>' +
@@ -362,7 +362,7 @@ tl.pg = tl.pg || {};
                 diff.index = newTargetData.index;
             }
             // push diff onto changequeue if changes have been made
-            if (diff.hasOwnProperty('targetStyle') || diff.hasOwnProperty('index')) {
+            if (diff.targetStyle != null || diff.index != null) {
                 self.changeQueue.push(diff);
             }
             $.extend(self.targetData[target], newTargetData);
@@ -380,16 +380,16 @@ tl.pg = tl.pg || {};
         for (var i=0; i<self.changeQueue.length; i++) {
             var changes = self.changeQueue[i];
             var selector = '.tlypageguide_shadow' + tl.pg.hashCode(changes.target);
-            var $el = $('#tlyPageGuideContent').find(selector);
+            var $el = self.$content.find(selector);
             if (changes.targetStyle != null) {
                 var style = $.extend({}, changes.targetStyle);
                 for (var prop in style) {
                     // fix this
                     if (prop === 'z-index') {
                         style[prop] += 1;
-                    } else if (typeof style[prop] === 'number') {
+                    //} else if (typeof style[prop] === 'number') {
                         // TODO: change width, height, etc as necessary
-                        style[prop] = style[prop] + 'px';
+                    //    style[prop] = style[prop] + 'px';
                     }
                 }
                 $el.css(style);
@@ -440,8 +440,8 @@ tl.pg = tl.pg || {};
         if (target != null) {
             var selector = '.tlypageguide_shadow' + tl.pg.hashCode(targetKey);
 
-            $('.tlypageguide-active').removeClass('tlypageguide-active');
-            $(selector).addClass('tlypageguide-active');
+            self.$content.find('.tlypageguide-active').removeClass('tlypageguide-active');
+            self.$content.find(selector).addClass('tlypageguide-active');
 
             self.$message.find('.tlypageguide_text').html(target.content);
             self.cur_idx = index;
@@ -452,14 +452,13 @@ tl.pg = tl.pg || {};
             var oldHeight = parseFloat(self.$message.css("height"));
             self.$message.css("height", "auto");
             var height = parseFloat(self.$message.outerHeight());
-            self.$message.css("height", oldHeight + 'px');
+            self.$message.css("height", oldHeight);
             if (height < defaultHeight) {
                 height = defaultHeight;
             }
             if (height > $(window).height()/2) {
                 height = $(window).height()/2;
             }
-            height = height + "px";
 
             if (!tl.pg.isScrolledIntoView($(targetKey))) {
                 $('html,body').animate({scrollTop: target.targetStyle.top - 50}, 500);
@@ -539,8 +538,8 @@ tl.pg = tl.pg || {};
         self.track_event('PG.close');
 
         // TODO: fix this
-        $('.tlypageguide_shadow').css('display', 'none');
-        $('.tlypageguide-active').removeClass('tlypageguide-active');
+        self.$content.find('.tlypageguide_shadow').css('display', 'none');
+        self.$content.find('.tlypageguide-active').removeClass('tlypageguide-active');
         self.$message.animate({ height: "0" }, 500, function() {
             $(this).hide();
         });
