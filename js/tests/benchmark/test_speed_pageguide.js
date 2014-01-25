@@ -16,9 +16,24 @@ $('#test_element').load('../../../example/index.html #exampleContent', function 
         }
     });
 
-    pgSuite.add('_open', _.extend(benchProto, {
+    pgSuite.add('hashUrl', _.extend(benchProto, {
+        fn: function () {
+            tl.pg.hashUrl();
+        }
+    }))
+    .add('isScrolledIntoView', _.extend(benchProto, {
+        fn: function () {
+            tl.pg.isScrolledIntoView('#fourth_element_to_target');
+        }
+    }))
+    .add('_open', _.extend(benchProto, {
         fn: function () {
             pg._open();
+        }
+    }))
+    .add('_close', _.extend(benchProto, {
+        fn: function () {
+            pg._close();
         }
     }))
     .add('_on_expand', _.extend(benchProto, {
@@ -26,7 +41,22 @@ $('#test_element').load('../../../example/index.html #exampleContent', function 
             pg._on_expand();
         }
     }))
-    .add('init', _.extend(benchProto, {
+    .add('setup_handlers', _.extend(benchProto, {
+        fn: function () {
+            pg.setup_handlers();
+        }
+    }))
+    .add('position_tour', _.extend(benchProto, {
+        fn: function () {
+            pg.position_tour();
+        }
+    }))
+    .add('show_message', _.extend(benchProto, {
+        fn: function () {
+            pg.show_message(3);
+        }
+    }))
+    .add('init without welcome', _.extend(benchProto, {
         defer: true,
         fn: function (deferred) {
             pg = tl.pg.init({
