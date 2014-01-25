@@ -298,30 +298,35 @@ tl.pg = tl.pg || {};
     };
 
     tl.pg.PageGuide.prototype.open = function() {
+        if (this.is_open) {
+            return;
+        } else {
+            this._open();
+        }
+    };
+
+    tl.pg.PageGuide.prototype._open = function () {
         if (this.preferences.show_welcome) {
             this.preferences.dismiss_welcome();
             this.close_welcome();
         }
-        if (this.is_open) {
-            return;
-        } else {
-            this.is_open = true;
-        }
-
+        this.is_open = true;
         this.track_event('PG.open');
-
         this._on_expand();
         this.$items.toggleClass('expanded');
         $('body').addClass('tlypageguide-open');
-    };
+    }
 
     tl.pg.PageGuide.prototype.close = function() {
         if (!this.is_open) {
             return;
         } else {
-            this.is_open = false;
+            this._close();
         }
+    };
 
+    tl.pg.PageGuide.prototype._close = function () {
+        this.is_open = false;
         this.track_event('PG.close');
 
         this.$items.toggleClass('expanded');
