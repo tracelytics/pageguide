@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Pageguide Speed Suite</title>
+
+  <!-- css -->
+  <link rel="stylesheet" href="/dist/css/pageguide.min.css" />
+
+  <!-- jquery -->
+  <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+
+  <!-- benchmark.js -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.backbone.js"></script>
+  <script src="benchmark.js"></script>
+
+  <!--  plugin sources -->
+  <script src="/dist/js/pageguide.min.js"></script>
+
+  <!-- speed tests -->
+  <script src="test_speed_pageguide.js"></script>
+
+  <style type="text/css">
+    #tlyPageGuideWrapper, #tlyPageGuideMessages, .tlypageguide_toggle {
+      z-index: -1;
+    }
+    #test_element {
+      position: absolute;
+      top: -10000px;
+      left: -10000px;
+      width: 1000px;
+      height: 1000px;
+    }
+  </style>
+</head>
+<body>
+  <div id="test_element"></div>
+  <table id="benchmarkResults"></table>
+</body>
+</html>

@@ -502,45 +502,49 @@ tl.pg = tl.pg || {};
      * modal.
      **/
     tl.pg.PageGuide.prototype.open = function() {
-        var self = this;
-        if (self.preferences.show_welcome) {
-            self.preferences.dismiss_welcome();
-            self.close_welcome();
-        }
-        if (self.is_open) {
+        if (this.is_open) {
             return;
         } else {
-            self.is_open = true;
+            this._open();
         }
+    };
 
-        self.track_event('PG.open');
+    tl.pg.PageGuide.prototype._open = function () {
+        if (this.preferences.show_welcome) {
+            this.preferences.dismiss_welcome();
+            this.close_welcome();
+        }
+        this.is_open = true;
+        this.track_event('PG.open');
 
-        self.refreshVisibleSteps();
+        this.refreshVisibleSteps();
 
-        if (self.preferences.auto_show_first && self.visibleTargets.length) {
-            self.show_message(0);
+        if (this.preferences.auto_show_first && this.visibleTargets.length) {
+            this.show_message(0);
         }
         $('body').addClass('tlypageguide-open');
-    };
+    }
 
     /**
      * close the pageguide. can also be fired at any time, though usually done via
      * the toggle or the close button.
      **/
     tl.pg.PageGuide.prototype.close = function() {
-        var self = this;
-        if (!self.is_open) {
+        if (!this.is_open) {
             return;
         } else {
-            self.is_open = false;
+            this._close();
         }
+    };
 
-        self.track_event('PG.close');
+    tl.pg.PageGuide.prototype._close = function () {
+        this.is_open = false;
+        this.track_event('PG.close');
 
         // TODO: fix this
-        self.$content.find('.tlypageguide_shadow').css('display', 'none');
-        self.$content.find('.tlypageguide-active').removeClass('tlypageguide-active');
-        self.$message.animate({ height: "0" }, 500, function() {
+        this.$content.find('.tlypageguide_shadow').css('display', 'none');
+        this.$content.find('.tlypageguide-active').removeClass('tlypageguide-active');
+        this.$message.animate({ height: "0" }, 500, function() {
             $(this).hide();
         });
 
