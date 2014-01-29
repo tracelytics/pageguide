@@ -4,6 +4,7 @@ $(function () {
 $(document).ready(function () {
 $('#test_element').load('../../../example/index.html #exampleContent', function () {
     var pgSuite = new Benchmark.Suite('Pageguide Speed Suite');
+
     var benchProto = {
         onError: function (e) {
             console.log(e);
@@ -12,7 +13,7 @@ $('#test_element').load('../../../example/index.html #exampleContent', function 
 
     pg = tl.pg.init({
         ready_callback: function () {
-            pgSuite.run();
+            $('.runSuite').removeAttr('disabled');
         }
     });
 
@@ -36,14 +37,14 @@ $('#test_element').load('../../../example/index.html #exampleContent', function 
             pg._close();
         }
     }))
-    .add('_on_expand', _.extend(benchProto, {
-        fn: function () {
-            pg._on_expand();
-        }
-    }))
     .add('setup_handlers', _.extend(benchProto, {
         fn: function () {
             pg.setup_handlers();
+        }
+    }))
+    .add('_on_expand', _.extend(benchProto, {
+        fn: function () {
+            pg._on_expand();
         }
     }))
     .add('position_tour', _.extend(benchProto, {
@@ -56,7 +57,7 @@ $('#test_element').load('../../../example/index.html #exampleContent', function 
             pg.show_message(3);
         }
     }))
-    .add('init without welcome', _.extend(benchProto, {
+    .add('init', _.extend(benchProto, {
         defer: true,
         fn: function (deferred) {
             pg = tl.pg.init({
@@ -76,20 +77,44 @@ Benchmark.Suite.prototype.setupDisplay = function () {
     var self = this;
     var $results = $('#benchmarkResults');
     _.each(self, function (benchmark, i) {
-        $results.append(
-            '<tr id="result-' + (i + 1) + '">' +
-                '<td class="summary">ready</td>' +
-            '</tr>'
-        );
+        var $summary = $('<td/>', {
+            class: 'summary',
+            text: 'ready'
+        });
+        var $name = $('<td/>', {
+            class: 'name',
+            text: benchmark.name
+        });
+        var $tr = $('<tr/>', {
+            id: ('result-' + (i + 1))
+        }).append([
+            $name,
+            $summary
+        ]);
+        $results.append($tr);
+        if (benchmark.events.start == null) {
+            benchmark.events.start = [];
+        }
+        benchmark.events.start.push(function (b) {
+            $summary.text('running...');
+        });
     });
 
-    self.on('cycle', function (event) {
+    self.on('start', function (event) {
+        //console.log(event);
+        //$('#benchmarkResults .summary').text('running...');
+    })
+    .on('cycle', function (event) {
         var $row = $results.find('#result-' + event.target.id);
         $row.find('.summary').text(String(event.target));
         console.log(String(event.target));
     })
     .on('complete', function () {
         console.log('complete');
+    });
+
+    $('.runSuite').on('click', function () {
+        self.run({'async': true});
     });
 };
 
