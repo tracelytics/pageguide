@@ -20,8 +20,8 @@
   <script src="test_speed_pageguide.js"></script>
 
   <style type="text/css">
-    #tlyPageGuideWrapper, #tlyPageGuideMessages, .tlypageguide_toggle {
-      z-index: -1;
+    #tlyPageGuideWrapper, #tlyPageGuideMessages, #tlyPageGuideWrapper .tlypageguide_toggle {
+      z-index: -1 !important;
     }
     #test_element {
       position: absolute;
@@ -30,10 +30,46 @@
       width: 1000px;
       height: 1000px;
     }
+    .benchmarkDisplay {
+      color: #444;
+      font-family: Helvetica, Arial, sans-serif;
+    }
+    .benchmarkDisplay * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+      border: 0;
+    }
+    #benchmarkResults {
+      border: 1px solid #444;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    #benchmarkResults td, #benchmarkResults th {
+      border: 1px solid #444;
+      padding: 7px;
+    }
+    .benchmarkDisplay h1 {
+      margin: 20px 0;
+    }
+    .runSuite {
+      font-size: 12px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
+  <div class="benchmarkDisplay">
+    <h1>Pageguide Speed Suite</h1>
+    <table id="benchmarkResults">
+      <tr>
+      <th>Test Name</th>
+      <th>Result</th>
+      </tr>
+    </table>
+    <button class="runSuite" disabled="disabled">Run Suite</button>
+  </div>
   <div id="test_element"></div>
-  <table id="benchmarkResults"></table>
 </body>
 </html>
