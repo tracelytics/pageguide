@@ -75,42 +75,71 @@ $('#test_element').load('../../../example/index.html #exampleContent', function 
 
 Benchmark.Suite.prototype.setupDisplay = function () {
     var self = this;
+    var statsToShow = ['hz','rme','samples'];
+    var statText = {
+        hz: 'Ops/Sec',
+        rme: 'Relative MOE',
+        samples: 'Runs Sampled'
+    };
     var $results = $('#benchmarkResults');
+    var ths = [
+        $('<th>Test Name</th>')
+    ];
+    _.each(statsToShow, function (stat) {
+        ths.push(
+            $('<th/>', {
+                text: statText[stat]
+            })
+        );
+    });
+    $results.append($('<tr/>').append(ths));
+
     _.each(self, function (benchmark, i) {
-        var $summary = $('<td/>', {
-            class: 'summary',
-            text: 'ready'
-        });
-        var $name = $('<td/>', {
-            class: 'name',
-            text: benchmark.name
+        var tds = [
+            $('<td/>', {
+                class: 'name',
+                text: benchmark.name
+            })
+        ];
+        _.each(statsToShow, function (stat) {
+            tds.push(
+                $('<td/>', {
+                    class: stat,
+                    text: 'ready'
+                })
+            );
         });
         var $tr = $('<tr/>', {
             id: ('result-' + (i + 1))
-        }).append([
-            $name,
-            $summary
-        ]);
+        }).append(tds);
         $results.append($tr);
+
         if (benchmark.events.start == null) {
             benchmark.events.start = [];
         }
         benchmark.events.start.push(function (b) {
-            $summary.text('running...');
+            $tr.find('td:not(.name)').text('running...');
         });
     });
 
     self.on('start', function (event) {
-        //console.log(event);
-        //$('#benchmarkResults .summary').text('running...');
+        $('.runSuite').text('running...')
+            .attr('disabled', 'disabled');
     })
     .on('cycle', function (event) {
+        var stats = {
+            'hz': Benchmark.formatNumber(Math.round(event.target.hz)),
+            'samples': event.target.stats.sample.length,
+            'rme': '\xb1' + event.target.stats.rme.toFixed(2) + '%'
+        };
         var $row = $results.find('#result-' + event.target.id);
-        $row.find('.summary').text(String(event.target));
-        console.log(String(event.target));
+        _.each(statsToShow, function (stat) {
+            $row.find('.' + stat).text(stats[stat]);
+        });
     })
     .on('complete', function () {
-        console.log('complete');
+        $('.runSuite').text('Run Suite')
+            .removeAttr('disabled');
     });
 
     $('.runSuite').on('click', function () {
