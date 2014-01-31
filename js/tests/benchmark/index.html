@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Pageguide Speed Suite</title>
+
+  <!-- css -->
+  <link rel="stylesheet" href="/dist/css/pageguide.min.css" />
+
+  <!-- jquery -->
+  <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+
+  <!-- benchmark.js -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
+  <script src="benchmark.js"></script>
+
+  <!--  plugin sources -->
+  <script src="/dist/js/pageguide.min.js"></script>
+
+  <!-- speed tests -->
+  <script src="test_speed_pageguide.js"></script>
+
+  <style type="text/css">
+    #tlyPageGuideWrapper, #tlyPageGuideMessages, #tlyPageGuideWrapper .tlypageguide_toggle {
+      z-index: -1 !important;
+    }
+    #test_element {
+      position: absolute;
+      top: -10000px;
+      left: -10000px;
+      width: 1000px;
+      height: 1000px;
+    }
+    .benchmarkDisplay {
+      color: #444;
+      font-family: Helvetica, Arial, sans-serif;
+    }
+    .benchmarkDisplay * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+      border: 0;
+    }
+    #benchmarkResults {
+      border: 1px solid #444;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    #benchmarkResults td, #benchmarkResults th {
+      border: 1px solid #444;
+      padding: 7px;
+    }
+    .benchmarkDisplay h1 {
+      margin: 20px 0;
+    }
+    .runSuite {
+      font-size: 12px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="benchmarkDisplay">
+    <h1>Pageguide Speed Suite</h1>
+    <table id="benchmarkResults"></table>
+    <button class="runSuite" disabled="disabled">Run Suite</button>
+  </div>
+  <div id="test_element"></div>
+</body>
+</html>
