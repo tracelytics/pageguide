@@ -4,6 +4,7 @@ $(function () {
 $(document).ready(function () {
 $('#test_element').load('../../../example/index.html #exampleContent', function () {
     var pgSuite = new Benchmark.Suite('Pageguide Speed Suite');
+
     var benchProto = {
         onError: function (e) {
             console.log(e);
@@ -12,7 +13,7 @@ $('#test_element').load('../../../example/index.html #exampleContent', function 
 
     pg = tl.pg.init({
         ready_callback: function () {
-            pgSuite.run();
+            $('.runSuite').removeAttr('disabled');
         }
     });
 
@@ -36,14 +37,14 @@ $('#test_element').load('../../../example/index.html #exampleContent', function 
             pg._close();
         }
     }))
-    .add('_on_expand', _.extend(benchProto, {
-        fn: function () {
-            pg._on_expand();
-        }
-    }))
     .add('setup_handlers', _.extend(benchProto, {
         fn: function () {
             pg.setup_handlers();
+        }
+    }))
+    .add('_on_expand', _.extend(benchProto, {
+        fn: function () {
+            pg._on_expand();
         }
     }))
     .add('position_tour', _.extend(benchProto, {
@@ -56,7 +57,7 @@ $('#test_element').load('../../../example/index.html #exampleContent', function 
             pg.show_message(3);
         }
     }))
-    .add('init without welcome', _.extend(benchProto, {
+    .add('init', _.extend(benchProto, {
         defer: true,
         fn: function (deferred) {
             pg = tl.pg.init({
@@ -74,22 +75,75 @@ $('#test_element').load('../../../example/index.html #exampleContent', function 
 
 Benchmark.Suite.prototype.setupDisplay = function () {
     var self = this;
+    var statsToShow = ['hz','rme','samples'];
+    var statText = {
+        hz: 'Ops/Sec',
+        rme: 'Relative MOE',
+        samples: 'Runs Sampled'
+    };
     var $results = $('#benchmarkResults');
-    _.each(self, function (benchmark, i) {
-        $results.append(
-            '<tr id="result-' + (i + 1) + '">' +
-                '<td class="summary">ready</td>' +
-            '</tr>'
+    var ths = [
+        $('<th>Test Name</th>')
+    ];
+    _.each(statsToShow, function (stat) {
+        ths.push(
+            $('<th/>', {
+                text: statText[stat]
+            })
         );
     });
+    $results.append($('<tr/>').append(ths));
 
-    self.on('cycle', function (event) {
+    _.each(self, function (benchmark, i) {
+        var tds = [
+            $('<td/>', {
+                class: 'name',
+                text: benchmark.name
+            })
+        ];
+        _.each(statsToShow, function (stat) {
+            tds.push(
+                $('<td/>', {
+                    class: stat,
+                    text: 'ready'
+                })
+            );
+        });
+        var $tr = $('<tr/>', {
+            id: ('result-' + (i + 1))
+        }).append(tds);
+        $results.append($tr);
+
+        if (benchmark.events.start == null) {
+            benchmark.events.start = [];
+        }
+        benchmark.events.start.push(function (b) {
+            $tr.find('td:not(.name)').text('running...');
+        });
+    });
+
+    self.on('start', function (event) {
+        $('.runSuite').text('running...')
+            .attr('disabled', 'disabled');
+    })
+    .on('cycle', function (event) {
+        var stats = {
+            'hz': Benchmark.formatNumber(event.target.hz.toFixed(event.target.hz < 100 ? 2 : 0)),
+            'samples': event.target.stats.sample.length,
+            'rme': '\xb1' + event.target.stats.rme.toFixed(2) + '%'
+        };
         var $row = $results.find('#result-' + event.target.id);
-        $row.find('.summary').text(String(event.target));
-        console.log(String(event.target));
+        _.each(statsToShow, function (stat) {
+            $row.find('.' + stat).text(stats[stat]);
+        });
     })
     .on('complete', function () {
-        console.log('complete');
+        $('.runSuite').text('Run Suite')
+            .removeAttr('disabled');
+    });
+
+    $('.runSuite').on('click', function () {
+        self.run({'async': true});
     });
 };
 
