@@ -128,7 +128,7 @@ Benchmark.Suite.prototype.setupDisplay = function () {
     })
     .on('cycle', function (event) {
         var stats = {
-            'hz': Benchmark.formatNumber(Math.round(event.target.hz)),
+            'hz': Benchmark.formatNumber(event.target.hz.toFixed(event.target.hz < 100 ? 2 : 0)),
             'samples': event.target.stats.sample.length,
             'rme': '\xb1' + event.target.stats.rme.toFixed(2) + '%'
         };
