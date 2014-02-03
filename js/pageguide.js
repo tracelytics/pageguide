@@ -41,6 +41,10 @@
  *                      checks whether a localStorage or cookie value has been
  *                      set for the (hashed) current URL, corresponds to default
  *                      dismiss_welcome function.
+ *  ready_callback:     A function to run once the pageguide ready event fires.
+ *  pointer_fallback:   Specify whether or not to provide a fallback for css
+ *                      pointer-events in browsers that do not support it
+ *                      (default true).
  */
 tl = window.tl || {};
 tl.pg = tl.pg || {};
@@ -83,7 +87,9 @@ tl.pg = tl.pg || {};
                 document.cookie = (key + '=true; expires=' + exp.toUTCString());
             }
         },
-        'ready_callback': null
+        'ready_callback': null,
+        'pointer_fallback': true,
+        'default_zindex': 100
     };
 
     // boilerplate markup for the message display element and shadow/index bubble container.
@@ -118,6 +124,12 @@ tl.pg = tl.pg || {};
         /* page guide object, for pages that have one */
         if ($("#tlyPageGuide").length === 0) {
             return;
+        }
+
+        // only worry about pointer_fallback if pointers are not supported in
+        // the user's browser
+        if (preferences.pointer_fallback && tl.pg.pointerEventSupport()) {
+            preferences.pointer_fallback = false;
         }
 
         var $guide = $("#tlyPageGuide");
@@ -226,6 +238,26 @@ tl.pg = tl.pg || {};
         $('#tlyPageGuideOverlay').remove();
         $('body').removeClass('tlypageguide-open');
         $('body').removeClass('tlyPageGuideWelcomeOpen');
+    };
+
+    /**
+     * check whether pointer events are supported in the user's browser.
+     * from http://stackoverflow.com/a/8898475/1135244
+     **/
+    tl.pg.pointerEventSupport = function () {
+        var element = document.createElement('x');
+        var documentElement = document.documentElement;
+        var getComputedStyle = window.getComputedStyle;
+        var supports = null;
+        if(!('pointerEvents' in element.style)){
+            return false;
+        }
+        element.style.pointerEvents = 'auto';
+        element.style.pointerEvents = 'x';
+        documentElement.appendChild(element);
+        supports = getComputedStyle && getComputedStyle(element, '').pointerEvents === 'auto';
+        documentElement.removeChild(element);
+        return !!supports;
     };
 
     /**
@@ -386,10 +418,8 @@ tl.pg = tl.pg || {};
                 for (var prop in style) {
                     // fix this
                     if (prop === 'z-index') {
-                        style[prop] += 1;
-                    //} else if (typeof style[prop] === 'number') {
-                        // TODO: change width, height, etc as necessary
-                    //    style[prop] = style[prop] + 'px';
+                        style[prop] = (typeof style[prop] === 'number') ?
+                            style[prop] + 1 : self.preferences.default_zindex;
                     }
                 }
                 $el.css(style);
@@ -583,7 +613,7 @@ tl.pg = tl.pg || {};
         });
 
         /* interaction: item click */
-        $('body').on('click', '.tlyPageGuideStepIndex', function () {
+        self.$base.on('click', '.tlyPageGuideStepIndex', function () {
             var selector = self.hashTable[$(this).parent().data('selectorhash')];
             var target = self.targetData[selector];
             var index = (target) ? target.index : 1;
@@ -601,6 +631,20 @@ tl.pg = tl.pg || {};
             self.navigateBack();
             return false;
         });
+
+        // pass through click events on overlays if necessary
+        if (self.preferences.pointer_fallback) {
+            self.$base.on('click', '.tlypageguide_shadow', function (e) {
+                $(this).hide();
+                var $bottomElement = $(document.elementFromPoint(e.clientX, e.clientY));
+                if ($bottomElement.is('a')) {
+                    $bottomElement.get(0).click(); // required for anchor click
+                } else {
+                    $bottomElement.trigger(e.type);
+                }
+                $(this).show();
+            });
+        }
 
         /* register resize callback */
         $(window).resize(function() {
