@@ -67,6 +67,13 @@
         font-size:12px;
         font-family: Helvetica, Arial, sans-serif;
 
+        #tlyPageGuideToggles {
+            top: 84px;
+            right: 0;
+            position: fixed;
+            z-index: 9999;
+            display: block;
+        }
         .tlypageguide_toggle {
             .pg-border-box;
             background: rgba(0, 0, 0, 0.1);
@@ -80,13 +87,12 @@
             height: 50px;
             line-height: 25px;
             padding: 22px 6px 6px;
-            position: fixed;
-            right: -190px;
+            margin-bottom: 20px;
+            position: relative;
+            right: -185px;
             text-align: left;
             text-decoration: none;
-            top: 84px;
             width: 184px;
-            z-index: 9999;
             .pg-transition-animation(all, 0.2s, ease-in);
 
             &:before {
@@ -219,21 +225,18 @@
 
     .tlypageguide-open {
 
-        #tlyPageGuideWrapper {
+        #tlyPageGuideWrapper .tlypageguide_toggle.tlyPageGuideToggleActive {
+            .pg-box-shadow(6px, 4px, 5px, 0, rgba(0, 0, 0, 0.4));
+            background: fade(@pg-highlight-color, 90%);
+            color: #fff;
+            right: 0 !important;
 
-            .tlypageguide_toggle {
-                .pg-box-shadow(6px, 4px, 5px, 0, rgba(0, 0, 0, 0.4));
-                background: fade(@pg-highlight-color, 90%);
-                color: #fff;
-                right: 0 !important;
+            a {
+                opacity: 1.0;
+            }
 
-                a {
-                    opacity: 1.0;
-                }
-
-                div span {
-                    margin: 0;
-                }
+            div span {
+                margin: 0;
             }
         }
     }

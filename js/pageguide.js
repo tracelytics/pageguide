@@ -45,6 +45,10 @@
  *  pointer_fallback:   Specify whether or not to provide a fallback for css
  *                      pointer-events in browsers that do not support it
  *                      (default true).
+ *  default_zindex:     The css z-index to apply to the tlypageguide_shadow
+ *                      overlay elements (default 100);
+ *  steps_element:       Selector for the ul element whose steps you wish to use
+ *                      in this particular pageguide object (default '#tlyPageGuide');
  */
 tl = window.tl || {};
 tl.pg = tl.pg || {};
@@ -89,7 +93,8 @@ tl.pg = tl.pg || {};
         },
         'ready_callback': null,
         'pointer_fallback': true,
-        'default_zindex': 100
+        'default_zindex': 100,
+        'steps_element': '#tlyPageGuide'
     };
 
     // boilerplate markup for the message display element and shadow/index bubble container.
@@ -103,6 +108,7 @@ tl.pg = tl.pg || {};
                 '<a href="#" class="tlypageguide_fwd" title="Next">Next</a>' +
             '</div>' +
             '<div id="tlyPageGuideContent"></div>' +
+            '<div id="tlyPageGuideToggles"></div>' +
         '</div>';
 
     // boilerplate markup for the toggle element.
@@ -120,9 +126,10 @@ tl.pg = tl.pg || {};
     tl.pg.init = function(preferences) {
         preferences = $.extend({}, tl.pg.default_prefs, preferences);
         clearInterval(tl.pg.interval);
+        var $guide = $(preferences.steps_element);
 
         /* page guide object, for pages that have one */
-        if ($("#tlyPageGuide").length === 0) {
+        if ($guide.length === 0) {
             return;
         }
 
@@ -132,30 +139,35 @@ tl.pg = tl.pg || {};
             preferences.pointer_fallback = false;
         }
 
-        var $guide = $("#tlyPageGuide");
-        var $wrapper = $(tl.pg.wrapper_markup);
-
-        var tourtitle = $guide.data('tourtitle') || preferences.tourtitle;
-
-        if (preferences.custom_open_button == null && $('.tlypageguide_toggle').length < 1) {
-            $wrapper.append(tl.pg.toggle_markup);
-            $wrapper.find('.tlypageguide_toggle').prepend(preferences.pg_caption);
-            $wrapper.find('.tlypageguide_toggletitle').text(tourtitle);
+        var $wrapper = $('#tlyPageGuideWrapper');
+        var wrapperExists = true;
+        if (!$wrapper.length) {
+            wrapperExists = false;
+            $wrapper = $(tl.pg.wrapper_markup);
         }
 
-        $wrapper.prepend($guide);
+        var stepsElHash = tl.pg.hashCode(preferences.steps_element);
+        if (preferences.custom_open_button == null &&
+            $('#tlyPageGuideToggle' + stepsElHash).length < 1) {
+            var tourtitle = $guide.data('tourtitle') || preferences.tourtitle;
+            var $toggle = $(tl.pg.toggle_markup)
+                .attr('id', ('tlyPageGuideToggle' + stepsElHash))
+                .prepend(preferences.pg_caption);
 
-        // remove any stale pageguides
-        $('#tlyPageGuideWrapper').remove();
+            $toggle.find('.tlypageguide_toggletitle').text(tourtitle);
+            $wrapper.find('#tlyPageGuideToggles').append($toggle);
+        }
 
-        $('body').prepend($wrapper);
+        if (!wrapperExists) {
+            $('body').prepend($wrapper);
+        }
 
         var pg = new tl.pg.PageGuide($('#tlyPageGuideWrapper'), preferences);
 
         pg.ready(function() {
             pg.setup_welcome();
             pg.setup_handlers();
-            pg.$base.children(".tlypageguide_toggle").animate({ "right": "-120px" }, 250);
+            pg.$base.find(".tlypageguide_toggle").animate({ "right": "-120px" }, 250);
             if (typeof(preferences.ready_callback) === 'function') {
                 preferences.ready_callback();
             }
@@ -176,8 +188,11 @@ tl.pg = tl.pg || {};
         this.$message = this.$base.find('#tlyPageGuideMessages');
         this.$fwd = this.$base.find('a.tlypageguide_fwd');
         this.$back = this.$base.find('a.tlypageguide_back');
-        this.$content = this.$base.find('#tlyPageGuideContent')
+        this.$content = this.$base.find('#tlyPageGuideContent');
         this.$welcome = $('#tlyPageGuideWelcome');
+        this.$steps = $(preferences.steps_element);
+        this.$toggle = this.$base.find('#tlyPageGuideToggle' +
+            tl.pg.hashCode(preferences.steps_element));
         this.cur_idx = 0;
         this.cur_selector = null;
         this.track_event = this.preferences.track_events_cb;
@@ -326,7 +341,7 @@ tl.pg = tl.pg || {};
      **/
     tl.pg.PageGuide.prototype.addSteps = function () {
         var self = this;
-        $('#tlyPageGuide > li').each(function (i, el) {
+        self.$steps.find('li').each(function (i, el) {
             var $el = $(el);
             var tourTarget = $el.data('tourtarget');
             var positionClass = $el.attr('class');
@@ -553,6 +568,7 @@ tl.pg = tl.pg || {};
             this.show_message(0);
         }
         $('body').addClass('tlypageguide-open');
+        this.$toggle.addClass('tlyPageGuideToggleActive');
     }
 
     /**
@@ -579,6 +595,7 @@ tl.pg = tl.pg || {};
         });
 
         $('body').removeClass('tlypageguide-open');
+        this.$toggle.removeClass('tlyPageGuideToggleActive');
     };
 
     /**
@@ -589,7 +606,8 @@ tl.pg = tl.pg || {};
 
         /* interaction: open/close PG interface */
         var interactor = (self.custom_open_button == null) ?
-                        self.$base.find('.tlypageguide_toggle') :
+                        self.$base.find('#tlyPageGuideToggle'
+                                    + tl.pg.hashCode(self.preferences.steps_element)) :
                         $(self.custom_open_button);
         interactor.off();
         interactor.on('click', function() {
@@ -601,6 +619,7 @@ tl.pg = tl.pg || {};
                 self.pop_welcome();
             } else {
                 self.open();
+                //$(this).addClass('tlyPageGuideToggleActive');
             }
             return false;
         });

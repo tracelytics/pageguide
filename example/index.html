@@ -18,6 +18,9 @@
         .data-block img {
             width: 100%;
         }
+        #titlePageGuide {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -49,7 +52,11 @@
                 </div>
             </div>
 
-            <ul id="tlyPageGuide" data-tourtitle="REPLACE THIS WITH A TITLE">
+            <!-- this set of pageguide steps will be displayed by default. -->
+            <ul id="tlyPageGuide" data-tourtitle="check out these elements">
+              <!-- use these classes to indicate where each number bubble should be
+              positioned. data-tourtarget should contain the selector for the element to
+              which you want to attach this pageguide step. -->
               <li class="tlypageguide_left" data-tourtarget=".first_element_to_target">
                 Here is the first item description. The number will appear to the left of the element.
               </li>
@@ -61,6 +68,24 @@
               </li>
               <li class="tlypageguide_bottom" data-tourtarget="#fourth_element_to_target">
                 Here is the fourth item description. The number will appear below the element.
+              </li>
+            </ul>
+
+            <!-- this is a second set of pageguide steps. it is possible to have multiple
+            pageguides per page, but you will need to initiate them separately, using the
+            steps_element parameter to specify the selectors for each. -->
+            <ul id="titlePageGuide" data-tourtitle="check out these titles">
+              <li class="tlypageguide_top" data-tourtarget=".first_element_to_target h3">
+                Here is the first title!
+              </li>
+              <li class="tlypageguide_top" data-tourtarget="#second_element_to_target h3">
+                This fine specimen is the second title.
+              </li>
+              <li class="tlypageguide_top" data-tourtarget=".third_element_to_target h3">
+                Third title reporting for duty.
+              </li>
+              <li class="tlypageguide_top" data-tourtarget="#fourth_element_to_target h3">
+                #fourthtitle
               </li>
             </ul>
         </div>
