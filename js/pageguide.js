@@ -52,6 +52,7 @@
  */
 tl = window.tl || {};
 tl.pg = tl.pg || {};
+tl.pg.interval = {};
 
 (function ($) {
     /**
@@ -125,8 +126,9 @@ tl.pg = tl.pg || {};
      **/
     tl.pg.init = function(preferences) {
         preferences = $.extend({}, tl.pg.default_prefs, preferences);
-        clearInterval(tl.pg.interval);
         var $guide = $(preferences.steps_element);
+        var uuid = tl.pg.hashCode(preferences.steps_element);
+        clearInterval(tl.pg.interval[uuid]);
 
         /* page guide object, for pages that have one */
         if ($guide.length === 0) {
@@ -146,12 +148,11 @@ tl.pg = tl.pg || {};
             $wrapper = $(tl.pg.wrapper_markup);
         }
 
-        var stepsElHash = tl.pg.hashCode(preferences.steps_element);
         if (preferences.custom_open_button == null &&
-            $('#tlyPageGuideToggle' + stepsElHash).length < 1) {
+            $('#tlyPageGuideToggle' + uuid).length < 1) {
             var tourtitle = $guide.data('tourtitle') || preferences.tourtitle;
             var $toggle = $(tl.pg.toggle_markup)
-                .attr('id', ('tlyPageGuideToggle' + stepsElHash))
+                .attr('id', ('tlyPageGuideToggle' + uuid))
                 .prepend(preferences.pg_caption);
 
             $toggle.find('.tlypageguide_toggletitle').text(tourtitle);
@@ -191,8 +192,8 @@ tl.pg = tl.pg || {};
         this.$content = this.$base.find('#tlyPageGuideContent');
         this.$welcome = $('#tlyPageGuideWelcome');
         this.$steps = $(preferences.steps_element);
-        this.$toggle = this.$base.find('#tlyPageGuideToggle' +
-            tl.pg.hashCode(preferences.steps_element));
+        this.uuid = tl.pg.hashCode(preferences.steps_element);
+        this.$toggle = this.$base.find('#tlyPageGuideToggle' + this.uuid);
         this.cur_idx = 0;
         this.cur_selector = null;
         this.track_event = this.preferences.track_events_cb;
@@ -253,6 +254,11 @@ tl.pg = tl.pg || {};
         $('#tlyPageGuideOverlay').remove();
         $('body').removeClass('tlypageguide-open');
         $('body').removeClass('tlyPageGuideWelcomeOpen');
+        for (var k in tl.pg.interval) {
+            if (tl.pg.interval.hasOwnProperty(k)) {
+                clearInterval(tl.pg.interval[k]);
+            }
+        }
     };
 
     /**
@@ -325,10 +331,10 @@ tl.pg = tl.pg || {};
      **/
     tl.pg.PageGuide.prototype.ready = function(callback) {
         var self = this;
-        tl.pg.interval = window.setInterval(function() {
+        tl.pg.interval[self.uuid] = window.setInterval(function() {
                 if (!$(self.preferences.loading_selector).is(':visible')) {
                     callback();
-                    clearInterval(tl.pg.interval);
+                    clearInterval(tl.pg.interval[self.uuid]);
                 }
             }, 250);
         return this;
@@ -587,7 +593,6 @@ tl.pg = tl.pg || {};
         this.is_open = false;
         this.track_event('PG.close');
 
-        // TODO: fix this
         this.$content.find('.tlypageguide_shadow').css('display', 'none');
         this.$content.find('.tlypageguide-active').removeClass('tlypageguide-active');
         this.$message.animate({ height: "0" }, 500, function() {
@@ -606,8 +611,7 @@ tl.pg = tl.pg || {};
 
         /* interaction: open/close PG interface */
         var interactor = (self.custom_open_button == null) ?
-                        self.$base.find('#tlyPageGuideToggle'
-                                    + tl.pg.hashCode(self.preferences.steps_element)) :
+                        self.$base.find('#tlyPageGuideToggle' + self.uuid) :
                         $(self.custom_open_button);
         interactor.off();
         interactor.on('click', function() {
