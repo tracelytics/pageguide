@@ -291,6 +291,39 @@ $(function () {
         localStorage.clear();
     }, '#examplePlusWelcome');
 
+    module('multiple pageguides');
+
+    loadInitAndTest('2 pageguides 1 page', function () {
+        expect(8);
+        var pg2 = tl.pg.init({
+            steps_element: '#titlePageGuide',
+            ready_callback: function () {
+                equal($('.tlypageguide_toggle').length, 2);
+                equal($('#tlyPageGuideWrapper').length, 1);
+
+                // check first one
+                $('.tlypageguide_toggle:first').trigger('click');
+                equal($('#tlyPageGuide > li:eq(0)').text(),
+                    $('.tlypageguide_text').text(), 'first caption for first pg displayed');
+                var numStepsFirst = $('#tlyPageGuide > li').length;
+                equal($('.tlypageguide_shadow:visible').length, numStepsFirst, 'all step shadows shown for first pg');
+                equal($('.tlyPageGuideStepIndex:visible').length, numStepsFirst, 'all step indices shown for first pg');
+                $('.tlypageguide_toggle:first').trigger('click');
+
+                // check second one
+                $('.tlypageguide_toggle:eq(1)').trigger('click');
+                equal($('#titlePageGuide > li:eq(0)').text(),
+                    $('.tlypageguide_text').text(), 'first caption for second pg displayed');
+                var numStepsSecond = $('#tlyPageGuide > li').length;
+                equal($('.tlypageguide_shadow:visible').length, numStepsSecond, 'all step shadows shown for second pg');
+                equal($('.tlyPageGuideStepIndex:visible').length, numStepsSecond, 'all step indices shown for second pg');
+                $('.tlypageguide_toggle:eq(1)').trigger('click');
+                start();
+                tl.pg.destroy();
+            }
+        });
+    }, null, true);
+
     // HELPER FUNCTIONS FOR TESTING
 
     /**
@@ -324,13 +357,15 @@ $(function () {
      * - selector: optional string selector for the area to select within the
      *   example page
      **/
-    function loadInitAndTest (title, cb, selector) {
+    function loadInitAndTest (title, cb, selector, delayStart) {
         loadAndTest(title, function () {
             pg = tl.pg.init({
                 ready_callback: function () {
                     cb();
-                    start();
-                    tl.pg.destroy();
+                    if (!delayStart) {
+                        start();
+                        tl.pg.destroy();
+                    }
                 }
             });
         }, true, selector);
