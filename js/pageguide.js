@@ -646,12 +646,16 @@ tl.pg.interval = {};
 
         /* interaction: fwd/back click */
         self.$fwd.on('click', function() {
-            self.navigateForward();
+            if (self.is_open) {
+                self.navigateForward();
+            }
             return false;
         });
 
         self.$back.on('click', function() {
-            self.navigateBack();
+            if (self.is_open) {
+                self.navigateBack();
+            }
             return false;
         });
 
