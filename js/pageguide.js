@@ -95,7 +95,9 @@ tl.pg.interval = {};
         'ready_callback': null,
         'pointer_fallback': true,
         'default_zindex': 100,
-        'steps_element': '#tlyPageGuide'
+        'steps_element': '#tlyPageGuide',
+        'auto_refresh': false,
+        'refresh_interval': 200
     };
 
     // boilerplate markup for the message display element and shadow/index bubble container.
@@ -204,6 +206,7 @@ tl.pg.interval = {};
         this.hashTable = {};
         this.changeQueue = [];
         this.visibleTargets = [];
+        this.timer = null;
     };
 
     /**
@@ -575,6 +578,13 @@ tl.pg.interval = {};
         }
         $('body').addClass('tlypageguide-open');
         this.$toggle.addClass('tlyPageGuideToggleActive');
+
+        var self = this;
+        if (self.preferences.auto_refresh) {
+            self.timer = setInterval(function () {
+                self.updateVisible();
+            }, 500);
+        }
     }
 
     /**
@@ -592,6 +602,9 @@ tl.pg.interval = {};
     tl.pg.PageGuide.prototype._close = function () {
         this.is_open = false;
         this.track_event('PG.close');
+        if (this.preferences.auto_refresh) {
+            clearInterval(this.timer);
+        }
 
         this.$content.find('.tlypageguide_shadow').css('display', 'none');
         this.$content.find('.tlypageguide-active').removeClass('tlypageguide-active');
