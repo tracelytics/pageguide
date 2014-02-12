@@ -581,11 +581,19 @@ tl.pg.interval = {};
 
         var self = this;
         if (self.preferences.auto_refresh) {
-            self.timer = setInterval(function () {
+            self.updateTimer(function () {
                 self.updateVisible();
-            }, 500);
+            });
         }
-    }
+    };
+
+    tl.pg.PageGuide.prototype.updateTimer = function (cb) {
+        var self = this;
+        cb();
+        self.timer = setTimeout(function () {
+            self.updateTimer(cb);
+        }, self.refresh_interval);
+    };
 
     /**
      * close the pageguide. can also be fired at any time, though usually done via
@@ -603,7 +611,7 @@ tl.pg.interval = {};
         this.is_open = false;
         this.track_event('PG.close');
         if (this.preferences.auto_refresh) {
-            clearInterval(this.timer);
+            clearTimeout(this.timer);
         }
 
         this.$content.find('.tlypageguide_shadow').css('display', 'none');
