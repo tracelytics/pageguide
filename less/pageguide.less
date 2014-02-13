@@ -221,22 +221,32 @@
                 left: 90px;
             }
         }
+
+        #tlyPageGuideContent {
+            display: none;
+        }
     }
 
     .tlypageguide-open {
 
-        #tlyPageGuideWrapper .tlypageguide_toggle.tlyPageGuideToggleActive {
-            .pg-box-shadow(6px, 4px, 5px, 0, rgba(0, 0, 0, 0.4));
-            background: fade(@pg-highlight-color, 90%);
-            color: #fff;
-            right: 0 !important;
+        #tlyPageGuideWrapper {
+            .tlypageguide_toggle.tlyPageGuideToggleActive {
+                .pg-box-shadow(6px, 4px, 5px, 0, rgba(0, 0, 0, 0.4));
+                background: fade(@pg-highlight-color, 90%);
+                color: #fff;
+                right: 0 !important;
 
-            a {
-                opacity: 1.0;
+                a {
+                    opacity: 1.0;
+                }
+
+                div span {
+                    margin: 0;
+                }
             }
 
-            div span {
-                margin: 0;
+            #tlyPageGuideContent {
+                display: block;
             }
         }
     }

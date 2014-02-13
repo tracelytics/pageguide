@@ -696,7 +696,9 @@ tl.pg.interval = {};
 
         /* register resize callback */
         $(window).resize(function() {
-            self.refreshVisibleSteps();
+            if (self.is_open) {
+                self.refreshVisibleSteps();
+            }
         });
     };
 
