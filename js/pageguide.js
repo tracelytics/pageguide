@@ -47,8 +47,24 @@
  *                      (default true).
  *  default_zindex:     The css z-index to apply to the tlypageguide_shadow
  *                      overlay elements (default 100);
- *  steps_element:       Selector for the ul element whose steps you wish to use
+ *  steps_element:      Selector for the ul element whose steps you wish to use
  *                      in this particular pageguide object (default '#tlyPageGuide');
+ *  auto_refresh:       If set to true, pageguide will run a timer to constantly
+ *                      monitor the DOM for changes in the target elements and
+ *                      adjust the pageguide display (bubbles, overlays, etc)
+ *                      accordingly. The timer will only run while pageguide is open.
+ *                      Useful for single-page or heavily dynamic apps where
+ *                      pageguide steps or visible DOM elements can change often.
+ *                      (default false)
+ *  welcome_refresh:    Similar to auto_refresh, welcome_refresh enables a timer to
+ *                      monitor the DOM for new #tlyPageGuideWelcome elements. This is
+ *                      useful if your welcome element isn't loaded immediately, or if
+ *                      you want to show different welcome elements on different pages.
+ *                      The timer will run constantly, whether or not the pageguide is
+ *                      open, so enable at your discretion. (default false)
+ *  refresh_interval:   If auto_refresh or welcome_refresh is enabled, refresh_interval
+ *                      indicates in ms how often to poll the DOM for changes. (default 500)
+ *
  */
 tl = window.tl || {};
 tl.pg = tl.pg || {};
@@ -97,7 +113,8 @@ tl.pg.interval = {};
         'default_zindex': 100,
         'steps_element': '#tlyPageGuide',
         'auto_refresh': false,
-        'refresh_interval': 200
+        'refresh_welcome': false,
+        'refresh_interval': 500
     };
 
     // boilerplate markup for the message display element and shadow/index bubble container.
@@ -169,6 +186,12 @@ tl.pg.interval = {};
 
         pg.ready(function() {
             pg.setup_welcome();
+            // start (neverending) welcome watch timer if preference is enabled
+            if (pg.preferences.welcome_refresh) {
+                pg.updateTimer(function () {
+                    pg.setup_welcome();
+                }, 'welcome');
+            }
             pg.setup_handlers();
             pg.$base.find(".tlypageguide_toggle").animate({ "right": "-120px" }, 250);
             if (typeof(preferences.ready_callback) === 'function') {
@@ -206,7 +229,10 @@ tl.pg.interval = {};
         this.hashTable = {};
         this.changeQueue = [];
         this.visibleTargets = [];
-        this.timer = null;
+        this.timer = {
+            overlay: null,
+            welcome: null
+        };
     };
 
     /**
@@ -290,7 +316,7 @@ tl.pg.interval = {};
      * the buttons included in the welcome message element.
      **/
     tl.pg.PageGuide.prototype.setup_welcome = function () {
-        var $welcome = $('#tlyPageGuideWelcome');
+        var $welcome = $('#tlyPageGuideWelcome').not('#tlyPageGuideWrapper > #tlyPageGuideWelcome');
         var self = this;
         if ($welcome.length > 0) {
             self.preferences.show_welcome = !self.preferences.check_welcome_dismissed();
@@ -583,16 +609,16 @@ tl.pg.interval = {};
         if (self.preferences.auto_refresh) {
             self.updateTimer(function () {
                 self.updateVisible();
-            });
+            }, 'overlay');
         }
     };
 
-    tl.pg.PageGuide.prototype.updateTimer = function (cb) {
+    tl.pg.PageGuide.prototype.updateTimer = function (cb, prop) {
         var self = this;
         cb();
-        self.timer = setTimeout(function () {
-            self.updateTimer(cb);
-        }, self.refresh_interval);
+        self.timer[prop] = setTimeout(function () {
+            self.updateTimer(cb, prop);
+        }, self.preferences.refresh_interval);
     };
 
     /**
@@ -611,7 +637,7 @@ tl.pg.interval = {};
         this.is_open = false;
         this.track_event('PG.close');
         if (this.preferences.auto_refresh) {
-            clearTimeout(this.timer);
+            clearTimeout(this.timer.overlay);
         }
 
         this.$content.find('.tlypageguide_shadow').css('display', 'none');
