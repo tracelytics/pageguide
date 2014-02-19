@@ -30,7 +30,7 @@ section {
   height: 120px;
 }
 .intro .tracelytcs_logo {
-  background: url("../img/logo_color.png") no-repeat scroll 0 10px transparent;
+  background: url("../img/logo_color.png") no-repeat scroll 6px 20px transparent;
   border-right: 1px solid #CCCCCC;
   float: left;
   height: 130px;
