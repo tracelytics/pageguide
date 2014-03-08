@@ -57,7 +57,7 @@
  *                      pageguide steps or visible DOM elements can change often.
  *                      (default false)
  *  welcome_refresh:    Similar to auto_refresh, welcome_refresh enables a timer to
- *                      monitor the DOM for new #tlyPageGuideWelcome elements. This is
+ *                      monitor the DOM for new .tlyPageGuideWelcome elements. This is
  *                      useful if your welcome element isn't loaded immediately, or if
  *                      you want to show different welcome elements on different pages.
  *                      The timer will run constantly, whether or not the pageguide is
@@ -120,6 +120,7 @@ tl.pg.interval = {};
     // boilerplate markup for the message display element and shadow/index bubble container.
     tl.pg.wrapper_markup =
         '<div id="tlyPageGuideWrapper">' +
+            '<div id="tlyPageGuideOverlay"></div>' +
             '<div id="tlyPageGuideMessages">' +
                 '<a href="#" class="tlypageguide_close" title="Close Guide">close</a>' +
                 '<span class="tlypageguide_index"></span>' +
@@ -215,7 +216,7 @@ tl.pg.interval = {};
         this.$fwd = this.$base.find('a.tlypageguide_fwd');
         this.$back = this.$base.find('a.tlypageguide_back');
         this.$content = this.$base.find('#tlyPageGuideContent');
-        this.$welcome = $('#tlyPageGuideWelcome');
+        this.$welcome = $('.tlyPageGuideWelcome').eq(0);
         this.$steps = $(preferences.steps_element);
         this.uuid = tl.pg.hashCode(preferences.steps_element);
         this.$toggle = this.$base.find('#tlyPageGuideToggle' + this.uuid);
@@ -280,7 +281,6 @@ tl.pg.interval = {};
      **/
     tl.pg.destroy = function () {
         $('#tlyPageGuideWrapper').remove();
-        $('#tlyPageGuideOverlay').remove();
         $('body').removeClass('tlypageguide-open');
         $('body').removeClass('tlyPageGuideWelcomeOpen');
         for (var k in tl.pg.interval) {
@@ -316,14 +316,14 @@ tl.pg.interval = {};
      * the buttons included in the welcome message element.
      **/
     tl.pg.PageGuide.prototype.setup_welcome = function () {
-        var $welcome = $('#tlyPageGuideWelcome').not('#tlyPageGuideWrapper > #tlyPageGuideWelcome');
+        // danger! this will break backwards compatibility in versions <= 1.2.0
+        var $welcome = $('.tlyPageGuideWelcome')
+            .not('#tlyPageGuideWrapper > .tlyPageGuideWelcome')
+            .eq(0);
         var self = this;
         if ($welcome.length > 0) {
             self.preferences.show_welcome = !self.preferences.check_welcome_dismissed();
             if (self.preferences.show_welcome) {
-                if (!$('#tlyPageGuideOverlay').length) {
-                    $('body').prepend('<div id="tlyPageGuideOverlay"></div>');
-                }
                 $welcome.appendTo(self.$base);
             }
 
