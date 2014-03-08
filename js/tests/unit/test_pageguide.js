@@ -46,7 +46,7 @@ $(function () {
     loadInitAndTest('welcome exists', function () {
         expect(3);
 
-        ok($('#tlyPageGuideWrapper #tlyPageGuideWelcome').length, 'welcome inside wrapper');
+        ok($('#tlyPageGuideWrapper .tlyPageGuideWelcome').length, 'welcome inside wrapper');
         equal($('#tlyPageGuideOverlay').length, 1, 'only one overlay exists');
         ok($('body').hasClass('tlyPageGuideWelcomeOpen'), 'body class');
     }, '#examplePlusWelcome');
@@ -237,8 +237,8 @@ $(function () {
         $('.tlypageguide_start').trigger('click');
         testOpen();
         ok(checkLocalStorageItem(), 'localStorage item exists');
-        ok($('#tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
-        ok($('#tlyPageGuideOverlay').not(':visible'), 'overlay hidden');
+        ok($('.tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
+        ok($('.tlyPageGuideOverlay').not(':visible'), 'overlay hidden');
         localStorage.clear();
     }, '#examplePlusWelcome');
 
@@ -248,7 +248,7 @@ $(function () {
         $('.tlypageguide_start').trigger('click');
         $('.tlypageguide_close').trigger('click');
         $('.tlypageguide_toggle').trigger('click');
-        ok($('#tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
+        ok($('.tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
         ok($('#tlyPageGuideOverlay').not(':visible'), 'overlay hidden');
         testOpen();
         localStorage.clear();
@@ -260,7 +260,7 @@ $(function () {
         $('.tlypageguide_toggle').trigger('click');
         testOpen();
         ok(checkLocalStorageItem(), 'localStorage item exists');
-        ok($('#tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
+        ok($('.tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
         ok($('#tlyPageGuideOverlay').not(':visible'), 'overlay hidden');
         localStorage.clear();
     }, '#examplePlusWelcome');
@@ -269,11 +269,11 @@ $(function () {
         expect(5);
 
         $('.tlypageguide_ignore').trigger('click');
-        ok($('#tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
-        ok($('#tlyPageGuideOverlay').not(':visible'), 'overlay hidden');
+        ok($('.tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
+        ok($('.tlyPageGuideOverlay').not(':visible'), 'overlay hidden');
         equal(checkLocalStorageItem(), false, 'no localStorage item yet');
         $('.tlypageguide_toggle').trigger('click');
-        ok($('#tlyPageGuideWelcome').is(':visible'), 'welcome shown again');
+        ok($('.tlyPageGuideWelcome').is(':visible'), 'welcome shown again');
         ok($('#tlyPageGuideOverlay').is(':visible'), 'overlay shown again');
     }, '#examplePlusWelcome');
 
@@ -281,11 +281,11 @@ $(function () {
         expect(11);
 
         $('.tlypageguide_dismiss').trigger('click');
-        ok($('#tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
+        ok($('.tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
         ok($('#tlyPageGuideOverlay').not(':visible'), 'overlay hidden');
         ok(checkLocalStorageItem(), 'localStorage item exists');
         $('.tlypageguide_toggle').trigger('click');
-        ok($('#tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
+        ok($('.tlyPageGuideWelcome').not(':visible'), 'welcome hidden');
         ok($('#tlyPageGuideOverlay').not(':visible'), 'overlay hidden');
         testOpen();
         localStorage.clear();
