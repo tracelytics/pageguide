@@ -216,7 +216,6 @@ tl.pg.interval = {};
         this.$fwd = this.$base.find('a.tlypageguide_fwd');
         this.$back = this.$base.find('a.tlypageguide_back');
         this.$content = this.$base.find('#tlyPageGuideContent');
-        this.$welcome = $('.tlyPageGuideWelcome').eq(0);
         this.$steps = $(preferences.steps_element);
         this.uuid = tl.pg.hashCode(preferences.steps_element);
         this.$toggle = this.$base.find('#tlyPageGuideToggle' + this.uuid);
@@ -316,9 +315,8 @@ tl.pg.interval = {};
      * the buttons included in the welcome message element.
      **/
     tl.pg.PageGuide.prototype.setup_welcome = function () {
-        // danger! this will break backwards compatibility in versions <= 1.2.0
-        var $welcome = $('.tlyPageGuideWelcome')
-            .not('#tlyPageGuideWrapper > .tlyPageGuideWelcome')
+        var $welcome = $('.tlyPageGuideWelcome, #tlyPageGuideWelcome')
+            .not('#tlyPageGuideWrapper > .tlyPageGuideWelcome, #tlyPageGuideWrapper > #tlyPageGuideWelcome')
             .eq(0);
         var self = this;
         if ($welcome.length > 0) {
