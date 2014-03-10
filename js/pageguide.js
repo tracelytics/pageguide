@@ -455,21 +455,20 @@ tl.pg.interval = {};
     /**
      * position the shadow elements (and their attached index bubbles) in their
      * appropriate places over the visible targets. executes by iterating through
-     * all the changes that have been pushed to self.changeQueue
+     * all the changes that have been pushed to changeQueue
      **/
     tl.pg.PageGuide.prototype.positionOverlays = function () {
-        var self = this;
-        for (var i=0; i<self.changeQueue.length; i++) {
-            var changes = self.changeQueue[i];
+        for (var i=0; i<this.changeQueue.length; i++) {
+            var changes = this.changeQueue[i];
             var selector = '.tlypageguide_shadow' + tl.pg.hashCode(changes.target);
-            var $el = self.$content.find(selector);
+            var $el = this.$content.find(selector);
             if (changes.targetStyle != null) {
                 var style = $.extend({}, changes.targetStyle);
                 for (var prop in style) {
                     // fix this
                     if (prop === 'z-index') {
                         style[prop] = (typeof style[prop] === 'number') ?
-                            style[prop] + 1 : self.preferences.default_zindex;
+                            style[prop] + 1 : this.preferences.default_zindex;
                     }
                 }
                 $el.css(style);
@@ -478,7 +477,7 @@ tl.pg.interval = {};
                 $el.find('.tlyPageGuideStepIndex').text(changes.index);
             }
         }
-        self.changeQueue = [];
+        this.changeQueue = [];
     };
 
     /**
@@ -488,10 +487,9 @@ tl.pg.interval = {};
      * (e.g. resize)
      **/
     tl.pg.PageGuide.prototype.refreshVisibleSteps = function () {
-        var self = this;
-        self.addSteps();
-        self.checkTargets();
-        self.positionOverlays();
+        this.addSteps();
+        this.checkTargets();
+        this.positionOverlays();
     };
 
     /**
@@ -500,12 +498,11 @@ tl.pg.interval = {};
      * pageguide is open, meaning its target elements may be affected.
      **/
     tl.pg.PageGuide.prototype.updateVisible = function () {
-        var self = this;
-        self.refreshVisibleSteps();
-        if (self.cur_selector != null && self.cur_selector !== self.visibleTargets[self.cur_idx]) {
+        this.refreshVisibleSteps();
+        if (this.cur_selector != null && this.cur_selector !== this.visibleTargets[this.cur_idx]) {
             // mod by target length in case user was viewing last target and it got removed
-            var newIndex = self.cur_idx % self.visibleTargets.length;
-            self.show_message(newIndex);
+            var newIndex = this.cur_idx % this.visibleTargets.length;
+            this.show_message(newIndex);
         }
     };
 
@@ -514,25 +511,24 @@ tl.pg.interval = {};
      * index (number): index of the currently visible step to show.
      **/
     tl.pg.PageGuide.prototype.show_message = function (index) {
-        var self = this;
-        var targetKey = self.visibleTargets[index];
-        var target = self.targetData[targetKey];
+        var targetKey = this.visibleTargets[index];
+        var target = this.targetData[targetKey];
         if (target != null) {
             var selector = '.tlypageguide_shadow' + tl.pg.hashCode(targetKey);
 
-            self.$content.find('.tlypageguide-active').removeClass('tlypageguide-active');
-            self.$content.find(selector).addClass('tlypageguide-active');
+            this.$content.find('.tlypageguide-active').removeClass('tlypageguide-active');
+            this.$content.find(selector).addClass('tlypageguide-active');
 
-            self.$message.find('.tlypageguide_text').html(target.content);
-            self.cur_idx = index;
-            self.cur_selector = targetKey;
+            this.$message.find('.tlypageguide_text').html(target.content);
+            this.cur_idx = index;
+            this.cur_selector = targetKey;
 
             // DOM stuff
             var defaultHeight = 100;
-            var oldHeight = parseFloat(self.$message.css("height"));
-            self.$message.css("height", "auto");
-            var height = parseFloat(self.$message.outerHeight());
-            self.$message.css("height", oldHeight);
+            var oldHeight = parseFloat(this.$message.css("height"));
+            this.$message.css("height", "auto");
+            var height = parseFloat(this.$message.outerHeight());
+            this.$message.css("height", oldHeight);
             if (height < defaultHeight) {
                 height = defaultHeight;
             }
@@ -543,8 +539,8 @@ tl.pg.interval = {};
             if (!tl.pg.isScrolledIntoView($(targetKey))) {
                 $('html,body').animate({scrollTop: target.targetStyle.top - 50}, 500);
             }
-            self.$message.show().animate({'height': height}, 500);
-            self.roll_number(self.$message.find('span'), target.index);
+            this.$message.show().animate({'height': height}, 500);
+            this.roll_number(this.$message.find('span'), target.index);
         }
     };
 
@@ -552,15 +548,14 @@ tl.pg.interval = {};
      * navigate to the previous step. if at the first step, loop around to the last.
      **/
     tl.pg.PageGuide.prototype.navigateBack = function () {
-        var self = this;
         /*
          * If -n < x < 0, then the result of x % n will be x, which is
          * negative. To get a positive remainder, compute (x + n) % n.
          */
-        var new_index = (self.cur_idx + self.visibleTargets.length - 1) % self.visibleTargets.length;
+        var new_index = (this.cur_idx + this.visibleTargets.length - 1) % this.visibleTargets.length;
 
-        self.track_event('PG.back');
-        self.show_message(new_index, true);
+        this.track_event('PG.back');
+        this.show_message(new_index, true);
         return false;
     };
 
@@ -568,11 +563,10 @@ tl.pg.interval = {};
      * navigate to the next step. if at last step, loop back to the first.
      **/
     tl.pg.PageGuide.prototype.navigateForward = function () {
-        var self = this;
-        var new_index = (self.cur_idx + 1) % self.visibleTargets.length;
+        var new_index = (this.cur_idx + 1) % this.visibleTargets.length;
 
-        self.track_event('PG.fwd');
-        self.show_message(new_index, true);
+        this.track_event('PG.fwd');
+        this.show_message(new_index, true);
         return false;
     };
 
@@ -670,7 +664,6 @@ tl.pg.interval = {};
                 self.pop_welcome();
             } else {
                 self.open();
-                //$(this).addClass('tlyPageGuideToggleActive');
             }
             return false;
         });
