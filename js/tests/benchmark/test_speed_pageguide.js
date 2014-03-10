@@ -42,14 +42,19 @@ $('#test_element').load('../../../example/index.html #exampleContent', function 
             pg.setup_handlers();
         }
     }))
-    .add('_on_expand', _.extend(benchProto, {
+    .add('refreshVisibleSteps (_on_expand)', _.extend(benchProto, {
         fn: function () {
-            pg._on_expand();
+            pg.refreshVisibleSteps();
         }
     }))
-    .add('position_tour', _.extend(benchProto, {
+    .add('addSteps (position_tour)', _.extend(benchProto, {
         fn: function () {
-            pg.position_tour();
+            pg.addSteps();
+        }
+    }))
+    .add('checkTargets', _.extend(benchProto, {
+        fn: function () {
+            pg.checkTargets();
         }
     }))
     .add('show_message', _.extend(benchProto, {
