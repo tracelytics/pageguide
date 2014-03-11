@@ -419,7 +419,6 @@ tl.pg.interval = {};
                     width: $el.outerWidth(),
                     height: $el.outerHeight(),
                     'z-index': $el.css('z-index')
-                    // some kind of special casing for fixed positioning
                 });
                 visibleIndex++;
                 newTargetData.index = visibleIndex;
