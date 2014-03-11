@@ -111,62 +111,17 @@ By default, the modal will continue to launch on page load until a user either a
 
 Pageguide can take a hash of options in `init()`. All are optional.
 
-<table>
-    <tr>
-		<th>Option</th>
-		<th>Type</th>
-		<th>Default</th>
-		<th>What it do</th>
-	</tr>
-	<tr>
-		<td><code>auto_show_first</code></td>
-		<td>boolean</td>
-		<td><code>true</code></td>
-		<td>Whether or not to focus on the first visible item immediately on PG open</td>
-	</tr>
-	<tr>
-		<td><code>loading_selector</code></td>
-		<td>selector</td>
-		<td><code>'#loading'</code></td>
-		<td>The CSS selector for the loading element. pageguide will wait until this element is no longer visible starting up.</td>
-	</tr>
-	<tr>
-		<td><code>track_events_cb</code></td>
-		<td>function</td>
-		<td>noop</td>
-		<td>Optional callback for tracking user interactions with pageguide.  Should be a method taking a single parameter indicating the name of the interaction. (default none)</td>
-	</tr>
-    <tr>
-    	<td><code>handle_doc_switch</code></td>
-		<td>function</td>
-		<td><code>null</code></td>
-		<td>Optional callback to enlight or adapt interface depending on current documented element. Should be a function taking 2 parameters, current and previous data-tourtarget selectors. (default null)</td>
-	</tr>
-    <tr>
-    	<td><code>custom_open_button</code></td>
-		<td>selector</td>
-		<td><code>null</code></td>
-		<td>Optional id for toggling pageguide. Default null. If not specified then the default button is used.</td>
-	</tr>
-    <tr>
-    	<td><code>pg_caption</code></td>
-		<td>string</td>
-		<td><code>page guide</code></td>
-		<td>Optional - Sets the visible caption</td>
-	</tr>
-    <tr>
-    	<td><code>dismiss_welcome</code></td>
-		<td>function</td>
-		<td>(see source)</td>
-		<td>Optional function to permanently dismiss the welcome message, corresponding to <code>check_welcome_dismissed</code>. Default: sets a localStorage or cookie value for the (hashed) current URL to indicate the welcome message has been dismissed, corresponds to default <code>check_welcome_dismissed</code> function.</td>
-	</tr>
-    <tr>
-        <td><code>check_welcome_dismissed</code></td>
-		<td>function</td>
-		<td>(see source)</td>
-		<td>Optional function to check whether or not the welcome message has been dismissed. Must return true or false. This function should check against whatever state change is made in dismiss_welcome. Default: checks whether a localStorage or cookie value has been set for the (hashed) current URL, corresponds to default dismiss_welcome function.</td>
-	</tr>
-</table>
+
+Option | Type | Default | What it do
+-------|------|---------|-----------
+`auto_show_first` | boolean | `true` | Whether or not to focus on the first visible item immediately on PG open
+`loading_selector` | selector | `'#loading'` | The CSS selector for the loading element. pageguide will wait until this element is no longer visible before starting up.
+`track_events_cb` | function | noop | Optional callback for tracking user interactions with pageguide. Should be a method taking a single parameter indicating the name of the interaction. (default none)
+`handle_doc_switch` | function | `null` | Optional callback to enlight or adapt interface depending on current documented element. Should be a function taking 2 parameters, current and previous data-tourtarget selectors. (default null)
+`custom_open_button` | selector | `null` | Optional id for toggling pageguide. Default null. If not specified then the default button is used.
+`pg_caption` | string | `'page guide'` | Optional - sets the visible caption
+`dismiss_welcome` | function | (see source) | Optional function to permanently dismiss the welcome message, corresponding to `check_welcome_dismissed`. Default: sets a localStorage or cookie value for the (hashed) current URL to indicate the welcome message has been dismissed, corresponds to default `check_welcome_dismissed` function.
+`check_welcome_dismissed` | function | (see source) | Optional function to check whether or not the welcome message has been dismissed. Must return true or false. This function should check against whatever state change is made in `dismiss_welcome`. Default: checks whether a localStorage or cookie value has been set for the (hashed) current URL, corresponds to default `dismiss_welcome` function.
 
 ## Requirements
 
