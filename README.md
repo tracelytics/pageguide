@@ -122,6 +122,13 @@ Option | Type | Default | What it do
 `pg_caption` | string | `'page guide'` | Optional - sets the visible caption
 `dismiss_welcome` | function | (see source) | Optional function to permanently dismiss the welcome message, corresponding to `check_welcome_dismissed`. Default: sets a localStorage or cookie value for the (hashed) current URL to indicate the welcome message has been dismissed, corresponds to default `check_welcome_dismissed` function.
 `check_welcome_dismissed` | function | (see source) | Optional function to check whether or not the welcome message has been dismissed. Must return true or false. This function should check against whatever state change is made in `dismiss_welcome`. Default: checks whether a localStorage or cookie value has been set for the (hashed) current URL, corresponds to default `dismiss_welcome` function.
+`ready_callback` | function | `null` | A function to run once the pageguide ready event fires.
+`pointer_fallback` | boolean | `true` | Specify whether or not to provide a fallback for css pointer-events in browsers that do not support it.
+`default_zindex` | number | `100` | The css z-index to apply to the tlypageguide_shadow overlay elements
+`steps_element` | selector | `'#tlyPageGuide'` | Selector for the ul element whose steps you wish to use in this particular pageguide object
+`auto_refresh` | boolean | `false` | If set to true, pageguide will run a timer to constantly monitor the DOM for changes in the target elements and adjust the pageguide display (bubbles, overlays, etc) accordingly. The timer will only run while pageguide is open. Useful for single-page or heavily dynamic apps where pageguide steps or visible DOM elements can change often.
+`welcome_refresh` | boolean | `false` | Similar to auto_refresh, welcome_refresh enables a timer to monitor the DOM for new .tlyPageGuideWelcome elements. This is useful if your welcome element isn't loaded immediately, or if you want to show different welcome elements on different pages. The timer will run constantly, whether or not the pageguide is open, so enable at your discretion.
+`refresh_interval` | number | `500` | If auto_refresh or welcome_refresh is enabled, refresh_interval indicates in ms how often to poll the DOM for changes.
 
 ## Requirements
 
