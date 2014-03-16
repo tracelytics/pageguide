@@ -1,7 +1,7 @@
 pageguide.js
 ============
 
-An interactive guide for web page elements using jQuery and CSS3. Check it out IRL at http://tracelytics.github.com/pageguide!
+An interactive, responsive, and smart guide for web page elements using jQuery and CSS3. Works great for dynamic pages and single-page apps as well as static pages. Check it out IRL at http://tracelytics.github.com/pageguide!
 
 [![Build Status](https://travis-ci.org/tracelytics/pageguide.png)](https://travis-ci.org/tracelytics/pageguide)
 
@@ -27,7 +27,7 @@ Read the [Getting Started](http://tracelytics.github.io/pageguide/) page for inf
 
 ## How-To:
 1. Add references in your code to jQuery, pageguide.min.js & pageguide.min.css
-2. Add a document ready callback to setup the page guide
+2. Add a single pageguide `init()` call within a `document.ready` callback.
 3. Add a simple `<ul>` to the bottom of the pages you want the pageguide to appear on.
 4. Customize the page guide tour title.
 5. (Optional) Add a welcome message to display to your users on page load.
@@ -58,6 +58,7 @@ Add the following block of JavaScript to your html document:
 pageguide.js matches the first occurrence of the selector you specify in the `<ul>` you put on your pages in the next step.
 
 ### Step 5 - Add the pageguide.js `<ul>` near the bottom of your pages.
+The `data-tourtarget` attribute for each `<li>` should contain the selector for the element you wish to target with this step. Optional: use the classes `tlypageguide_left`, `tlypageguide_right`, `tlypageguide_top`, or `tlypageguide_bottom` to position the step indices.
 
     <ul id="tlyPageGuide" data-tourtitle="REPLACE THIS WITH A TITLE">
       <li class="tlypageguide_left" data-tourtarget=".first_element_to_target">
@@ -82,9 +83,9 @@ pageguide.js matches the first occurrence of the selector you specify in the `<u
       </li>
     </ul>
 
-### Step 6 (optional) - Add `#tlyPageGuideWelcome` near the bottom of your page.
+### Step 6 (optional) - Add `.tlyPageGuideWelcome` near the bottom of your page.
 
-    <div id="tlyPageGuideWelcome">
+    <div class="tlyPageGuideWelcome">
         <p>Here's a snappy modal to welcome you to my new page! pageguide is here to help you learn more.</p>
         <p>
             This button will launch pageguide:
@@ -100,7 +101,7 @@ pageguide.js matches the first occurrence of the selector you specify in the `<u
         </p>
     </div>
 
-This element will display as an introductory welcome modal to your users when they visit your page. There are three elements you can include inside `#tlyPageGuideWelcome` to let users control its behavior:
+This element will display as an introductory welcome modal to your users when they visit your page. There are three elements you can include inside `.tlyPageGuideWelcome` to let users control its behavior:
 - `.tlypageguide_start` (required): Closes the welcome modal and launches pageguide.
 - `.tlypageguide_ignore` (optional): Simply closes the welcome modal.
 - `.tlypageguide_dismiss` (optional): Closes the welcome modal and never shows it again.
@@ -110,7 +111,6 @@ By default, the modal will continue to launch on page load until a user either a
 ## Options
 
 Pageguide can take a hash of options in `init()`. All are optional.
-
 
 Option | Type | Default | What it do
 -------|------|---------|-----------
