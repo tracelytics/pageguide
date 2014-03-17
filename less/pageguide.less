@@ -61,14 +61,19 @@
 /* Page Guide
 ================================================== */
 
-    #tlyPageGuide li div { display: none; }
-
     #tlyPageGuideWrapper {
         .pg-border-box;
         color: #000;
         font-size:12px;
         font-family: Helvetica, Arial, sans-serif;
 
+        #tlyPageGuideToggles {
+            top: 84px;
+            right: 0;
+            position: fixed;
+            z-index: 9999;
+            display: block;
+        }
         .tlypageguide_toggle {
             .pg-border-box;
             background: rgba(0, 0, 0, 0.1);
@@ -82,13 +87,12 @@
             height: 50px;
             line-height: 25px;
             padding: 22px 6px 6px;
-            position: fixed;
-            right: -190px;
+            margin-bottom: 20px;
+            position: relative;
+            right: -185px;
             text-align: left;
             text-decoration: none;
-            top: 84px;
             width: 184px;
-            z-index: 9999;
             .pg-transition-animation(all, 0.2s, ease-in);
 
             &:before {
@@ -139,144 +143,6 @@
             }
         }
 
-        #tlyPageGuide {
-            list-style: none;
-            margin: 0 0 0 0;
-            padding: 0 0 0 0;
-
-            li {
-                background: fade(@pg-highlight-color, 30%);
-                .pg-box-shadow(0, 2px, 10px, 1px, rgba(0, 0, 0, 0.4));
-                .pg-transition-animation(~"min-height, max-height", 0.1s, ease-in-out);
-                .pg-opacity(0);
-                cursor: pointer;
-                display: block;
-                height: 46px;
-                line-height: 50px;
-                min-height: 0px;
-                max-height: 0px;
-                position: absolute;
-                text-align: center;
-                width: 50px;
-                z-index: 5000;
-
-                &.expanded {
-                    .pg-opacity(100);
-                    height:46px;
-                    min-height: 15px;
-                    max-height: 46px;
-
-                    &:after {
-                        display: block;
-                    }
-                }
-
-
-                ins {
-                    background: none;
-                    color: #fff;
-                    display: block;
-                    font-size: 32px;
-                    overflow: hidden;
-                    text-decoration: none;
-                    width: 50px;
-                }
-
-                div {
-                    display: none;
-                }
-
-                &:after {
-                    content: " ";
-                    display: none;
-                    height: 0;
-                    left: 0;
-                    position: absolute;
-                    top: -15px;
-                    width: 0;
-                    border-top: none;
-                    border-right: none;
-                    border-bottom: none;
-                    border-left: none;
-                    top: auto;
-                    left: auto;
-                    right: auto;
-                }
-
-                &.tlypageguide-active {
-                    background: fade(@pg-highlight-color, 95%);
-
-                    &.tlypageguide_bottom:after {
-                        border-bottom: 15px solid fade(@pg-highlight-color, 95%);
-                    }
-
-                    &.tlypageguide_right,
-                    &.tlypageguide_left,
-                    &.tlypageguide_top {
-                        &:after {
-                            border-top: 15px solid fade(@pg-highlight-color, 95%);
-                        }
-                    }
-                }
-
-                &.tlypageguide_bottom {
-                    &:after {
-                        border-bottom: 15px solid fade(@pg-highlight-color, 30%);
-                        border-right: 15px solid transparent;
-                        left: 0;
-                        top: -15px;
-                    }
-                    &:hover { margin-top: -5px; }
-                }
-
-                &.tlypageguide_right {
-                    &:after {
-                        border-top: 15px solid fade(@pg-highlight-color, 30%);
-                        border-left: 15px solid transparent;
-                        left: -15px;
-                        top: 0;
-                    }
-                    &:hover { margin-left: -5px; }
-                }
-
-                &.tlypageguide_left {
-                    &:after {
-                        border-top: 15px solid fade(@pg-highlight-color, 30%);
-                        border-right: 15px solid transparent;
-                        right: -15px;
-                        top: 0;
-                    }
-                    &:hover { margin-left: 5px; }
-                }
-
-                &.tlypageguide_top {
-                    &:after {
-                        border-top: 15px solid fade(@pg-highlight-color, 30%);
-                        border-right: 15px solid transparent;
-                        bottom: -15px;
-                        left: 0;
-                    }
-                    &:hover { margin-top: 5px; }
-                }
-
-                &:hover {
-                    background: fade(@pg-highlight-color, 95%);
-
-                    &.tlypageguide_bottom:after {
-                        border-bottom: 15px solid fade(@pg-highlight-color, 95%);
-                    }
-
-                    &.tlypageguide_right,
-                    &.tlypageguide_left,
-                    &.tlypageguide_top {
-                        &:after {
-                            border-top: 15px solid fade(@pg-highlight-color, 95%);
-                        }
-                    }
-                }
-            }
-        }
-
         #tlyPageGuideMessages {
             .pg-rounded-corners(3px 3px 0 0);
             background: rgba(0, 0, 0, 0.85);
@@ -307,7 +173,7 @@
                 width: 50px;
             }
 
-            div {
+            .tlypageguide_text {
                 color: #fff;
                 line-height: 22px;
                 margin: 10px 90px 0 120px;
@@ -355,27 +221,16 @@
                 left: 90px;
             }
         }
-    }
 
-    .tlypageguide_shadow {
-        position: relative;
-
-        &:after {
-            background-color: fade(@pg-highlight-color, 10%);
-            .pg-box-shadow(0, 0, 1px, 1px, rgba(147, 0, 119, 0.25));
-            content: " ";
+        #tlyPageGuideContent {
             display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
         }
     }
 
     .tlypageguide-open {
 
         #tlyPageGuideWrapper {
-
-            .tlypageguide_toggle {
+            .tlypageguide_toggle.tlyPageGuideToggleActive {
                 .pg-box-shadow(6px, 4px, 5px, 0, rgba(0, 0, 0, 0.4));
                 background: fade(@pg-highlight-color, 90%);
                 color: #fff;
@@ -389,14 +244,14 @@
                     margin: 0;
                 }
             }
-        }
 
-        .tlypageguide_shadow:after {
-            display: block;
+            #tlyPageGuideContent {
+                display: block;
+            }
         }
     }
 
-    #tlyPageGuideWelcome {
+    .tlyPageGuideWelcome, #tlyPageGuideWelcome {
         display: none;
         .pg-opacity(0);
         position: absolute;
@@ -449,12 +304,145 @@
     }
 
     .tlyPageGuideWelcomeOpen {
-        #tlyPageGuideWelcome {
+        .tlyPageGuideWelcome, #tlyPageGuideWelcome {
             .pg-opacity(95);
             display: block;
         }
         #tlyPageGuideOverlay {
             .pg-opacity(70);
             display: block;
+        }
+    }
+
+    // NEW
+
+    #tlyPageGuide {
+        display: none;
+    }
+
+    .tlypageguide_shadow {
+        position: absolute;
+        display: none;
+        background-color: fade(@pg-highlight-color, 10%);
+        .pg-box-shadow(0, 0, 1px, 1px, rgba(147, 0, 119, 0.25));
+        pointer-events: none;
+    }
+
+    .tlyPageGuideStepIndex {
+        background: fade(@pg-highlight-color, 30%);
+        .pg-box-shadow(0, 2px, 10px, 1px, rgba(0, 0, 0, 0.4));
+        .pg-transition-animation(~"min-height, max-height", 0.1s, ease-in-out);
+        cursor: pointer;
+        display: block;
+        height: 46px;
+        line-height: 50px;
+        position: absolute;
+        text-align: center;
+        width: 50px;
+        z-index: 5000;
+        .pg-opacity(100);
+        min-height: 15px;
+        max-height: 46px;
+        pointer-events: all;
+        color: #fff;
+        font-size: 32px;
+        text-decoration: none;
+        width: 50px;
+
+        &:after {
+            content: " ";
+            display: block;
+            height: 0;
+            left: 0;
+            position: absolute;
+            top: -15px;
+            width: 0;
+            border-top: none;
+            border-right: none;
+            border-bottom: none;
+            border-left: none;
+            top: auto;
+            left: auto;
+            right: auto;
+        }
+
+        &.tlypageguide_bottom {
+            bottom: -65px;
+            &:after {
+                border-bottom: 15px solid fade(@pg-highlight-color, 30%);
+                border-right: 15px solid transparent;
+                left: 0;
+                top: -15px;
+            }
+            &:hover { margin-top: -5px; }
+        }
+
+        &.tlypageguide_right {
+            right: -65px;
+            &:after {
+                border-top: 15px solid fade(@pg-highlight-color, 30%);
+                border-left: 15px solid transparent;
+                left: -15px;
+                top: 0;
+            }
+            &:hover { margin-left: -5px; }
+        }
+
+        &.tlypageguide_left {
+            left: -65px;
+            &:after {
+                border-top: 15px solid fade(@pg-highlight-color, 30%);
+                border-right: 15px solid transparent;
+                right: -15px;
+                top: 0;
+            }
+            &:hover { margin-left: 5px; }
+        }
+
+        &.tlypageguide_top {
+            top: -60px;
+            &:after {
+                border-top: 15px solid fade(@pg-highlight-color, 30%);
+                border-right: 15px solid transparent;
+                bottom: -15px;
+                left: 0;
+            }
+            &:hover { margin-top: 5px; }
+        }
+
+        &:hover {
+            background: fade(@pg-highlight-color, 95%);
+
+            &.tlypageguide_bottom:after {
+                border-bottom: 15px solid fade(@pg-highlight-color, 95%);
+            }
+
+            &.tlypageguide_right,
+            &.tlypageguide_left,
+            &.tlypageguide_top {
+                &:after {
+                    border-top: 15px solid fade(@pg-highlight-color, 95%);
+                }
+            }
+        }
+    }
+
+    .tlypageguide-active {
+
+        // highlight the index bubble
+        .tlyPageGuideStepIndex {
+            background: fade(@pg-highlight-color, 95%);
+
+            &.tlypageguide_bottom:after {
+                border-bottom: 15px solid fade(@pg-highlight-color, 95%);
+            }
+
+            &.tlypageguide_right,
+            &.tlypageguide_left,
+            &.tlypageguide_top {
+                &:after {
+                    border-top: 15px solid fade(@pg-highlight-color, 95%);
+                }
+            }
         }
     }
