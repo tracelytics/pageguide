@@ -249,13 +249,13 @@ tl.pg.interval = {};
      * str (string): the string to be hashed
      **/
     tl.pg.hashCode = function (str) {
-        var hash = 0, i, char;
+        var hash = 0, i, c;
         if (str == null || str.length === 0) {
             return hash;
         }
         for (i = 0; i < str.length; i++) {
-            char = str.charCodeAt(i);
-            hash = ((hash<<5)-hash)+char;
+            c = str.charCodeAt(i);
+            hash = ((hash<<5)-hash)+c;
             hash = hash & hash;
         }
         return hash.toString();
