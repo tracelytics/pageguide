@@ -405,24 +405,32 @@ tl.pg.interval = {};
         var visibleIndex = 0;
         var newVisibleTargets = [];
         for (var target in self.targetData) {
-            var $el = $(target);
+            var $elements = $(target);
+            var $el;
+            // assume all invisible
             var newTargetData = {
                 targetStyle: {
-                    display: (!!$el.length && $el.is(':visible')) ? 'block' : 'none'
+                    display: 'none'
                 }
             };
-            if (newTargetData.targetStyle.display === 'block') {
-                var offset = $el.offset();
-                $.extend(newTargetData.targetStyle, {
-                    top: offset.top,
-                    left: offset.left,
-                    width: $el.outerWidth(),
-                    height: $el.outerHeight(),
-                    'z-index': $el.css('z-index')
-                });
-                visibleIndex++;
-                newTargetData.index = visibleIndex;
-                newVisibleTargets.push(target);
+            // find first visible instance of target selector per issue #4798
+            for(var i = 0; i < $elements.length; i++){
+                if($($elements[i]).is(':visible') ){
+                    $el = $($elements[i]); // is it weird to '$($x)'?
+                    newTargetData.targetStyle.display = 'block';
+                    var offset = $el.offset();
+                    $.extend(newTargetData.targetStyle, {
+                        top: offset.top,
+                        left: offset.left,
+                        width: $el.outerWidth(),
+                        height: $el.outerHeight(),
+                        'z-index': $el.css('z-index')
+                    });
+                    visibleIndex++;
+                    newTargetData.index = visibleIndex;
+                    newVisibleTargets.push(target);
+                    break;
+                }
             }
             var diff = {
                 target: target
