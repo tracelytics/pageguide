@@ -670,7 +670,6 @@ tl.pg.interval = {};
             } else {
                 self.open();
             }
-            return false;
         });
 
         /* close guide */
