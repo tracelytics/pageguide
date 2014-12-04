@@ -30,21 +30,20 @@ section {
   height: 120px;
 }
 .intro .tracelytcs_logo {
-  background: url("../img/logo_color.png") no-repeat scroll 6px 20px transparent;
-  border-right: 1px solid #CCCCCC;
+  background: url("../img/logo_color.png") no-repeat scroll 6px 10px transparent;
+  background-size: 250px 72px;
+  border-top: 1px solid #CCCCCC;
+  border-bottom: 1px solid #CCCCCC;
   float: left;
-  height: 130px;
-  margin: 0 10px 0 0;
+  height: 94px;
+  margin: 0 10px 10px 0;
   overflow: hidden;
   text-indent: -999px;
-  width: 100px;
+  width: 100%;
 }
 .intro h1 {
-  margin: 0 0 15px 100px;
+  margin: 0 0 15px 0;
   padding: 10px 0 0 0;
-}
-.intro p {
-  margin: 0 0 0 100px;
 }
 .start {
   -moz-border-radius: 5px;
