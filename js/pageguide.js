@@ -521,6 +521,12 @@ tl.pg.interval = {};
         if (target != null) {
             var selector = '.tlypageguide_shadow' + tl.pg.hashCode(targetKey);
 
+            if (this.handle_doc_switch) {
+                var len = this.visibleTargets.length;
+                var prevTargetKey = this.visibleTargets[(index - 1 + len) % len];
+                this.handle_doc_switch(targetKey, prevTargetKey);
+            }
+
             this.$content.find('.tlypageguide-active').removeClass('tlypageguide-active');
             this.$content.find(selector).addClass('tlypageguide-active');
 
