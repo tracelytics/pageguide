@@ -23,6 +23,12 @@ Three quick start options are available:
 * Clone the repo: `git clone https://github.com/tracelytics/pageguide.git`
 * Install with [Bower](http://bower.io/): `bower install pageguide`
 
+Pageguide comes with an example implementation (the files are in `/example`) which you can run locally with [Grunt](http://gruntjs.com/). Assuming you have a working copy of [npm](https://www.npmjs.com/) installed on your machine, open up a terminal, navigate to the root `pageguide` directory, and run:
+
+    $ npm install
+    $ grunt server
+Then navigate to [http://localhost:3000/example/](http://localhost:3000/example/) in your browser.
+
 Read the [Getting Started](http://tracelytics.github.io/pageguide/) page for information on the framework contents and more.
 
 ## How-To:
