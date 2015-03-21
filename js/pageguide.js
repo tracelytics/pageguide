@@ -266,13 +266,13 @@ tl.pg.interval = {};
      * currently scrolled viewport.
      * elem (string): selector for the element in question
      **/
-    tl.pg.isScrolledIntoView = function(elem) {
+    tl.pg.isScrolledIntoView = function(elem, height) {
         var dvtop = $(window).scrollTop(),
             dvbtm = dvtop + $(window).height(),
             eltop = $(elem).offset().top,
             elbtm = eltop + $(elem).height();
 
-        return (elbtm >= dvtop) && (eltop <= dvbtm - 100);
+        return (eltop >= dvtop) && (elbtm <= dvbtm - height);
     };
 
     /**
@@ -547,10 +547,10 @@ tl.pg.interval = {};
                 height = $(window).height()/2;
             }
 
-            if (!tl.pg.isScrolledIntoView($(targetKey))) {
+            this.$message.show().animate({'height': height}, 500);
+            if (!tl.pg.isScrolledIntoView($(targetKey), this.$message.outerHeight())) {
                 $('html,body').animate({scrollTop: target.targetStyle.top - 50}, 500);
             }
-            this.$message.show().animate({'height': height}, 500);
             this.roll_number(this.$message.find('span'), target.index);
         }
     };
