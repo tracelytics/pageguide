@@ -22,7 +22,7 @@ $(function () {
         expect(2);
 
         // NOTE: had to test on a qunit element because the fixture gets offset by defauly
-        ok(tl.pg.isScrolledIntoView('#qunit-header'), 'top element scrolled into view');
+        ok(tl.pg.isScrolledIntoView('#qunit-header', 0), 'top element scrolled into view');
         equal(tl.pg.isScrolledIntoView('.data-block:last'), false, 'bottom element not scrolled into view');
     });
 
