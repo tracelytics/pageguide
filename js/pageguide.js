@@ -68,6 +68,7 @@
  */
 tl = window.tl || {};
 tl.pg = tl.pg || {};
+tl.pg.pageGuideList = tl.pg.pageGuideList || [];
 tl.pg.interval = {};
 
 (function ($) {
@@ -199,6 +200,7 @@ tl.pg.interval = {};
                 preferences.ready_callback();
             }
         });
+        tl.pg.pageGuideList.push(pg);
         return pg;
     };
 
@@ -308,6 +310,18 @@ tl.pg.interval = {};
         documentElement.removeChild(element);
         return !!supports;
     };
+
+    /**
+     * close any other open pageguides
+     * uuid (string): the uuid of the pageguide that should remain open
+     **/
+    tl.pg.closeOpenGuides = function (uuid) {
+        for (var i=0; i<tl.pg.pageGuideList.length; i++) {
+            if (tl.pg.pageGuideList[i].uuid !== uuid) {
+                tl.pg.pageGuideList[i].close();
+            }
+        }
+    }
 
     /**
      * check for a welcome message. if it exists, determine whether or not to show it,
@@ -590,6 +604,7 @@ tl.pg.interval = {};
         if (this.is_open) {
             return;
         } else {
+            tl.pg.closeOpenGuides(this.uuid);
             this._open();
         }
     };
