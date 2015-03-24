@@ -518,7 +518,7 @@ tl.pg.interval = {};
      **/
     tl.pg.PageGuide.prototype.updateVisible = function () {
         this.refreshVisibleSteps();
-        if (this.visibleTargets.length == 0)
+        if (this.visibleTargets.length === 0)
         {
             if (this.$message.is(":visible"))
             {
