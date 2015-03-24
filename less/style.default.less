@@ -1,8 +1,3 @@
-/* Variables
-================================================== */
-
-    @pg-highlight-color: #f70077;
-
 /* Mixins
 ================================================== */
 
@@ -30,7 +25,7 @@
         width: @width;
     }
 
-    .pg-box-shadow (@x: 0, @y: 0, @blur: 5px, @spread: 0, @color: rgba(0, 0, 0, 0.5)) {
+    .pg-box-shadow (@x: 0, @y: 0, @blur: 5px, @spread: 0, @color: fade(@pg-base-color, 50%)) {
         -webkit-box-shadow: @arguments;
         -moz-box-shadow: @arguments;
         -o-box-shadow: @arguments;
@@ -76,7 +71,7 @@
         }
         .tlypageguide_toggle {
             .pg-border-box;
-            background: rgba(0, 0, 0, 0.1);
+            background: fade(@pg-base-color, 10%);
             .pg-rounded-corners(3px 0 0 3px);
             clear: both;
             color: #000000;
@@ -134,7 +129,7 @@
             }
 
             &:hover {
-                background: rgba(0, 0, 0, 0.2);
+                background: fade(@pg-base-color, 20%);
                 right: 0 !important;
 
                 div span {
@@ -145,8 +140,8 @@
 
         #tlyPageGuideMessages {
             .pg-rounded-corners(3px 3px 0 0);
-            background: rgba(0, 0, 0, 0.85);
-            .pg-box-shadow(0, 0, 9px, 4px, rgba(0, 0, 0, 0.4));
+            background: fade(@pg-base-color, 85%);
+            .pg-box-shadow(0, 0, 9px, 4px, fade(@pg-base-color, 40%));
             bottom: 0;
             display: none;
             font-size: 16px;
@@ -231,7 +226,7 @@
 
         #tlyPageGuideWrapper {
             .tlypageguide_toggle.tlyPageGuideToggleActive {
-                .pg-box-shadow(6px, 4px, 5px, 0, rgba(0, 0, 0, 0.4));
+                .pg-box-shadow(6px, 4px, 5px, 0, fade(@pg-base-color, 40%));
                 background: fade(@pg-highlight-color, 90%);
                 color: #fff;
                 right: 0 !important;
@@ -265,12 +260,12 @@
         max-width: 400px;
         height: 300px;
         max-height: 80%;
-        background: rgba(0, 0, 0, 0.85);
+        background: fade(@pg-base-color, 85%);
         padding: 15px 20px;
         color: #fff;
         font-size: 16px;
         line-height: 22px;
-        .pg-box-shadow(0, 0, 9px, 4px, rgba(0, 0, 0, 0.4));
+        .pg-box-shadow(0, 0, 9px, 4px, fade(@pg-base-color, 40%));
         .pg-rounded-corners(10px);
         .pg-transition-animation (all, 0.2s, linear);
 
@@ -324,13 +319,13 @@
         position: absolute;
         display: none;
         background-color: fade(@pg-highlight-color, 10%);
-        .pg-box-shadow(0, 0, 1px, 1px, rgba(147, 0, 119, 0.25));
+        .pg-box-shadow(0, 0, 1px, 1px, @pg-shadow-color);
         pointer-events: none;
     }
 
     .tlyPageGuideStepIndex {
         background: fade(@pg-highlight-color, 30%);
-        .pg-box-shadow(0, 2px, 10px, 1px, rgba(0, 0, 0, 0.4));
+        .pg-box-shadow(0, 2px, 10px, 1px, fade(@pg-base-color, 40%));
         .pg-transition-animation(~"min-height, max-height", 0.1s, ease-in-out);
         cursor: pointer;
         display: block;

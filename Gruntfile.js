@@ -43,9 +43,17 @@ module.exports = function(grunt) {
         options: {
           compress: true
         },
-        src: ['less/<%= pkg.name %>.less'],
-        dest: 'dist/css/<%= pkg.name %>.min.css'
-      }
+        files:[
+          {
+            expand: true,            // Enable dynamic expansion.
+            cwd: 'less',     // Src matches are relative to this path.
+            src: ['pageguide*.less'],         // Actual pattern(s) to match.
+            extDot: 'last',
+            dest: 'dist/css/',    // Destination path prefix.
+            ext: '.min.css'
+          }
+        ]
+      },
     },
 
     qunit: {
@@ -56,11 +64,19 @@ module.exports = function(grunt) {
       server: {
         options: {
           keepalive: true,
-          port: 3000,
+          port: 3000
         }
       }
     },
 
+    multiless : {
+      dist: {
+        cwd: 'less',
+        colors: "color.*.less",
+        styles: "style.*.less",
+        dest: 'less'
+      }
+    }
   });
 
   // These plugins provide necessary tasks.
@@ -71,8 +87,41 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-recess');
 
+  // Helper task to combine all color / style options for compilation
+  grunt.registerMultiTask("multiless", "Combine color / style options for processing by recess", function() {
+
+    var path = require("path");
+
+    var colors = grunt.file.expand({ cwd: this.data.cwd }, this.data.colors);
+    var styles = grunt.file.expand({ cwd: this.data.cwd }, this.data.styles);
+
+    for (var colorIndex = 0; colorIndex < colors.length; colorIndex++)
+    {
+      var colorName = colors[colorIndex].replace(/^[^\.]*\.(.*)\.[^\.]*/g, "$1");
+
+      for (var styleIndex = 0; styleIndex < styles.length; styleIndex++)
+      {
+        var styleName = styles[styleIndex].replace(/^[^\.]*\.(.*)\.[^\.]*/g, "$1");
+
+        var name = "pageguide";
+
+        if (colorName !== "default")
+        {
+          name += "." + colorName;
+        }
+        if (styleName !== colorName && styleName != "default")
+        {
+          name += "." + styleName;
+        }
+        name += ".less";
+
+        grunt.file.write(path.join(this.data.dest, name), "@import \"" + colors[colorIndex] + "\";\n@import \"" + styles[styleIndex] + "\";\n");
+      }
+    }
+  });
+
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'jshint', 'qunit', 'uglify', 'recess']);
+  grunt.registerTask('default', ['clean', 'jshint', 'qunit', 'uglify', 'multiless', 'recess']);
   grunt.registerTask('server', ['default', 'connect']);
 
 };
