@@ -115,7 +115,7 @@ module.exports = function(grunt) {
         }
         name += ".less";
 
-        grunt.file.write(path.join(this.data.dest, name), "@import \"" + colors[colorIndex] + "\";\n@import \"" + styles[styleIndex] + "\";\n");
+        grunt.file.write(path.join(this.data.dest, name), "@import \"color.default.less\";\n@import \"" + colors[colorIndex] + "\";\n@import \"" + styles[styleIndex] + "\";\n");
       }
     }
   });

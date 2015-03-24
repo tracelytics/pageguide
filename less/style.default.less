@@ -58,7 +58,7 @@
 
     #tlyPageGuideWrapper {
         .pg-border-box;
-        color: #000;
+        color: @pg-closed-color-text;
         font-size:12px;
         font-family: Helvetica, Arial, sans-serif;
 
@@ -71,10 +71,10 @@
         }
         .tlypageguide_toggle {
             .pg-border-box;
-            background: fade(@pg-base-color, 10%);
+            background: @pg-closed-color;
             .pg-rounded-corners(3px 0 0 3px);
             clear: both;
-            color: #000000;
+            color: @pg-closed-color-text;
             cursor: pointer;
             display: block;
             float: right;
@@ -121,7 +121,7 @@
 
             a {
                 bottom: -26px;
-                color: #000;
+                color: @pg-closed-color-page-text;
                 opacity: 0;
                 position: absolute;
                 right: 10px;
@@ -129,7 +129,7 @@
             }
 
             &:hover {
-                background: fade(@pg-base-color, 20%);
+                background: fadein(@pg-closed-color, 10%);
                 right: 0 !important;
 
                 div span {
@@ -155,7 +155,7 @@
             span {
                 background: fade(@pg-highlight-color, 95%);
                 .pg-rounded-corners(3px);
-                color: #fff;
+                color: @pg-highlight-color-text;
                 display: block;
                 font-size: 32px;
                 height: 46px;
@@ -169,16 +169,16 @@
             }
 
             .tlypageguide_text {
-                color: #fff;
+                color: @pg-base-color-text;
                 line-height: 22px;
                 margin: 10px 90px 0 120px;
                 position: relative;
 
                 a {
-                    color: #fff;
+                    color: @pg-base-color-text;
 
                     &:hover {
-                        color: #fff;
+                        color: @pg-base-color-text;
                     }
                 }
             }
@@ -186,7 +186,7 @@
             .tlypageguide_close {
                 background: @pg-highlight-color;
                 .pg-rounded-corners(0 0 3px 3px);
-                color: #fff;
+                color: @pg-highlight-color-text;
                 display: block;
                 font-size: 11px;
                 height: 24px;
@@ -228,7 +228,7 @@
             .tlypageguide_toggle.tlyPageGuideToggleActive {
                 .pg-box-shadow(6px, 4px, 5px, 0, fade(@pg-base-color, 40%));
                 background: fade(@pg-highlight-color, 90%);
-                color: #fff;
+                color: @pg-highlight-color-text;
                 right: 0 !important;
 
                 a {
@@ -262,7 +262,7 @@
         max-height: 80%;
         background: fade(@pg-base-color, 85%);
         padding: 15px 20px;
-        color: #fff;
+        color: @pg-base-color-text;
         font-size: 16px;
         line-height: 22px;
         .pg-box-shadow(0, 0, 9px, 4px, fade(@pg-base-color, 40%));
@@ -276,7 +276,7 @@
         button {
             background: fade(@pg-highlight-color, 95%);
             .pg-rounded-corners(3px);
-            color: #fff;
+            color: @pg-highlight-color-text;
             font-size: 22px;
             border: 0;
             overflow: hidden;
@@ -339,7 +339,7 @@
         min-height: 15px;
         max-height: 46px;
         pointer-events: all;
-        color: #fff;
+        color: @pg-highlight-color-text;
         font-size: 32px;
         text-decoration: none;
         width: 50px;
