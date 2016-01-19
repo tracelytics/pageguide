@@ -449,13 +449,50 @@ tl.pg.interval = {};
             var diff = {
                 target: target
             };
+
+            // a helper function to determine if an element is postion:fixed
+            var isFixed = function (ele, posType) {
+                posType = posType || "fixed";
+
+                if (!ele || ele.prop("tagName") === 'HTML') {
+                    return false;
+                }
+                return (ele.css("position") !== posType) ? isFixed(ele.offsetParent()) : posType;
+            };
+
+            // if the target does not have a position value
+            if (!self.targetData[target].position) {
+
+                // if target element is position fixed
+                newTargetData.targetStyle['position'] = isFixed($el) ? 'fixed' : 'absolute';
+
+            }
+
             // compare new styles with existing ones
             for (var prop in newTargetData.targetStyle) {
                 if (newTargetData.targetStyle[prop] !== self.targetData[target][prop]) {
+
                     if (diff.targetStyle == null) {
                         diff.targetStyle = {};
                     }
-                    diff.targetStyle[prop] = newTargetData.targetStyle[prop];
+
+                    if (newTargetData.targetStyle.position === 'fixed' || self.targetData[target].position === 'fixed') {
+                        switch (prop) {
+                            // only set a positioning value if it is unset
+                            case 'top' || 'right' || 'bottom' || 'left':
+
+                                if (!self.targetData[target].targetStyle[prop]) {
+                                    diff.targetStyle[prop] = newTargetData.targetStyle[prop];
+                                }
+                                break;
+                            default:
+                                diff.targetStyle[prop] = newTargetData.targetStyle[prop];
+                                break;
+                        }
+                    } else {
+                        diff.targetStyle[prop] = newTargetData.targetStyle[prop];
+                    }
+
                 }
             }
             // compare index with existing index
