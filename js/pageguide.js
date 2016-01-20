@@ -418,6 +418,16 @@ tl.pg.interval = {};
         var self = this;
         var visibleIndex = 0;
         var newVisibleTargets = [];
+        // a helper function to determine if an element is postion:fixed
+        var isFixed = function (ele, posType) {
+            posType = posType || "fixed";
+
+            if (!ele || ele.prop("tagName") === 'HTML') {
+                return false;
+            }
+            return (ele.css("position") !== posType) ? isFixed(ele.offsetParent()) : posType;
+        };
+
         for (var target in self.targetData) {
             var $elements = $(target);
             var $el;
@@ -448,16 +458,6 @@ tl.pg.interval = {};
             }
             var diff = {
                 target: target
-            };
-
-            // a helper function to determine if an element is postion:fixed
-            var isFixed = function (ele, posType) {
-                posType = posType || "fixed";
-
-                if (!ele || ele.prop("tagName") === 'HTML') {
-                    return false;
-                }
-                return (ele.css("position") !== posType) ? isFixed(ele.offsetParent()) : posType;
             };
 
             // if the target does not have a position value
