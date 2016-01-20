@@ -464,7 +464,7 @@ tl.pg.interval = {};
             if (!self.targetData[target].position) {
 
                 // if target element is position fixed
-                newTargetData.targetStyle['position'] = isFixed($el) ? 'fixed' : 'absolute';
+                newTargetData.targetStyle.position = isFixed($el) ? 'fixed' : 'absolute';
 
             }
 
