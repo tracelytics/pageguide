@@ -56,9 +56,11 @@ Minified css can be found in /dist/css/. Source LESS file is in /less/.
 
 Add the following block of JavaScript to your html document:
 
-```$(document).ready(function() {
+```
+$(document).ready(function() {
     tl.pg.init({ /* optional preferences go here */ });
-});```
+});
+```
 
 ### Step 4 - Choose the elements that you want included in the page guide.
 pageguide.js matches the first occurrence of the selector you specify in the `<ul>` you put on your pages in the next step.
