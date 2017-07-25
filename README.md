@@ -95,6 +95,7 @@ The `data-tourtarget` attribute for each `<li>` should contain the selector for 
 
 ### Step 6 (optional) - Add `.tlyPageGuideWelcome` near the bottom of your page.
 
+```html
     <div class="tlyPageGuideWelcome">
         <p>Here's a snappy modal to welcome you to my new page! pageguide is here to help you learn more.</p>
         <p>
@@ -110,6 +111,7 @@ The `data-tourtarget` attribute for each `<li>` should contain the selector for 
             <button class="tlypageguide_dismiss">got it, thanks</button>
         </p>
     </div>
+```
 
 This element will display as an introductory welcome modal to your users when they visit your page. There are three elements you can include inside `.tlyPageGuideWelcome` to let users control its behavior:
 - `.tlypageguide_start` (required): Closes the welcome modal and launches pageguide.
