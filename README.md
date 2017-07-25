@@ -56,6 +56,7 @@ Minified css can be found in /dist/css/. Source LESS file is in /less/.
 
 Add the following block of JavaScript to your html document:
 
+
 ```javascript
 $(document).ready(function() {
     tl.pg.init({ /* optional preferences go here */ });
