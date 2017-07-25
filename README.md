@@ -56,7 +56,8 @@ Minified css can be found in /dist/css/. Source LESS file is in /less/.
 
 Add the following block of JavaScript to your html document:
 
-```
+
+```javascript
 $(document).ready(function() {
     tl.pg.init({ /* optional preferences go here */ });
 });
@@ -68,6 +69,7 @@ pageguide.js matches the first occurrence of the selector you specify in the `<u
 ### Step 5 - Add the pageguide.js `<ul>` near the bottom of your pages.
 The `data-tourtarget` attribute for each `<li>` should contain the selector for the element you wish to target with this step. Optional: use the classes `tlypageguide_left`, `tlypageguide_right`, `tlypageguide_top`, or `tlypageguide_bottom` to position the step indices.
 
+```html
     <ul id="tlyPageGuide" data-tourtitle="REPLACE THIS WITH A TITLE">
       <li class="tlypageguide_left" data-tourtarget=".first_element_to_target">
         <div>
@@ -90,9 +92,11 @@ The `data-tourtarget` attribute for each `<li>` should contain the selector for 
         </div>
       </li>
     </ul>
+```
 
 ### Step 6 (optional) - Add `.tlyPageGuideWelcome` near the bottom of your page.
 
+```html
     <div class="tlyPageGuideWelcome">
         <p>Here's a snappy modal to welcome you to my new page! pageguide is here to help you learn more.</p>
         <p>
@@ -108,6 +112,7 @@ The `data-tourtarget` attribute for each `<li>` should contain the selector for 
             <button class="tlypageguide_dismiss">got it, thanks</button>
         </p>
     </div>
+```
 
 This element will display as an introductory welcome modal to your users when they visit your page. There are three elements you can include inside `.tlyPageGuideWelcome` to let users control its behavior:
 - `.tlypageguide_start` (required): Closes the welcome modal and launches pageguide.
