@@ -518,7 +518,16 @@ tl.pg.interval = {};
      **/
     tl.pg.PageGuide.prototype.updateVisible = function () {
         this.refreshVisibleSteps();
-        if (this.cur_selector != null && this.cur_selector !== this.visibleTargets[this.cur_idx]) {
+        if (this.visibleTargets.length === 0)
+        {
+            if (this.$message.is(":visible"))
+            {
+                this.$message.animate({ height: "0" }, 500, function() {
+                  $(this).hide();
+                });
+            }
+        }
+        else if (this.cur_selector == null || this.cur_selector !== this.visibleTargets[this.cur_idx]) {
             // mod by target length in case user was viewing last target and it got removed
             var newIndex = this.cur_idx % this.visibleTargets.length;
             this.show_message(newIndex);
