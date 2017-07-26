@@ -264,6 +264,38 @@ tl.pg.interval = {};
     };
 
     /**
+     * To ensure we are not dealing with an iframe we get all targetdata here.
+     * Normal targets will return an array with just 1 entry (the target, as-is)
+     * while an iframe target will have ['iframeSelector', 'iframeElementSelector']
+     **/
+    tl.pg.getTargetInfo = function(realTarget) {
+        var target = [];
+        if (realTarget.split('iframe-')[0] === '') {
+            target = realTarget.split('iframe-')[1].split('-');
+        } else {
+            target.push(realTarget);
+        }
+        return target;
+    };
+
+
+    /**
+     * This retrieves the iFrame of the given tourTarget
+     * Normal targets will return an array with just 1 entry (the target, as-is)
+     * while an iframe target will have ['iframeSelector', 'iframeElementSelector']
+     **/
+    tl.pg.getIframeContents = function(tourTarget) {
+        var $iframe;
+        if ($.isArray(tourTarget)) {
+            $iframe = $(tourTarget[0]);
+        } else {
+            $iframe = $(tl.pg.getTargetInfo(tourTarget)[0]);
+        }
+        $iframe.addClass('pgIframe');
+        return $iframe.contents();
+    };
+
+    /**
      * check whether the element targeted by the given selector is within the
      * currently scrolled viewport.
      * elem (string): selector for the element in question
@@ -277,11 +309,22 @@ tl.pg.interval = {};
         return (eltop >= dvtop) && (elbtm <= dvbtm - height);
     };
 
+    tl.pg.iframedElIsScrolledIntoView = function(iframe, elem, height) {
+        iframe = $(iframe).contents();
+        var dvtop = iframe.find('body').scrollTop();
+            dvbtm = dvtop + iframe.height(),
+            eltop = iframe.find(elem).offset().top,
+            elbtm = eltop + iframe.find(elem).height();
+
+        return (eltop >= dvtop) && (elbtm <= dvbtm - height);
+    };
+
     /**
      * remove all traces of pageguide from the DOM.
      **/
     tl.pg.destroy = function () {
         $('#tlyPageGuideWrapper').remove();
+        $('.pgIframe').contents().find('#tlyPageGuideWrapper').remove();
         $('body').removeClass('tlypageguide-open');
         $('body').removeClass('tlyPageGuideWelcomeOpen');
         for (var k in tl.pg.interval) {
@@ -392,6 +435,14 @@ tl.pg.interval = {};
             var $el = $(el);
             var tourTarget = $el.data('tourtarget');
             var positionClass = $el.attr('class');
+            var isIframe = $(tourTarget).is('iframe');
+            var $content = self.$content;
+
+            if (isIframe) {
+                tourTarget = 'iframe-' + tourTarget + '-' + $el.data('tourtargetFrame');
+                $content = tl.pg.getIframeContents(tourTarget).find('body');
+            }
+
             if (self.targetData[tourTarget] == null) {
                 self.targetData[tourTarget] = {
                     targetStyle: {},
@@ -399,7 +450,7 @@ tl.pg.interval = {};
                 };
                 var hashCode = tl.pg.hashCode(tourTarget) + '';
                 self.hashTable[hashCode] = tourTarget;
-                self.$content.append(
+                $content.append(
                     '<div class="tlypageguide_shadow tlypageguide_shadow' + hashCode +
                     '" data-selectorhash="' + hashCode + '">' +
                         '<span class="tlyPageGuideStepIndex ' + positionClass +'"></span>' +
@@ -419,8 +470,14 @@ tl.pg.interval = {};
         var visibleIndex = 0;
         var newVisibleTargets = [];
         for (var target in self.targetData) {
-            var $elements = $(target);
-            var $el;
+            var targetInfo = tl.pg.getTargetInfo(target);
+            var $elements,
+                $el;
+            if (targetInfo.length === 1) {
+                $elements = $(targetInfo[0]);
+            } else {
+                $elements = tl.pg.getIframeContents(target).find(targetInfo[1]);
+            }
             // assume all invisible
             var newTargetData = {
                 targetStyle: {
@@ -480,7 +537,11 @@ tl.pg.interval = {};
         for (var i=0; i<this.changeQueue.length; i++) {
             var changes = this.changeQueue[i];
             var selector = '.tlypageguide_shadow' + tl.pg.hashCode(changes.target);
+            var target = tl.pg.getTargetInfo(changes.target);
             var $el = this.$content.find(selector);
+            if (target.length > 1) {
+                $el = tl.pg.getIframeContents(target).find(selector);
+            }
             if (changes.targetStyle != null) {
                 var style = $.extend({}, changes.targetStyle);
                 for (var prop in style) {
@@ -532,6 +593,8 @@ tl.pg.interval = {};
     tl.pg.PageGuide.prototype.show_message = function (index) {
         var targetKey = this.visibleTargets[index];
         var target = this.targetData[targetKey];
+        var targetInfo = tl.pg.getTargetInfo(targetKey);
+
         if (target != null) {
             var selector = '.tlypageguide_shadow' + tl.pg.hashCode(targetKey);
 
@@ -541,8 +604,13 @@ tl.pg.interval = {};
                 this.handle_doc_switch(targetKey, prevTargetKey);
             }
 
-            this.$content.find('.tlypageguide-active').removeClass('tlypageguide-active');
-            this.$content.find(selector).addClass('tlypageguide-active');
+            var $content = this.$content;
+            if (tl.pg.getTargetInfo(targetKey).length > 1) {
+                $content = tl.pg.getIframeContents(targetKey);
+            }
+
+            $content.find('.tlypageguide-active').removeClass('tlypageguide-active');
+            $content.find(selector).addClass('tlypageguide-active');
 
             this.$message.find('.tlypageguide_text').html(target.content);
             this.cur_idx = index;
@@ -562,8 +630,23 @@ tl.pg.interval = {};
             }
 
             this.$message.show().animate({'height': height}, 500);
-            if (!tl.pg.isScrolledIntoView($(targetKey), this.$message.outerHeight())) {
-                $('html,body').animate({scrollTop: target.targetStyle.top - 50}, 500);
+            var inView;
+            if (targetInfo.length > 1)  {
+                inView = tl.pg.isScrolledIntoView($(targetInfo[0]));
+                if (!inView, !tl.pg.iframedElIsScrolledIntoView(targetInfo[0], targetInfo[1], this.$message.outerHeight())) {
+                    tl.pg.getIframeContents(targetInfo).find('html, body').animate({scrollTop: target.targetStyle.top - 50}, 500);
+                }
+            } else {
+                 inView = tl.pg.isScrolledIntoView($(targetKey));
+            }
+            if (!inView, this.$message.outerHeight()) {
+                var offset;
+                if (targetInfo.length > 1) {
+                    offset = $(targetInfo[0]).offset().top - 50;
+                } else {
+                    offset = target.targetStyle.top - 50;
+                }
+                $('html,body').animate({scrollTop: offset}, 500);
             }
             this.roll_number(this.$message.find('span'), target.index);
         }
@@ -661,7 +744,10 @@ tl.pg.interval = {};
         }
 
         this.$content.find('.tlypageguide_shadow').css('display', 'none');
+        var iframes = $('.pgIframe').contents();
+        iframes.find('.tlypageguide_shadow').css('display', 'none');
         this.$content.find('.tlypageguide-active').removeClass('tlypageguide-active');
+        iframes.find('.tlypageguide-active').removeClass('tlypageguide-active');
         this.$message.animate({ height: "0" }, 500, function() {
             $(this).hide();
         });
@@ -702,12 +788,21 @@ tl.pg.interval = {};
 
         /* interaction: item click */
         self.$base.on('click', '.tlyPageGuideStepIndex', function () {
-            var selector = self.hashTable[$(this).parent().data('selectorhash')];
+            pageGuideStepIndexClickHandler($(this));
+        });
+
+        $('iframe').contents().on('click', '.tlyPageGuideStepIndex', function() {
+            pageGuideStepIndexClickHandler($(this));
+        });
+
+        /* interaction: item click */
+        function pageGuideStepIndexClickHandler($el) {
+            var selector = self.hashTable[$el.parent().data('selectorhash')];
             var target = self.targetData[selector];
             var index = (target) ? target.index : 1;
             self.track_event('PG.specific_elt');
             self.show_message(index - 1);
-        });
+        }
 
         /* interaction: fwd/back click */
         self.$fwd.on('click', function() {
