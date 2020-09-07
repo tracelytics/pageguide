@@ -536,7 +536,7 @@
    *
    * In Opera < 9.50 and some older/beta Mobile Safari versions using `unshift()`
    * generically to augment the `arguments` object will pave the value at index 0
-   * without incrimenting the other values's indexes.
+   * without incrementing the other values's indexes.
    * https://github.com/documentcloud/underscore/issues/9
    *
    * Rhino and environments it powers, like Narwhal and RingoJS, may have
